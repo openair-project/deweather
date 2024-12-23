@@ -77,8 +77,8 @@ run multiple times with \code{B = 1} and a different value of \code{seed} e.g. \
 
 \item{seed}{Random number seed for reproducibility in returned model.}
 
-\item{type}{One of the supported parallelisation types.
-See parallel::makeCluster()}
+\item{type}{One of the supported parallelisation types. See
+\code{\link[parallel:makeCluster]{parallel::makeCluster()}}.}
 }
 \value{
 Returns a list including the model, influence data frame and partial

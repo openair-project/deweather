@@ -44,8 +44,8 @@
 #'   cross-validation, calculate an estimate of generalization error returned in
 #'   `cv.error`.
 #' @param seed Random number seed for reproducibility in returned model.
-#' @param type One of the supported parallelisation types.
-#' See parallel::makeCluster()
+#' @param type One of the supported parallelisation types. See
+#'   [parallel::makeCluster()].
 #'
 #' @export
 #' @seealso [testMod()] for testing models before they are built.
