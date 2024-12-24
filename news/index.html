@@ -43,7 +43,9 @@
 <h2 class="pkg-version" data-toc-text="development version" id="deweather-development-version">deweather (development version)<a class="anchor" aria-label="anchor" href="#deweather-development-version"></a></h2>
 <div class="section level3">
 <h3 id="new-features-development-version">New Features<a class="anchor" aria-label="anchor" href="#new-features-development-version"></a></h3>
-<ul><li>The plot assemblies in <code><a href="../reference/plotPD.html">plotPD()</a></code> and <code><a href="../reference/testMod.html">testMod()</a></code> are now powered by <a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a>. This will allow for more post-hoc control of the plot assembly using <code>&amp;</code> for example.</li>
+<ul><li><p>The plot assemblies in <code><a href="../reference/plotPD.html">plotPD()</a></code> and <code><a href="../reference/testMod.html">testMod()</a></code> are now powered by <a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a>. This will allow for more post-hoc control of the plot assembly using <code>&amp;</code> for example.</p></li>
+<li><p>Users can now select their parallelisation type in <code><a href="../reference/buildMod.html">buildMod()</a></code> (<a href="https://github.com/djg46" class="external-link">@djg46</a>).</p></li>
+<li><p>Added <code>n.core</code> arguments to <code>runGbm()</code> and <code><a href="../reference/testMod.html">testMod()</a></code>, which are passed to <code><a href="https://rdrr.io/pkg/gbm/man/gbm.html" class="external-link">gbm::gbm()</a></code>. This may improve function performance (<a href="https://github.com/djg46" class="external-link">@djg46</a>).</p></li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fixes-development-version">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-development-version"></a></h3>
@@ -51,7 +53,8 @@
 <li><p>Added <code>ylab</code> back as an explicit option for <code><a href="../reference/plotPD.html">plotPD()</a></code>.</p></li>
 <li><p><code><a href="../reference/prepData.html">prepData()</a></code> will now formally error if <code>mydata$date</code> is numeric/character/factor (i.e., not a date/datetime).</p></li>
 <li><p>Fixed a bug where <code><a href="../reference/plotPD.html">plotPD()</a></code> would work differently if the input to <code><a href="../reference/buildMod.html">buildMod()</a></code> was a <code>data.frame</code> rather than a <code>tibble</code>.</p></li>
-</ul></div>
+<li>
+</li></ul></div>
 </div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.7.2" id="deweather-072">deweather 0.7.2<a class="anchor" aria-label="anchor" href="#deweather-072"></a></h2>
