@@ -52,7 +52,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/davidcarslaw/deweather/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/openair-project/deweather/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -68,14 +68,14 @@
       <img src="../logo.png" class="logo" alt=""><h1>Meteorological Normalisation with {deweather}</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/davidcarslaw/deweather/blob/master/vignettes/articles/deweather.Rmd" class="external-link"><code>vignettes/articles/deweather.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openair-project/deweather/blob/master/vignettes/articles/deweather.Rmd" class="external-link"><code>vignettes/articles/deweather.Rmd</code></a></small>
       <div class="d-none name"><code>deweather.Rmd</code></div>
     </div>
 
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidcarslaw.github.io/deweather/">deweather</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openair-project.github.io/deweather/" class="external-link">deweather</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
 <span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span></code></pre></div>
 <div class="section level2">
@@ -139,7 +139,7 @@ temperature.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidcarslaw.github.io/openair/" class="external-link">openair</a></span><span class="op">)</span></span>
 <span><span class="co"># select only part of the data set</span></span>
-<span><span class="va">dat_part</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://davidcarslaw.github.io/openair/reference/selectByDate.html" class="external-link">selectByDate</a></span><span class="op">(</span><span class="va">road_data</span>, year <span class="op">=</span> <span class="fl">2001</span><span class="op">:</span><span class="fl">2004</span><span class="op">)</span></span>
+<span><span class="va">dat_part</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/openair/man/selectByDate.html" class="external-link">selectByDate</a></span><span class="op">(</span><span class="va">road_data</span>, year <span class="op">=</span> <span class="fl">2001</span><span class="op">:</span><span class="fl">2004</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># to speed up the example, sample rows in `dat_part`</span></span>
 <span><span class="co"># not needed in reality</span></span>
@@ -157,7 +157,7 @@ temperature.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Percent increase in RMSE using test data is <span style="font-weight: bold;">28.0%</span></span></span></code></pre></div>
 <div class="figure">
 <img src="deweather_files/figure-html/testMod-1.png" alt="A scatter plot showing predicted nitrogen dioxide on the x-axis and measured nitrogen dioxide on the y-axis. Alongside is a table of statistical values describing the model performance, including R, RMSE, NMGE, NMB, MGE, MB, FAC2 and n." width="700"><p class="caption">
-A statistical summary of a <a href="https://davidcarslaw.github.io/deweather/">deweather</a> model test.
+A statistical summary of a <a href="https://openair-project.github.io/deweather/" class="external-link">deweather</a> model test.
 </p>
 </div>
 <p>The output shows by default the performance of the model when applied
@@ -249,7 +249,7 @@ function. Note that in this case there is no need to supply the
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now it is possible to plot the resulting trend.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">openair</span><span class="fu">::</span><span class="fu"><a href="https://davidcarslaw.github.io/openair/reference/timePlot.html" class="external-link">timePlot</a></span><span class="op">(</span><span class="va">demet</span>, <span class="st">"no2"</span>, ylab <span class="op">=</span> <span class="st">"Deweathered no2 (ug/m3)"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">openair</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openair/man/timePlot.html" class="external-link">timePlot</a></span><span class="op">(</span><span class="va">demet</span>, <span class="st">"no2"</span>, ylab <span class="op">=</span> <span class="st">"Deweathered no2 (ug/m3)"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="deweather_files/figure-html/plotTrend-1.png" alt="A line chart with date on the x-axis and deweathered NO2 on the y-axis. The trend is very noisy, but shows an increase in concentrations in 2003." width="672"><p class="caption">
 A deweathered nitrogen dioxide trend.
@@ -263,7 +263,7 @@ traffic which has strong hourly and daily variations throughout the
 year. It can be useful to simply average the results to provide a better
 indication of the overall trend. For example:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">openair</span><span class="fu">::</span><span class="fu"><a href="https://davidcarslaw.github.io/openair/reference/timePlot.html" class="external-link">timePlot</a></span><span class="op">(</span><span class="va">demet</span>, <span class="st">"no2"</span>, avg.time <span class="op">=</span> <span class="st">"week"</span>, ylab <span class="op">=</span> <span class="st">"Deweathered no2 (ug/m3)"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">openair</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/openair/man/timePlot.html" class="external-link">timePlot</a></span><span class="op">(</span><span class="va">demet</span>, <span class="st">"no2"</span>, avg.time <span class="op">=</span> <span class="st">"week"</span>, ylab <span class="op">=</span> <span class="st">"Deweathered no2 (ug/m3)"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="deweather_files/figure-html/plotTrendAve-1.png" alt="A line chart with date on the x-axis and deweathered NO2 on the y-axis. The trend has been time averaged to show weekly mean concentrations, clearly illustrating a sharp increase in 2003." width="672"><p class="caption">
 A time-averaged deweathered nitrogen dioxide trend.
