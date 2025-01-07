@@ -1,5 +1,4 @@
-url: https://davidcarslaw.github.io/deweather/
-
+url: https://openair-project.github.io/deweather/
 template:
   bootstrap: 5
   bslib:

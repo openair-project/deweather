@@ -7,7 +7,7 @@ labels: ["question"]
 
 Please ask your question about `deweather`. This could be about how to properly use `deweather` functions, interpret plots, or something else entirely.
 
-Before you submit your issue, it may be useful to check through the [openair book](https://bookdown.org/david_carslaw/openair/) just to make sure your question hasn't already been answered!
+Before you submit your issue, it may be useful to check through the [openair book](https://openair-project.github.io/book/) just to make sure your question hasn't already been answered!
 
 Feel free to delete these instructions before you submit your issue.
 
