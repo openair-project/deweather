@@ -75,7 +75,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openair-project.github.io/deweather/" class="external-link">deweather</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openair-project.github.io/deweather/">deweather</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Error in get(paste0(generic, ".", class), envir = get_method_env()) : </span></span>
 <span><span class="co">#&gt;   object 'type_sum.accel' not found</span></span></code></pre></div>
 <div class="section level2">
@@ -106,7 +106,7 @@ package).</p>
 such a NO<sub>x</sub>, NO<sub>2</sub>, ethane and isoprene as well as
 meteorological data including wind speed, wind direction, relative
 humidity, ambient temperature and cloud cover. Code to obtain this data
-directly can be found <a href="https://github.com/davidcarslaw/deweather/blob/master/data-raw/road_data.R" class="external-link">here</a>.</p>
+directly can be found <a href="https://github.com/openair-project/deweather/blob/master/data-raw/road_data.R" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">road_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 11</span></span></span>
@@ -157,7 +157,7 @@ temperature.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Percent increase in RMSE using test data is <span style="font-weight: bold;">28.0%</span></span></span></code></pre></div>
 <div class="figure">
 <img src="deweather_files/figure-html/testMod-1.png" alt="A scatter plot showing predicted nitrogen dioxide on the x-axis and measured nitrogen dioxide on the y-axis. Alongside is a table of statistical values describing the model performance, including R, RMSE, NMGE, NMB, MGE, MB, FAC2 and n." width="700"><p class="caption">
-A statistical summary of a <a href="https://openair-project.github.io/deweather/" class="external-link">deweather</a> model test.
+A statistical summary of a <a href="https://openair-project.github.io/deweather/">deweather</a> model test.
 </p>
 </div>
 <p>The output shows by default the performance of the model when applied
