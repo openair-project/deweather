@@ -7,12 +7,12 @@
 ### open source tools to remove meteorological variation from air quality data
 
 <!-- badges: start -->
-[![R-CMD-check](https://github.com/davidcarslaw/deweather/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/davidcarslaw/deweather/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/openair-project/deweather/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/openair-project/deweather/actions/workflows/R-CMD-check.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/deweather)](https://CRAN.R-project.org/package=deweather)
 <br>
-[![github](https://img.shields.io/badge/CODE-github-black?logo=github)](https://github.com/davidcarslaw/deweather)
-[![website](https://img.shields.io/badge/DOCS-website-black)](https://davidcarslaw.github.io/deweather/)
-[![book](https://img.shields.io/badge/DOCS-book-black)](https://bookdown.org/david_carslaw/openair/)
+[![github](https://img.shields.io/badge/CODE-github-black?logo=github)](https://github.com/openair-project/deweather)
+[![website](https://img.shields.io/badge/DOCS-website-black)](https://openair-project.github.io/deweather/)
+[![book](https://img.shields.io/badge/DOCS-book-black)](https://openair-project.github.io/book/)
 <!-- badges: end -->
 
 </div>
@@ -76,7 +76,7 @@ The development version of **deweather** can be installed from GitHub using `{pa
 
 ``` r
 # install.packages("pak")
-pak::pak("davidcarslaw/deweather")
+pak::pak("openair-project/deweather")
 ```
 
 <hr>

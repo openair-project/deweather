@@ -13,9 +13,9 @@ Model and account for (or remove) the effect of meteorology on atmospheric compo
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://davidcarslaw.github.io/deweather/}
-  \item \url{https://github.com/davidcarslaw/deweather}
-  \item Report bugs at \url{https://github.com/davidcarslaw/deweather/issues}
+  \item \url{https://openair-project.github.io/deweather/}
+  \item \url{https://github.com/openair-project/deweather}
+  \item Report bugs at \url{https://github.com/openair-project/deweather/issues}
 }
 
 }
