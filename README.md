@@ -83,6 +83,6 @@ pak::pak("openair-project/deweather")
 
 🏛️ **deweather** is primarily maintained by [David Carslaw](https://github.com/davidcarslaw).
 
-📃 **deweather** is licensed under the [GNU General Public License](https://openair-project.github.io/deweather/LICENSE.html).
+📃 **deweather** is licensed under the [MIT License](https://openair-project.github.io/deweather/LICENSE.html).
 
 🧑‍💻 Contributions are welcome from the wider community. See the [contributing guide](https://openair-project.github.io/deweather/CONTRIBUTING.html) and [code of conduct](https://openair-project.github.io/deweather/CODE_OF_CONDUCT.html) for more information.
