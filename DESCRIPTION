@@ -40,8 +40,6 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown
-VignetteBuilder: 
-    knitr
 Config/Needs/website: openair-project/openairpkgdown
 Encoding: UTF-8
 Language: en-GB
