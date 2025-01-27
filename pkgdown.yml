@@ -3,7 +3,7 @@ pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   articles/deweather: deweather.html
-last_built: 2025-01-14T08:39Z
+last_built: 2025-01-27T10:05Z
 urls:
   reference: https://openair-project.github.io/deweather/reference
   article: https://openair-project.github.io/deweather/articles
