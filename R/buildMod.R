@@ -44,8 +44,8 @@
 #'   cross-validation, calculate an estimate of generalization error returned in
 #'   `cv.error`.
 #' @param seed Random number seed for reproducibility in returned model.
-#' @param progress When using multiple cores, show a progress indicator for
-#'   bootstrap simulations?
+#' @param type One of the supported parallelisation types. See
+#'   [parallel::makeCluster()].
 #'
 #' @export
 #' @seealso [testMod()] for testing models before they are built.
@@ -72,7 +72,7 @@ buildMod <- function(input_data,
                      B = 100,
                      n.core = 4,
                      seed = 123,
-                     progress = TRUE) {
+                     type = "PSOCK") {
   ## add other variables, select only those required for modelling
   input_data <- prepData(input_data)
   input_data <-
@@ -110,27 +110,22 @@ buildMod <- function(input_data,
       bag.fraction = bag.fraction,
       n.minobsinnode = n.minobsinnode,
       cv.folds = cv.folds,
-      seed
+      seed,
+      n.core = n.core
     )
   }
 
   # if model needs to be run multiple times
-  res <- partialDep(
-    input_data,
-    eq,
-    vars,
-    B,
-    n.core,
+  res <- partialDep(input_data, eq, vars, B, n.core,
     n.trees = n.trees,
     shrinkage = shrinkage,
     interaction.depth = interaction.depth,
     bag.fraction = bag.fraction,
     n.minobsinnode = n.minobsinnode,
-    cv.folds = cv.folds,
-    seed = seed,
-    progress = progress
+    cv.folds = cv.folds, seed = seed,
+    type = type
   )
-  
+
   if (B != 1) {
     Mod <- mod$model
   } else {
@@ -194,7 +189,8 @@ runGbm <-
            bag.fraction = bag.fraction,
            n.minobsinnode = n.minobsinnode,
            cv.folds = cv.folds,
-           seed = seed) {
+           seed = seed,
+           n.core = 4) {
     ## sub-sample the data for bootstrapping
     if (simulate) {
       dat <- dat[sample(nrow(dat), nrow(dat), replace = TRUE), ]
@@ -220,7 +216,8 @@ runGbm <-
       n.minobsinnode = n.minobsinnode,
       cv.folds = cv.folds,
       keep.data = TRUE,
-      verbose = FALSE
+      verbose = FALSE,
+      n.cores = n.core
     )
 
     ## extract partial dependence components
@@ -260,7 +257,7 @@ partialDep <-
            n.minobsinnode = n.minobsinnode,
            cv.folds = cv.folds,
            seed,
-           progress = progress) {
+           type = "PSOCK") {
     if (B == 1) {
       return.mod <- TRUE
     } else {
@@ -280,35 +277,35 @@ partialDep <-
         bag.fraction = bag.fraction,
         n.minobsinnode = n.minobsinnode,
         cv.folds = cv.folds,
-        seed
+        seed,
+        n.core = n.core
       )
     } else {
-      if (progress) {
-        ex <- c(mirai::.stop, mirai::.progress)
-      } else {
-        ex <- c(mirai::.stop)
-      }
-      pred <-
-        with(mirai::daemons(n.core),
-             mirai::mirai_map(
-               .x = 1:B,
-               .f = function(x, ...) {
-                 runGbm(...)
-               },
-               .args = list(
-                 dat = dat,
-                 eq = eq,
-                 vars = vars,
-                 return.mod = FALSE,
-                 simulate = TRUE,
-                 n.trees = n.trees,
-                 shrinkage = shrinkage,
-                 interaction.depth = interaction.depth,
-                 bag.fraction = bag.fraction,
-                 n.minobsinnode = n.minobsinnode,
-                 cv.folds = cv.folds
-               )
-             )[ex])
+      cl <- parallel::makeCluster(n.core, type = type)
+      doParallel::registerDoParallel(cl)
+
+      pred <- foreach::foreach(
+        i = 1:B,
+        .inorder = FALSE,
+        .packages = "gbm",
+        .export = "runGbm"
+      ) %dopar%
+        runGbm(
+          dat,
+          eq,
+          vars,
+          return.mod = FALSE,
+          simulate = TRUE,
+          n.trees = n.trees,
+          shrinkage = shrinkage,
+          interaction.depth = interaction.depth,
+          bag.fraction = bag.fraction,
+          n.minobsinnode = n.minobsinnode,
+          cv.folds = cv.folds,
+          n.core = 1
+        )
+
+      parallel::stopCluster(cl)
     }
 
     # partial dependence plots

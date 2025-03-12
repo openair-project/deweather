@@ -4,13 +4,17 @@
 
 * The plot assemblies in `plotPD()` and `testMod()` are now powered by `{patchwork}`. This will allow for more post-hoc control of the plot assembly using `&` for example.
 
-* Parallel processing is now managed by `{mirai}`. This has fewer dependencies and provides a helpful progress indicator, which can be disabled using the `progress` argument.
+* Users can now select their parallelisation type in `buildMod()` (@djg46).
+
+* Added `n.core` arguments to `runGbm()` and `testMod()`, which are passed to `gbm::gbm()`. This may improve function performance (@djg46).
 
 ## Bug fixes
 
 * Fixed an issue where `buildMod()` would fail if there wasn't a character variable (e.g., "weekday").
 
-* added `ylab` back as an explicit option for `plotPD`.
+* Added `ylab` back as an explicit option for `plotPD()`.
+
+* `prepData()` will now formally error if `mydata$date` is numeric/character/factor (i.e., not a date/datetime).
 
 * Fixed a bug where `plotPD()` would work differently if the input to `buildMod()` was a `data.frame` rather than a `tibble`.
 

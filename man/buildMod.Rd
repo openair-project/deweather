@@ -19,7 +19,7 @@ buildMod(
   B = 100,
   n.core = 4,
   seed = 123,
-  progress = TRUE
+  type = "PSOCK"
 )
 }
 \arguments{
@@ -77,8 +77,8 @@ run multiple times with \code{B = 1} and a different value of \code{seed} e.g. \
 
 \item{seed}{Random number seed for reproducibility in returned model.}
 
-\item{progress}{When using multiple cores, show a progress indicator for
-bootstrap simulations?}
+\item{type}{One of the supported parallelisation types. See
+\code{\link[parallel:makeCluster]{parallel::makeCluster()}}.}
 }
 \value{
 Returns a list including the model, influence data frame and partial

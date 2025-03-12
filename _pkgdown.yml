@@ -1,26 +1,9 @@
-url: https://davidcarslaw.github.io/deweather/
-
+url: https://openair-project.github.io/deweather/
 template:
-  bootstrap: 5
-  bslib:
-    bootswatch: lumen
-    pkgdown-nav-height: 100px
+  package: openairpkgdown
 
 navbar:
-  title: deweather
-  structure:
-    left:  [intro, reference, news, articles, tutorials, book, casestudy]
-    right: [search, github]
   components:
-    reference:
-      text: Functions
-      href: reference/index.html
-    news:
-      text: News
-      href: news/index.html
-    book:
-      text: Book (External)
-      href: https://bookdown.org/david_carslaw/openair/
     casestudy:
       text: Case Studies (External)
       menu:
