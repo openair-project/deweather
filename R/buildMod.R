@@ -55,24 +55,30 @@
 #' @return Returns a list including the model, influence data frame and partial
 #'   dependence data frame.
 #' @author David Carslaw
-buildMod <- function(input_data,
-                     vars = c(
-                       "trend", "ws", "wd", "hour",
-                       "weekday", "air_temp"
-                     ),
-                     pollutant = "nox",
-                     sam.size = nrow(input_data),
-                     n.trees = 200,
-                     shrinkage = 0.1,
-                     interaction.depth = 5,
-                     bag.fraction = 0.5,
-                     n.minobsinnode = 10,
-                     cv.folds = 0,
-                     simulate = FALSE,
-                     B = 100,
-                     n.core = 4,
-                     seed = 123,
-                     type = "PSOCK") {
+buildMod <- function(
+  input_data,
+  vars = c(
+    "trend",
+    "ws",
+    "wd",
+    "hour",
+    "weekday",
+    "air_temp"
+  ),
+  pollutant = "nox",
+  sam.size = nrow(input_data),
+  n.trees = 200,
+  shrinkage = 0.1,
+  interaction.depth = 5,
+  bag.fraction = 0.5,
+  n.minobsinnode = 10,
+  cv.folds = 0,
+  simulate = FALSE,
+  B = 100,
+  n.core = 4,
+  seed = 123,
+  type = "PSOCK"
+) {
   ## add other variables, select only those required for modelling
   input_data <- prepData(input_data)
   input_data <-
@@ -116,13 +122,19 @@ buildMod <- function(input_data,
   }
 
   # if model needs to be run multiple times
-  res <- partialDep(input_data, eq, vars, B, n.core,
+  res <- partialDep(
+    input_data,
+    eq,
+    vars,
+    B,
+    n.core,
     n.trees = n.trees,
     shrinkage = shrinkage,
     interaction.depth = interaction.depth,
     bag.fraction = bag.fraction,
     n.minobsinnode = n.minobsinnode,
-    cv.folds = cv.folds, seed = seed,
+    cv.folds = cv.folds,
+    seed = seed,
     type = type
   )
 
@@ -160,11 +172,7 @@ extractPD <- function(vars, mod) {
 
   ## extract partial dependence values
   res <-
-    gbm::plot.gbm(mod,
-      vars,
-      continuous.resolution = n,
-      return.grid = TRUE
-    )
+    gbm::plot.gbm(mod, vars, continuous.resolution = n, return.grid = TRUE)
   res <- data.frame(
     y = res$y,
     var = vars,
@@ -178,19 +186,21 @@ extractPD <- function(vars, mod) {
 #' Run Gbm
 #' @noRd
 runGbm <-
-  function(dat,
-           eq,
-           vars,
-           return.mod,
-           simulate,
-           n.trees = n.trees,
-           shrinkage = shrinkage,
-           interaction.depth = interaction.depth,
-           bag.fraction = bag.fraction,
-           n.minobsinnode = n.minobsinnode,
-           cv.folds = cv.folds,
-           seed = seed,
-           n.core = 4) {
+  function(
+    dat,
+    eq,
+    vars,
+    return.mod,
+    simulate,
+    n.trees = n.trees,
+    shrinkage = shrinkage,
+    interaction.depth = interaction.depth,
+    bag.fraction = bag.fraction,
+    n.minobsinnode = n.minobsinnode,
+    cv.folds = cv.folds,
+    seed = seed,
+    n.core = 4
+  ) {
     ## sub-sample the data for bootstrapping
     if (simulate) {
       dat <- dat[sample(nrow(dat), nrow(dat), replace = TRUE), ]
@@ -222,11 +232,13 @@ runGbm <-
 
     ## extract partial dependence components
     pd <- purrr::map(vars, extractPD, mod = mod) %>%
-      purrr::map(~ dplyr::nest_by(.x, var, var_type) %>%
-        tidyr::pivot_wider(
-          names_from = "var_type",
-          values_from = "data"
-        )) %>%
+      purrr::map(
+        ~ dplyr::nest_by(.x, var, var_type) %>%
+          tidyr::pivot_wider(
+            names_from = "var_type",
+            values_from = "data"
+          )
+      ) %>%
       dplyr::bind_rows()
 
     ## relative influence
@@ -245,19 +257,21 @@ runGbm <-
 #' @noRd
 #' @importFrom rlang .data
 partialDep <-
-  function(dat,
-           eq,
-           vars,
-           B = 100,
-           n.core = 4,
-           n.trees = n.trees,
-           shrinkage = shrinkage,
-           interaction.depth = interaction.depth,
-           bag.fraction = bag.fraction,
-           n.minobsinnode = n.minobsinnode,
-           cv.folds = cv.folds,
-           seed,
-           type = "PSOCK") {
+  function(
+    dat,
+    eq,
+    vars,
+    B = 100,
+    n.core = 4,
+    n.trees = n.trees,
+    shrinkage = shrinkage,
+    interaction.depth = interaction.depth,
+    bag.fraction = bag.fraction,
+    n.minobsinnode = n.minobsinnode,
+    cv.folds = cv.folds,
+    seed,
+    type = "PSOCK"
+  ) {
     if (B == 1) {
       return.mod <- TRUE
     } else {
@@ -324,16 +338,16 @@ partialDep <-
 
       mod <- pred[[1]]$model
     }
-    
+
     # if either character/numeric not in the output df, add dummy col
     if (!"character" %in% names(pd)) {
       pd$character <- rep(list(data.frame()), nrow(pd))
     }
-    
+
     if (!"numeric" %in% names(pd)) {
       pd$numeric <- rep(list(data.frame()), nrow(pd))
     }
-    
+
     # Calculate 95% CI for different vars
     resCI <-
       dplyr::group_by(pd, .data$var) %>%
@@ -345,7 +359,10 @@ partialDep <-
         numeric = purrr::map(
           numeric,
           purrr::possibly(
-            ~ dplyr::mutate(.x, x_bin = cut(.data$x, 100, include.lowest = TRUE)) %>%
+            ~ dplyr::mutate(
+              .x,
+              x_bin = cut(.data$x, 100, include.lowest = TRUE)
+            ) %>%
               dplyr::group_by(x_bin) %>%
               dplyr::summarise(
                 x = mean(x),

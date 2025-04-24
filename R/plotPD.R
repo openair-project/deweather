@@ -24,18 +24,20 @@
 #'   can be further manipulated using `&` and
 #'   [ggplot2][ggplot2::ggplot2-package].
 #' @author David Carslaw
-plotPD <- function(dw_model,
-                   variable = "all",
-                   intervals = 40,
-                   ylim = NULL,
-                   ylab = NULL,
-                   col = "tomato",
-                   nrow = NULL,
-                   polar.wd = FALSE,
-                   auto.text = TRUE,
-                   plot = TRUE) {
+plotPD <- function(
+  dw_model,
+  variable = "all",
+  intervals = 40,
+  ylim = NULL,
+  ylab = NULL,
+  col = "tomato",
+  nrow = NULL,
+  polar.wd = FALSE,
+  auto.text = TRUE,
+  plot = TRUE
+) {
   check_dwmod(dw_model)
-  
+
   ## plot most influencial predictor first
   influ <- dw_model$influence
   influ <- dplyr::arrange(influ, dplyr::desc(mean))
@@ -43,7 +45,7 @@ plotPD <- function(dw_model,
   if (!"all" %in% variable) {
     influ <- dplyr::filter(influ, .data$var %in% variable)
   }
-  
+
   col <- openair::openColours(scheme = col, n = length(influ$var))
 
   ## plot everything
@@ -69,19 +71,19 @@ plotPD <- function(dw_model,
   # name plots & data for easy indexing
   names(thedata) <- influ$var
   names(plots) <- influ$var
-  
+
   # combine all outputs
   printplots <- plots
   if ("wd" %in% names(printplots) & polar.wd) {
     printplots$wd <- patchwork::free(printplots$wd)
   }
   pw <- patchwork::wrap_plots(printplots, nrow = nrow)
-  
+
   # plot if `plot`
   if (plot) {
     plot(pw)
   }
-  
+
   # invisibly return list
   invisible(list(
     plot = pw,
@@ -92,14 +94,16 @@ plotPD <- function(dw_model,
 
 #' helper function to plot partial dependencies
 #' @noRd
-plot_pd_helper <- function(dw_model,
-                           variable,
-                           ylim,
-                           ylab,
-                           col,
-                           intervals,
-                           polar.wd,
-                           auto.text) {
+plot_pd_helper <- function(
+  dw_model,
+  variable,
+  ylim,
+  ylab,
+  col,
+  intervals,
+  polar.wd,
+  auto.text
+) {
   ## extract from deweather object
   influ <- dw_model$influence
   poll <- dw_model$model$response.name
@@ -131,7 +135,7 @@ plot_pd_helper <- function(dw_model,
 
   # get ylim range if needed
   if (is.null(ylim)) ylim <- rng(dat)
-  
+
   if (is.null(ylab)) ylab <- poll
 
   # function to plot a PD base graph
@@ -149,7 +153,9 @@ plot_pd_helper <- function(dw_model,
       ggplot2::xlab(openair::quickText(variable)) +
       ggplot2::ylab(openair::quickText(ylab, auto.text = auto.text)) +
       ggplot2::ggtitle(title) +
-      ggplot2::theme(plot.title = ggplot2::element_text(lineheight = 0.8, face = "bold"))
+      ggplot2::theme(
+        plot.title = ggplot2::element_text(lineheight = 0.8, face = "bold")
+      )
 
     if (factor) {
       plt <- plt +
@@ -173,19 +179,26 @@ plot_pd_helper <- function(dw_model,
   # calculate quantiles of numeric variable
   if (is.numeric(data[[as.character(variable)]])) {
     quants <-
-      data.frame(x = stats::quantile(data[[as.character(variable)]],
-        probs = 0:10 / 10, na.rm = TRUE
-      ))
+      data.frame(
+        x = stats::quantile(
+          data[[as.character(variable)]],
+          probs = 0:10 / 10,
+          na.rm = TRUE
+        )
+      )
   }
 
   # convert trend back to dates
   if (variable == "trend") {
     dat <-
-      dplyr::mutate(dat, x = as.POSIXct(
-        as.numeric(.data$x),
-        tz = attr(data$date, "tzone"),
-        origin = "1970-01-01"
-      ))
+      dplyr::mutate(
+        dat,
+        x = as.POSIXct(
+          as.numeric(.data$x),
+          tz = attr(data$date, "tzone"),
+          origin = "1970-01-01"
+        )
+      )
   }
 
   # plot numeric variables (not WD)
@@ -194,13 +207,14 @@ plot_pd_helper <- function(dw_model,
 
     # add rug if not trend
     if (variable != "trend") {
-      plt <- plt + ggplot2::geom_rug(
-        ggplot2::aes(x = .data$x),
-        data = quants,
-        sides = "b",
-        inherit.aes = FALSE,
-        size = 1
-      )
+      plt <- plt +
+        ggplot2::geom_rug(
+          ggplot2::aes(x = .data$x),
+          data = quants,
+          sides = "b",
+          inherit.aes = FALSE,
+          size = 1
+        )
     }
 
     ## better hour x-scaling
@@ -223,9 +237,12 @@ plot_pd_helper <- function(dw_model,
     } else {
       plt <-
         plot_pd_skeleton(dat, ylab = ylab, polar = polar.wd) +
-        ggplot2::geom_rug(ggplot2::aes(x = .data$x),
-          data = quants, sides = "b",
-          inherit.aes = FALSE, size = 1
+        ggplot2::geom_rug(
+          ggplot2::aes(x = .data$x),
+          data = quants,
+          sides = "b",
+          inherit.aes = FALSE,
+          size = 1
         )
     }
   }

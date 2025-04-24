@@ -1,16 +1,15 @@
-
 #' @method print deweather
 #' @export
 #' @author Jack Davison
-print.deweather <- function(x, ...){
+print.deweather <- function(x, ...) {
   cli::cli_par(id = "Intro")
   cli::cli_h1("{.pkg deweather} model")
   cli::cli_inform(c("i" = "{.field $model} information:"))
   print(x$model)
   cli::cli_end(id = "Intro")
-  
+
   other_objects <- names(x)[names(x) != "model"]
-  
+
   cli::cli_par(id = "other-stuff")
   cli::cli_h3("Also contains:")
   cli::cli_ul(paste0("{.field $", other_objects, "}"))
@@ -19,25 +18,25 @@ print.deweather <- function(x, ...){
 
 #' @method plot deweather
 #' @export
-plot.deweather <- function(x, ...){
+plot.deweather <- function(x, ...) {
   plotInfluence(x, ...)
 }
 
 #' @method summary deweather
 #' @export
-summary.deweather <- function(object, ...){
+summary.deweather <- function(object, ...) {
   dw_map(object, summary, ...)
 }
 
 #' @method head deweather
 #' @export
-head.deweather <- function(x, ...){
+head.deweather <- function(x, ...) {
   dw_map(x, utils::head, ...)
 }
 
 #' @method tail deweather
 #' @export
-tail.deweather <- function(x, ...){
+tail.deweather <- function(x, ...) {
   dw_map(x, utils::tail, ...)
 }
 
@@ -46,7 +45,7 @@ tail.deweather <- function(x, ...){
 #' @author Jack Davison
 dw_map <- function(x, FUN, ...) {
   dat <- names(x)[names(x) != "model"]
-  
+
   out <- list()
   for (i in dat) {
     args = list(x[[i]], ...)
@@ -57,7 +56,7 @@ dw_map <- function(x, FUN, ...) {
     cli::cli_end(id = i)
     out <- append(out, list(proc))
   }
-  
+
   names(out) <- dat
   return(invisible(out))
 }

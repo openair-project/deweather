@@ -20,18 +20,25 @@
 #' @return Some data
 #' @author David Carslaw
 diurnalGbm <-
-  function(input_data,
-           vars = c("ws", "wd", "hour", "weekday"),
-           pollutant = "nox",
-           dates = c(
-             "01/01/2012", "31/12/2012",
-             "31/12/2013"
-           ),
-           ylab = "value",
-           plot = TRUE) {
+  function(
+    input_data,
+    vars = c("ws", "wd", "hour", "weekday"),
+    pollutant = "nox",
+    dates = c(
+      "01/01/2012",
+      "31/12/2012",
+      "31/12/2013"
+    ),
+    ylab = "value",
+    plot = TRUE
+  ) {
     dates <- lubridate::dmy(dates, tz = attr(input_data$date, "tzone"))
 
-    theData <- openair::selectByDate(input_data, start = dates[1], end = dates[2])
+    theData <- openair::selectByDate(
+      input_data,
+      start = dates[1],
+      end = dates[2]
+    )
 
     mod1 <- buildMod(
       theData,
@@ -48,7 +55,6 @@ diurnalGbm <-
     names(res1$data)[which(names(res1$data) == "y")] <- name1
 
     results <- res1
-
 
     if (length(dates) == 4) {
       start1 <- dates[3]
@@ -85,7 +91,10 @@ diurnalGbm <-
 
     results <-
       dplyr::group_by(results, .data$Weekday, .data$Hour) %>%
-      dplyr::summarise(dplyr::across(dplyr::where(is.numeric), ~ mean(.x, na.rm = TRUE)))
+      dplyr::summarise(dplyr::across(
+        dplyr::where(is.numeric),
+        ~ mean(.x, na.rm = TRUE)
+      ))
 
     results$Weekday <- ordered(
       results$Weekday,
@@ -145,6 +154,6 @@ diurnalGbm <-
     if (plot) {
       print(plt)
     }
-    
+
     return(list(plot = plt, data = results))
   }

@@ -13,11 +13,13 @@
 #' @seealso [buildMod()] to build a gbm model
 #' @author David Carslaw
 metSim <-
-  function(dw_model,
-           newdata,
-           metVars = c("ws", "wd", "air_temp"),
-           n.core = 4,
-           B = 200) {
+  function(
+    dw_model,
+    newdata,
+    metVars = c("ws", "wd", "air_temp"),
+    n.core = 4,
+    B = 200
+  ) {
     check_dwmod(dw_model)
 
     ## extract the model
@@ -27,9 +29,11 @@ metSim <-
     pollutant <- dw_model$model$response.name
 
     if (!"trend" %in% mod$var.names) {
-      stop("The model must have a trend component as one of the explanatory variables.")
+      stop(
+        "The model must have a trend component as one of the explanatory variables."
+      )
     }
-    
+
     if (missing(newdata)) {
       ## should already have variables
       newdata <- dw_model$data
@@ -75,8 +79,8 @@ doPred <- function(mydata, mod, metVars) {
   })
 
   prediction <- gbm::predict.gbm(mod, mydata, mod$n.trees)
-  
+
   prediction <- data.frame(date = mydata$date, pred = prediction)
-  
+
   return(prediction)
 }
