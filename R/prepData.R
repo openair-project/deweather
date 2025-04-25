@@ -113,8 +113,6 @@ prepData <- function(
   }
 
   ## NaN spells trouble for gbm for some reason
-  mydata[] <- lapply(mydata, function(x) {
-    replace(x, which(is.nan(x)), NA)
-  })
+  mydata[] <- lapply(mydata, \(x) replace(x, which(is.nan(x)), NA))
   mydata
 }
