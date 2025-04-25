@@ -59,8 +59,8 @@ prepData <- function(
   }
   # is `date` a date?
   if (
-    inherits(mydata$date, "character") |
-      inherits(mydata$date, "factor") |
+    inherits(mydata$date, "character") ||
+      inherits(mydata$date, "factor") ||
       inherits(mydata$date, "numeric")
   ) {
     cli::cli_abort(

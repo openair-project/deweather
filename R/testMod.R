@@ -53,7 +53,7 @@ testMod <- function(
   # make reproducible
   set.seed(seed)
   id <-
-    sample(1:nrow(input_data), size = train.frac * nrow(input_data))
+    sample(seq_len(nrow(input_data)), size = train.frac * nrow(input_data))
   train.dat <- input_data[id, ]
   pred.dat <- input_data[-id, ]
 
