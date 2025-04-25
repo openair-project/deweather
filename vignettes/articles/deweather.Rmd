@@ -57,7 +57,7 @@ dat_part <- selectByDate(road_data, year = 2001:2004)
 
 # to speed up the example, sample rows in `dat_part`
 # not needed in reality
-dat_part <- dplyr::slice_sample(dat_part, prop = 1/10)
+dat_part <- dplyr::slice_sample(dat_part, prop = 1 / 10)
 
 # test a model with commonly used covariates
 mod_test <-
@@ -81,7 +81,7 @@ mod_no2 <- buildMod(
   dat_part,
   vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp", "week"),
   pollutant = "no2",
-  n.trees = mod_test$optimum_trees, 
+  n.trees = mod_test$optimum_trees,
   n.core = 6
 )
 ```
@@ -135,7 +135,7 @@ An *indication* of the meteorologically-averaged trend is given by the `plotPD()
 #| fig.width: 7
 #| fig.height: 3.5
 #| fig.cap: "The partial dependence plot of the 'trend' component."
-#| fig.alt: "Patial dependence plot of the 'trend' component of the deweather model 
+#| fig.alt: "Patial dependence plot of the 'trend' component of the deweather model
 #| with date on the x-axis and NO2 on the y-axis. The trend is jagged, but shows an increase in 2003."
 plotPD(mod_no2, variable = "trend")
 ```

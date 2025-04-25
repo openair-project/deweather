@@ -59,8 +59,8 @@ prepData <- function(
   }
   # is `date` a date?
   if (
-    inherits(mydata$date, "character") |
-      inherits(mydata$date, "factor") |
+    inherits(mydata$date, "character") ||
+      inherits(mydata$date, "factor") ||
       inherits(mydata$date, "numeric")
   ) {
     cli::cli_abort(
@@ -113,8 +113,6 @@ prepData <- function(
   }
 
   ## NaN spells trouble for gbm for some reason
-  mydata[] <- lapply(mydata, function(x) {
-    replace(x, which(is.nan(x)), NA)
-  })
+  mydata[] <- lapply(mydata, \(x) replace(x, which(is.nan(x)), NA))
   mydata
 }

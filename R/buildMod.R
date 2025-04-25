@@ -231,14 +231,14 @@ runGbm <-
     )
 
     ## extract partial dependence components
-    pd <- purrr::map(vars, extractPD, mod = mod) %>%
+    pd <- purrr::map(vars, extractPD, mod = mod) |>
       purrr::map(
-        ~ dplyr::nest_by(.x, var, var_type) %>%
+        ~ dplyr::nest_by(.x, var, var_type) |>
           tidyr::pivot_wider(
             names_from = "var_type",
             values_from = "data"
           )
-      ) %>%
+      ) |>
       dplyr::bind_rows()
 
     ## relative influence
@@ -329,11 +329,11 @@ partialDep <-
       ri <- pred$ri
       mod <- pred$model
     } else {
-      pd <- purrr::map(pred, "pd") %>%
+      pd <- purrr::map(pred, "pd") |>
         dplyr::bind_rows()
 
       ## relative influence
-      ri <- purrr::map(pred, "ri") %>%
+      ri <- purrr::map(pred, "ri") |>
         dplyr::bind_rows()
 
       mod <- pred[[1]]$model
@@ -350,11 +350,11 @@ partialDep <-
 
     # Calculate 95% CI for different vars
     resCI <-
-      dplyr::group_by(pd, .data$var) %>%
+      dplyr::group_by(pd, .data$var) |>
       dplyr::reframe(
         numeric = list(dplyr::bind_rows(numeric)),
         character = list(dplyr::bind_rows(character))
-      ) %>%
+      ) |>
       dplyr::mutate(
         numeric = purrr::map(
           numeric,
@@ -362,39 +362,39 @@ partialDep <-
             ~ dplyr::mutate(
               .x,
               x_bin = cut(.data$x, 100, include.lowest = TRUE)
-            ) %>%
-              dplyr::group_by(x_bin) %>%
+            ) |>
+              dplyr::group_by(x_bin) |>
               dplyr::summarise(
                 x = mean(x),
                 mean = mean(y),
                 lower = quantile(y, probs = 0.025),
                 upper = quantile(y, probs = 0.975)
-              ) %>%
+              ) |>
               dplyr::ungroup()
           )
         ),
         character = purrr::map(
           character,
           purrr::possibly(
-            ~ dplyr::group_by(.x, x) %>%
+            ~ dplyr::group_by(.x, x) |>
               dplyr::summarise(
                 mean = mean(y),
                 lower = quantile(y, probs = 0.025),
                 upper = quantile(y, probs = 0.975)
-              ) %>%
+              ) |>
               dplyr::ungroup()
           )
         )
       )
 
-    resRI <- dplyr::group_by(ri, .data$var) %>%
+    resRI <- dplyr::group_by(ri, .data$var) |>
       dplyr::summarise(
         mean = mean(.data$rel.inf),
         lower = stats::quantile(.data$rel.inf, probs = c(0.025)),
         upper = stats::quantile(.data$rel.inf, probs = c(0.975))
-      ) %>%
-      dplyr::ungroup() %>%
-      dplyr::mutate(var = stats::reorder(.data$var, mean)) %>%
+      ) |>
+      dplyr::ungroup() |>
+      dplyr::mutate(var = stats::reorder(.data$var, mean)) |>
       dplyr::arrange(dplyr::desc(.data$var))
 
     if (return.mod) {

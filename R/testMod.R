@@ -53,7 +53,7 @@ testMod <- function(
   # make reproducible
   set.seed(seed)
   id <-
-    sample(1:nrow(input_data), size = train.frac * nrow(input_data))
+    sample(seq_len(nrow(input_data)), size = train.frac * nrow(input_data))
   train.dat <- input_data[id, ]
   pred.dat <- input_data[-id, ]
 
@@ -61,7 +61,7 @@ testMod <- function(
     # if n.trees = NA, calculate optimum number using CV; use all data for this
     # because it will be randomly split select maximum of 10000 rows
     if (nrow(train.dat) > 10000) {
-      train.dat <- train.dat %>%
+      train.dat <- train.dat |>
         dplyr::slice_sample(n = 10000)
     } else {
       train.dat <- train.dat
@@ -128,11 +128,11 @@ testMod <- function(
   stats_train <-
     openair::modStats(pred_train, obs = pollutant, mod = "pred")
 
-  stats_train <- stats_train %>%
-    tidyr::pivot_longer(cols = -1) %>%
-    dplyr::rename(statistic = "name") %>%
-    dplyr::select(-1) %>%
-    dplyr::mutate(value = round(value, 2)) %>%
+  stats_train <- stats_train |>
+    tidyr::pivot_longer(cols = -1) |>
+    dplyr::rename(statistic = "name") |>
+    dplyr::select(-1) |>
+    dplyr::mutate(value = round(value, 2)) |>
     dplyr::filter(!statistic %in% c("P", "COE", "IOA"))
 
   # predictions based on test data
@@ -183,11 +183,11 @@ testMod <- function(
   ## calculate key model statistics
   stats <- openair::modStats(pred, obs = pollutant, mod = "pred")
 
-  stats <- stats %>%
-    tidyr::pivot_longer(cols = -1) %>%
-    dplyr::rename(statistic = "name") %>%
-    dplyr::select(-1) %>%
-    dplyr::mutate(value = round(value, 2)) %>%
+  stats <- stats |>
+    tidyr::pivot_longer(cols = -1) |>
+    dplyr::rename(statistic = "name") |>
+    dplyr::select(-1) |>
+    dplyr::mutate(value = round(value, 2)) |>
     dplyr::filter(!statistic %in% c("P", "COE", "IOA"))
 
   stats_both <-
@@ -195,7 +195,7 @@ testMod <- function(
       dplyr::rename(stats_train, "train" = "value"),
       dplyr::rename(stats, "test" = "value"),
       by = "statistic"
-    ) %>%
+    ) |>
     dplyr::tibble()
 
   # plotting side effect - disabled w/ `plot` arg

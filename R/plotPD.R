@@ -74,7 +74,7 @@ plotPD <- function(
 
   # combine all outputs
   printplots <- plots
-  if ("wd" %in% names(printplots) & polar.wd) {
+  if ("wd" %in% names(printplots) && polar.wd) {
     printplots$wd <- patchwork::free(printplots$wd)
   }
   pw <- patchwork::wrap_plots(printplots, nrow = nrow)
