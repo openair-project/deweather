@@ -90,7 +90,7 @@ diurnalGbm <-
     results$Weekday[-ids] <- "Weekday"
 
     results <-
-      dplyr::group_by(results, .data$Weekday, .data$Hour) %>%
+      dplyr::group_by(results, .data$Weekday, .data$Hour) |>
       dplyr::summarise(dplyr::across(
         dplyr::where(is.numeric),
         ~ mean(.x, na.rm = TRUE)
