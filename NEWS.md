@@ -18,8 +18,6 @@
 
 * Fixed a bug where `plotPD()` would work differently if the input to `buildMod()` was a `data.frame` rather than a `tibble`.
 
-* 
-
 # deweather 0.7.2
 
 ## Breaking changes
