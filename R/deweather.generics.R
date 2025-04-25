@@ -48,7 +48,7 @@ dw_map <- function(x, FUN, ...) {
 
   out <- list()
   for (i in dat) {
-    args = list(x[[i]], ...)
+    args <- list(x[[i]], ...)
     proc <- do.call(FUN, args = args)
     cli::cli_par(id = i)
     cli::cli_inform(paste0("{.field $", i, "}"))
