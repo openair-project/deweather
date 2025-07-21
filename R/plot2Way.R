@@ -97,7 +97,6 @@ plot2Way <- function(
       variable[id] <- "Hour"
       var2 <- variable[which(variable != "Hour")]
       res <- dplyr::rename(res, Hour = .data$hour)
-      #  res$Hour <- factor(round(res$Hour))
       var1 <- "Hour"
     }
 

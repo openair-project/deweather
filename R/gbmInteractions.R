@@ -12,7 +12,6 @@ gbmInteractions <- function(dw_model) {
 
   gbm.call <- gbm.object$call
   n.trees <- gbm.object$n.trees
-  depth <- gbm.object$interaction.depth
 
   alldat <- dw_model$data
 
@@ -45,8 +44,8 @@ gbmInteractions <- function(dw_model) {
   for (i in 1:(n.preds - 1)) {
     if (is.vector(data[, i])) {
       x.var <- seq(
-        min(data[, i], na.rm = T),
-        max(data[, i], na.rm = T),
+        min(data[, i], na.rm = TRUE),
+        max(data[, i], na.rm = TRUE),
         length = 20
       )
     } else {
@@ -58,8 +57,8 @@ gbmInteractions <- function(dw_model) {
     for (j in (i + 1):n.preds) {
       if (is.vector(data[, j])) {
         y.var <- seq(
-          min(data[, j], na.rm = T),
-          max(data[, j], na.rm = T),
+          min(data[, j], na.rm = TRUE),
+          max(data[, j], na.rm = TRUE),
           length = 20
         )
       } else {
@@ -70,9 +69,9 @@ gbmInteractions <- function(dw_model) {
       names(pred.frame) <- c(pred.names[i], pred.names[j])
       n <- 3
       for (k in 1:n.preds) {
-        if (k != i & k != j) {
+        if (k != i && k != j) {
           if (is.vector(data[, k])) {
-            pred.frame[, n] <- mean(data[, k], na.rm = T)
+            pred.frame[, n] <- mean(data[, k], na.rm = TRUE)
           } else {
             temp.table <- sort(table(data[, k]), decreasing = TRUE)
             pred.frame[, n] <- rep(
@@ -139,6 +138,6 @@ gbmInteractions <- function(dw_model) {
   return(list(
     rank.list = rank.list,
     interactions = cross.tab,
-    gbm.call = gbm.object$call
+    gbm.call = gbm.call
   ))
 }

@@ -60,7 +60,7 @@ metSim <-
     names(prediction)[2] <- pollutant
 
     ## Aggregate results
-    prediction <- dplyr::group_by(prediction, .data$date) %>%
+    prediction <- dplyr::group_by(prediction, .data$date) |>
       dplyr::summarise({{ pollutant }} := mean(.data[[pollutant]]))
 
     return(dplyr::tibble(prediction))
@@ -74,9 +74,7 @@ doPred <- function(mydata, mod, metVars) {
   id <- sample(1:n, n, replace = FALSE)
 
   ## new data with random samples
-  mydata[metVars] <- lapply(mydata[metVars], function(x) {
-    x[id]
-  })
+  mydata[metVars] <- lapply(mydata[metVars], \(x) x[id])
 
   prediction <- gbm::predict.gbm(mod, mydata, mod$n.trees)
 
