@@ -163,7 +163,7 @@ temperature.</p>
 <span></span>
 <span><span class="co"># to speed up the example, sample rows in `dat_part`</span></span>
 <span><span class="co"># not needed in reality</span></span>
-<span><span class="va">dat_part</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_sample</a></span><span class="op">(</span><span class="va">dat_part</span>, prop <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">dat_part</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_sample</a></span><span class="op">(</span><span class="va">dat_part</span>, prop <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">10</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># test a model with commonly used covariates</span></span>
 <span><span class="va">mod_test</span> <span class="op">&lt;-</span></span>
@@ -196,7 +196,7 @@ in more detail using the optimum number of trees from
 <span>  <span class="va">dat_part</span>,</span>
 <span>  vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"trend"</span>, <span class="st">"ws"</span>, <span class="st">"wd"</span>, <span class="st">"hour"</span>, <span class="st">"weekday"</span>, <span class="st">"air_temp"</span>, <span class="st">"week"</span><span class="op">)</span>,</span>
 <span>  pollutant <span class="op">=</span> <span class="st">"no2"</span>,</span>
-<span>  n.trees <span class="op">=</span> <span class="va">mod_test</span><span class="op">$</span><span class="va">optimum_trees</span>, </span>
+<span>  n.trees <span class="op">=</span> <span class="va">mod_test</span><span class="op">$</span><span class="va">optimum_trees</span>,</span>
 <span>  n.core <span class="op">=</span> <span class="fl">6</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This function returns a <code>deweather</code> object that can be
