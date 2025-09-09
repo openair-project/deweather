@@ -13,11 +13,13 @@
 #' @seealso [buildMod()] to build a gbm model
 #' @author David Carslaw
 metSim <-
-  function(dw_model,
-           newdata,
-           metVars = c("ws", "wd", "air_temp"),
-           n.core = 4,
-           B = 200) {
+  function(
+    dw_model,
+    newdata,
+    metVars = c("ws", "wd", "air_temp"),
+    n.core = 4,
+    B = 200
+  ) {
     check_dwmod(dw_model)
 
     ## extract the model
@@ -27,9 +29,11 @@ metSim <-
     pollutant <- dw_model$model$response.name
 
     if (!"trend" %in% mod$var.names) {
-      stop("The model must have a trend component as one of the explanatory variables.")
+      stop(
+        "The model must have a trend component as one of the explanatory variables."
+      )
     }
-    
+
     if (missing(newdata)) {
       ## should already have variables
       newdata <- dw_model$data
@@ -38,19 +42,24 @@ metSim <-
       newdata <- prepData(newdata)
     }
 
-    cl <- parallel::makeCluster(n.core)
-    doParallel::registerDoParallel(cl)
+    # only use parallel processing if more than 1 core
+    if (n.core == 1L) {
+      prediction <- doPred(newdata, mod, metVars)
+    } else {
+      cl <- parallel::makeCluster(n.core)
+      doParallel::registerDoParallel(cl)
 
-    prediction <- foreach::foreach(
-      i = 1:B,
-      .inorder = FALSE,
-      .combine = "rbind",
-      .packages = "gbm",
-      .export = "doPred"
-    ) %dopar%
-      doPred(newdata, mod, metVars)
+      prediction <- foreach::foreach(
+        i = 1:B,
+        .inorder = FALSE,
+        .combine = "rbind",
+        .packages = "gbm",
+        .export = "doPred"
+      ) %dopar%
+        doPred(newdata, mod, metVars)
 
-    parallel::stopCluster(cl)
+      parallel::stopCluster(cl)
+    }
 
     # use pollutant name
     names(prediction)[2] <- pollutant
@@ -68,15 +77,15 @@ doPred <- function(mydata, mod, metVars) {
   ## random samples
   n <- nrow(mydata)
   id <- sample(1:n, n, replace = FALSE)
-
+  browser()
   ## new data with random samples
   mydata[metVars] <- lapply(mydata[metVars], function(x) {
     x[id]
   })
 
   prediction <- gbm::predict.gbm(mod, mydata, mod$n.trees)
-  
+
   prediction <- data.frame(date = mydata$date, pred = prediction)
-  
+
   return(prediction)
 }
