@@ -77,7 +77,8 @@ doPred <- function(mydata, mod, metVars) {
   ## random samples
   n <- nrow(mydata)
   id <- sample(1:n, n, replace = FALSE)
-  browser()
+  #id <- index2(mydata, days = 15)
+
   ## new data with random samples
   mydata[metVars] <- lapply(mydata[metVars], function(x) {
     x[id]
@@ -88,4 +89,28 @@ doPred <- function(mydata, mod, metVars) {
   prediction <- data.frame(date = mydata$date, pred = prediction)
 
   return(prediction)
+}
+
+#' Function to create a random index based on day of year with some jitter
+index2 <- function(.data, days = 15) {
+  .data <- .data |>
+    dplyr::mutate(
+      jday = lubridate::yday(date),
+      jday = jday + sample(seq(-days, days), dplyr::n(), replace = TRUE),
+      jday = dplyr::case_when(
+        jday < 1 ~ jday + 365,
+        jday > 365 ~ jday - 365,
+        .default = jday
+      )
+    )
+
+  # Pre-compute all indices grouped by jday
+  jday_indices <- split(seq_along(.data$jday), .data$jday)
+
+  # Fast sampling using the pre-computed indices
+  result <- sapply(.data$jday, function(x) {
+    indices <- jday_indices[[as.character(x)]]
+    sample(indices, 1)
+  })
+  return(result)
 }
