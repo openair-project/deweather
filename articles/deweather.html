@@ -11,9 +11,11 @@
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
 <link rel="icon" sizes="any" href="../favicon.ico">
 <link rel="manifest" href="../site.webmanifest">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Nunito_Sans-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/JetBrains_Mono-0.4.10/font.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Meteorological Normalisation with {deweather}">
 </head>
@@ -21,7 +23,7 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">deweather</a>
 
@@ -37,7 +39,6 @@
 <li class="active nav-item"><a class="nav-link" href="../articles/deweather.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://bookdown.org/david_carslaw/openair/">Book (External)</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-case-studies-external-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Case Studies (External)</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-case-studies-external-">
@@ -51,7 +52,30 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
-<li class="nav-item"><a class="external-link nav-link" href="https://github.com/davidcarslaw/deweather/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/openair-project" aria-label="Website"><span class="fa fa-globe"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://openair-project.github.io/book/" aria-label="Book"><span class="fa fa-book"></span></a></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/openair-project/deweather/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-packages" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Packages</button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-packages">
+<li><h6 class="dropdown-header" data-toc-skip>Data Analysis</h6></li>
+    <li><a class="external-link dropdown-item" href="https://openair-project.github.io/openair/">🧭 openair</a></li>
+    <li><a class="external-link dropdown-item" href="https://openair-project.github.io/openairmaps/">🗺️ openairmaps</a></li>
+    <li><a class="dropdown-item" href="https://openair-project.github.io/deweather/">📉 deweather</a></li>
+    <li><h6 class="dropdown-header" data-toc-skip>Data Access</h6></li>
+    <li><a class="external-link dropdown-item" href="https://openair-project.github.io/worldmet/">🍃 worldmet</a></li>
+    <li><a class="external-link dropdown-item" href="https://openair-project.github.io/euroaq/">🌍 euroaq</a></li>
+    <li><a class="external-link dropdown-item" href="https://openair-project.github.io/ukaq/">👑 ukaq</a></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -67,14 +91,14 @@
       <img src="../logo.png" class="logo" alt=""><h1>Meteorological Normalisation with {deweather}</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/davidcarslaw/deweather/blob/master/vignettes/articles/deweather.Rmd" class="external-link"><code>vignettes/articles/deweather.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/openair-project/deweather/blob/main/vignettes/articles/deweather.Rmd" class="external-link"><code>vignettes/articles/deweather.Rmd</code></a></small>
       <div class="d-none name"><code>deweather.Rmd</code></div>
     </div>
 
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://davidcarslaw.github.io/deweather/">deweather</a></span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://openair-project.github.io/deweather/">deweather</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
@@ -103,7 +127,7 @@ package).</p>
 such a NO<sub>x</sub>, NO<sub>2</sub>, ethane and isoprene as well as
 meteorological data including wind speed, wind direction, relative
 humidity, ambient temperature and cloud cover. Code to obtain this data
-directly can be found <a href="https://github.com/davidcarslaw/deweather/blob/master/data-raw/road_data.R" class="external-link">here</a>.</p>
+directly can be found <a href="https://github.com/openair-project/deweather/blob/master/data-raw/road_data.R" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">road_data</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 11</span></span></span>
@@ -140,7 +164,7 @@ temperature.</p>
 <span></span>
 <span><span class="co"># to speed up the example, sample rows in `dat_part`</span></span>
 <span><span class="co"># not needed in reality</span></span>
-<span><span class="va">dat_part</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_sample</a></span><span class="op">(</span><span class="va">dat_part</span>, prop <span class="op">=</span> <span class="fl">1</span><span class="op">/</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">dat_part</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_sample</a></span><span class="op">(</span><span class="va">dat_part</span>, prop <span class="op">=</span> <span class="fl">1</span> <span class="op">/</span> <span class="fl">10</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># test a model with commonly used covariates</span></span>
 <span><span class="va">mod_test</span> <span class="op">&lt;-</span></span>
@@ -154,7 +178,7 @@ temperature.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Percent increase in RMSE using test data is <span style="font-weight: bold;">28.0%</span></span></span></code></pre></div>
 <div class="figure">
 <img src="deweather_files/figure-html/testMod-1.png" alt="A scatter plot showing predicted nitrogen dioxide on the x-axis and measured nitrogen dioxide on the y-axis. Alongside is a table of statistical values describing the model performance, including R, RMSE, NMGE, NMB, MGE, MB, FAC2 and n." width="700"><p class="caption">
-A statistical summary of a <a href="https://davidcarslaw.github.io/deweather/">deweather</a> model test.
+A statistical summary of a <a href="https://openair-project.github.io/deweather/">deweather</a> model test.
 </p>
 </div>
 <p>The output shows by default the performance of the model when applied
@@ -173,7 +197,7 @@ in more detail using the optimum number of trees from
 <span>  <span class="va">dat_part</span>,</span>
 <span>  vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"trend"</span>, <span class="st">"ws"</span>, <span class="st">"wd"</span>, <span class="st">"hour"</span>, <span class="st">"weekday"</span>, <span class="st">"air_temp"</span>, <span class="st">"week"</span><span class="op">)</span>,</span>
 <span>  pollutant <span class="op">=</span> <span class="st">"no2"</span>,</span>
-<span>  n.trees <span class="op">=</span> <span class="va">mod_test</span><span class="op">$</span><span class="va">optimum_trees</span>, </span>
+<span>  n.trees <span class="op">=</span> <span class="va">mod_test</span><span class="op">$</span><span class="va">optimum_trees</span>,</span>
 <span>  n.core <span class="op">=</span> <span class="fl">6</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This function returns a <code>deweather</code> object that can be
@@ -191,7 +215,15 @@ partial dependencies show the relationship between the pollutant of
 interest and the covariates used in the model while holding the value of
 other covariates at their mean level.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPD.html">plotPD</a></span><span class="op">(</span><span class="va">mod_no2</span>, nrow <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPD.html">plotPD</a></span><span class="op">(</span><span class="va">mod_no2</span>, nrow <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Please use `linewidth` instead.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">deweather</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue at</span></span>
+<span><span class="co">#&gt;   <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/openair-project/deweather/issues&gt;</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
 <div class="figure">
 <img src="deweather_files/figure-html/plotAll-1.png" alt="Seven line charts showing the partial dependencies of the deweather model. In order of influence: wind direction, hour of day, long-term trend, weekday, wind speed, week of the year, and finally air temperature." width="672"><p class="caption">
 The 7 partial dependencies of the deweather model.
