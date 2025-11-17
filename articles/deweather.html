@@ -177,7 +177,7 @@ temperature.</p>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> RMSE from cross-validation is <span style="font-weight: bold;">23.59</span></span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Percent increase in RMSE using test data is <span style="font-weight: bold;">28.0%</span></span></span></code></pre></div>
 <div class="figure">
-<img src="deweather_files/figure-html/testMod-1.png" alt="A scatter plot showing predicted nitrogen dioxide on the x-axis and measured nitrogen dioxide on the y-axis. Alongside is a table of statistical values describing the model performance, including R, RMSE, NMGE, NMB, MGE, MB, FAC2 and n." width="700"><p class="caption">
+<img src="deweather_files/figure-html/testMod-1.png" class="r-plt" alt="A scatter plot showing predicted nitrogen dioxide on the x-axis and measured nitrogen dioxide on the y-axis. Alongside is a table of statistical values describing the model performance, including R, RMSE, NMGE, NMB, MGE, MB, FAC2 and n." width="700"><p class="caption">
 A statistical summary of a <a href="https://openair-project.github.io/deweather/">deweather</a> model test.
 </p>
 </div>
@@ -225,7 +225,7 @@ other covariates at their mean level.</p>
 <span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
 <span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span></code></pre></div>
 <div class="figure">
-<img src="deweather_files/figure-html/plotAll-1.png" alt="Seven line charts showing the partial dependencies of the deweather model. In order of influence: wind direction, hour of day, long-term trend, weekday, wind speed, week of the year, and finally air temperature." width="672"><p class="caption">
+<img src="deweather_files/figure-html/plotAll-1.png" class="r-plt" alt="Seven line charts showing the partial dependencies of the deweather model. In order of influence: wind direction, hour of day, long-term trend, weekday, wind speed, week of the year, and finally air temperature." width="672"><p class="caption">
 The 7 partial dependencies of the deweather model.
 </p>
 </div>
@@ -245,7 +245,7 @@ useful covariate to add to the model.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot2Way.html">plot2Way</a></span><span class="op">(</span><span class="va">mod_no2</span>, variable <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ws"</span>, <span class="st">"air_temp"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="deweather_files/figure-html/plot2way-1.png" alt="A heatmap showing the interaction between air temperature and wind speed in the deweather model. Nitrogen dioixde is shown to be high when wind speed is low and temperature is either very low or above around 25 degrees Celcius." width="50%"><p class="caption">
+<img src="deweather_files/figure-html/plot2way-1.png" class="r-plt" alt="A heatmap showing the interaction between air temperature and wind speed in the deweather model. Nitrogen dioixde is shown to be high when wind speed is low and temperature is either very low or above around 25 degrees Celcius." width="50%"><p class="caption">
 A two-way interaction plot showing the interaction between wind speed
 and air temperature
 </p>
@@ -261,7 +261,7 @@ isolated using the <code>variable</code> argument.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPD.html">plotPD</a></span><span class="op">(</span><span class="va">mod_no2</span>, variable <span class="op">=</span> <span class="st">"trend"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="deweather_files/figure-html/pd-trend-1.png" alt="Patial dependence plot of the 'trend' component of the deweather model with date on the x-axis and NO2 on the y-axis. The trend is jagged, but shows an increase in 2003." width="672"><p class="caption">
+<img src="deweather_files/figure-html/pd-trend-1.png" class="r-plt" alt="Patial dependence plot of the 'trend' component of the deweather model with date on the x-axis and NO2 on the y-axis. The trend is jagged, but shows an increase in 2003." width="672"><p class="caption">
 The partial dependence plot of the ‘trend’ component.
 </p>
 </div>
@@ -280,7 +280,7 @@ function. Note that in this case there is no need to supply the
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">openair</span><span class="fu">::</span><span class="fu"><a href="https://openair-project.github.io/openair/reference/timePlot.html" class="external-link">timePlot</a></span><span class="op">(</span><span class="va">demet</span>, <span class="st">"no2"</span>, ylab <span class="op">=</span> <span class="st">"Deweathered no2 (ug/m3)"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="deweather_files/figure-html/plotTrend-1.png" alt="A line chart with date on the x-axis and deweathered NO2 on the y-axis. The trend is very noisy, but shows an increase in concentrations in 2003." width="672"><p class="caption">
+<img src="deweather_files/figure-html/plotTrend-1.png" class="r-plt" alt="A line chart with date on the x-axis and deweathered NO2 on the y-axis. The trend is very noisy, but shows an increase in concentrations in 2003." width="672"><p class="caption">
 A deweathered nitrogen dioxide trend.
 </p>
 </div>
@@ -294,7 +294,7 @@ indication of the overall trend. For example:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">openair</span><span class="fu">::</span><span class="fu"><a href="https://openair-project.github.io/openair/reference/timePlot.html" class="external-link">timePlot</a></span><span class="op">(</span><span class="va">demet</span>, <span class="st">"no2"</span>, avg.time <span class="op">=</span> <span class="st">"week"</span>, ylab <span class="op">=</span> <span class="st">"Deweathered no2 (ug/m3)"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
-<img src="deweather_files/figure-html/plotTrendAve-1.png" alt="A line chart with date on the x-axis and deweathered NO2 on the y-axis. The trend has been time averaged to show weekly mean concentrations, clearly illustrating a sharp increase in 2003." width="672"><p class="caption">
+<img src="deweather_files/figure-html/plotTrendAve-1.png" class="r-plt" alt="A line chart with date on the x-axis and deweathered NO2 on the y-axis. The trend has been time averaged to show weekly mean concentrations, clearly illustrating a sharp increase in 2003." width="672"><p class="caption">
 A time-averaged deweathered nitrogen dioxide trend.
 </p>
 </div>
@@ -311,7 +311,7 @@ A time-averaged deweathered nitrogen dioxide trend.
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
