@@ -82,3 +82,43 @@ doPred <- function(mydata, mod, metVars) {
 
   return(prediction)
 }
+
+doPred2 <- function(mydata, mod, metVars) {
+  ## random samples
+  n <- nrow(mydata)
+  #id <- sample(1:n, n, replace = FALSE)
+  id <- get_constrained_random_index(mydata$date)
+
+  ## new data with random samples
+  mydata[metVars] <- lapply(mydata[metVars], \(x) x[id])
+
+  prediction <- gbm::predict.gbm(mod, mydata, mod$n.trees)
+
+  prediction <- data.frame(date = mydata$date, pred = prediction)
+
+  return(prediction)
+}
+
+get_constrained_random_index <- function(dates) {
+  n_hours <- length((dates))
+
+  # Extract time-of-year information
+  day_of_year <- lubridate::yday(dates)
+  hour_of_day <- lubridate::hour(dates)
+
+  # Vectorized approach: for each observation, sample from valid indices
+  random_indices <- integer(n_hours)
+
+  for (i in seq_len(n_hours)) {
+    # Find valid indices based on constraints
+    valid_indices <- which(
+      abs(day_of_year - day_of_year[i]) <= 30 &
+        abs(hour_of_day - hour_of_day[i]) <= 2
+    )
+
+    # Randomly sample one valid index
+    random_indices[i] <- sample(valid_indices, size = 1)
+  }
+
+  random_indices
+}
