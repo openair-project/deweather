@@ -30,6 +30,7 @@ Imports:
     parallel,
     patchwork,
     purrr,
+    Rcpp,
     rlang,
     scales,
     stats,
@@ -45,4 +46,6 @@ Language: en-GB
 LazyData: yes
 LazyLoad: yes
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
+LinkingTo: 
+    Rcpp

@@ -50,9 +50,9 @@ metSim <-
       .inorder = FALSE,
       .combine = "rbind",
       .packages = "gbm",
-      .export = "doPred"
+      .export = "doPred3"
     ) %dopar%
-      doPred(newdata, mod, metVars)
+      doPred3(newdata, mod, metVars)
 
     parallel::stopCluster(cl)
 
@@ -99,6 +99,22 @@ doPred2 <- function(mydata, mod, metVars) {
   return(prediction)
 }
 
+doPred3 <- function(mydata, mod, metVars) {
+  ## random samples
+  n <- nrow(mydata)
+  #id <- sample(1:n, n, replace = FALSE)
+  id <- get_constrained_random_index_rcpp(mydata$date)
+
+  ## new data with random samples
+  mydata[metVars] <- lapply(mydata[metVars], \(x) x[id])
+
+  prediction <- gbm::predict.gbm(mod, mydata, mod$n.trees)
+
+  prediction <- data.frame(date = mydata$date, pred = prediction)
+
+  return(prediction)
+}
+
 get_constrained_random_index <- function(dates) {
   n_hours <- length((dates))
 
@@ -121,4 +137,23 @@ get_constrained_random_index <- function(dates) {
   }
 
   random_indices
+}
+
+
+#' Function to shuffle dates
+#' @param dates Dates to shuffle.
+#' @param day_window The day range to sample from.
+#' @param hour_window The hour range to sample from.
+#' @export
+get_constrained_random_index_rcpp <- function(
+  dates,
+  day_window = 15,
+  hour_window = 2
+) {
+  # Extract features
+  doy <- lubridate::yday(dates)
+  hod <- lubridate::hour(dates)
+
+  # Call C++ with the window arguments
+  return(get_constrained_indices_cpp(doy, hod, day_window, hour_window))
 }
