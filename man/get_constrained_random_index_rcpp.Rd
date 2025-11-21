@@ -8,6 +8,10 @@ get_constrained_random_index_rcpp(dates, day_window = 15, hour_window = 2)
 }
 \arguments{
 \item{dates}{Dates to shuffle.}
+
+\item{day_window}{The day range to sample from.}
+
+\item{hour_window}{The hour range to sample from.}
 }
 \description{
 Function to shuffle dates

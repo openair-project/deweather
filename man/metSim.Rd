@@ -8,6 +8,9 @@ metSim(
   dw_model,
   newdata,
   metVars = c("ws", "wd", "air_temp"),
+  resampling = c("constrained", "all"),
+  day_win = 30,
+  hour_win = 2,
   n.core = 4,
   B = 200
 )
@@ -21,6 +24,17 @@ to build the model in the first place will be used.}
 \item{metVars}{The variables that should be randomly varied. Note that these
 should typically be meteorological variables and not temporal emission
 proxies such as "hour", "weekday" or "week".}
+
+\item{resampling}{How to do the resampling. The default is "constrained" meaning
+that only days of the year close to the target date are sampled. For
+example, a value of 30 will sample +/-30 days of the date. Similarly with
+\code{hour_win}. If \code{method = "all"}, then all dates are shuffled. The argument
+for using constrained resampling is that it reduces or eliminates
+potentially impluasible conditions such as cold temperatures in summer.}
+
+\item{day_win}{The day of the year range to sample within i.e. +/= \code{day_win}.}
+
+\item{hour_win}{The hour of the day to sample.}
 
 \item{n.core}{Number of cores to use.}
 
