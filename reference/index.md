@@ -2,52 +2,57 @@
 
 ## Data
 
-In-built data to demonstrate deweather functions.
+Example datasets included with the package, used to demonstrate and test
+deweathering functions.
 
-- [`road_data`](https://openair-project.github.io/deweather/reference/road_data.md)
-  : Example data for deweather
+- [`aqroadside`](https://openair-project.github.io/deweather/reference/aqroadside.md)
+  : Example air quality monitoring data for openair
 
 ## Build
 
-Functions to test and build
-[deweather](https://openair-project.github.io/deweather/) models
+Core functions for tuning and fitting deweathering models, including
+parameter tuning, model construction and adding derived variables.
 
-- [`testMod()`](https://openair-project.github.io/deweather/reference/testMod.md)
-  : Function to test different meteorological normalisation models.
-- [`buildMod()`](https://openair-project.github.io/deweather/reference/buildMod.md)
-  : Function to apply meteorological normalisation
+- [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
+  : Tune a deweather model
+- [`build_dw_model()`](https://openair-project.github.io/deweather/reference/build_dw_model.md)
+  : Build a Deweather Model
+- [`append_dw_vars()`](https://openair-project.github.io/deweather/reference/append_dw_vars.md)
+  : Conveniently append common 'deweathering' variables to an air
+  quality time series
 
 ## Examine
 
-Functions to visualise or otherwise examine
-[`buildMod()`](https://openair-project.github.io/deweather/reference/buildMod.md)
-outputs
+Methods to examine a deweathering model; currently ‘getters’ to extract
+specific features of a built model.
 
-- [`plot2Way()`](https://openair-project.github.io/deweather/reference/plot2Way.md)
-  : Plot two-way interactions from gbm model
-- [`plotInfluence()`](https://openair-project.github.io/deweather/reference/plotInfluence.md)
-  : Plot a GBM influence plot
-- [`plotPD()`](https://openair-project.github.io/deweather/reference/plotPD.md)
-  : Function to plot partial dependence plots with bootstrap
-  uncertainties
-- [`gbmInteractions()`](https://openair-project.github.io/deweather/reference/gbmInteractions.md)
-  : Quantify most important 2-way interactions
+- [`get_dw_pollutant()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
+  [`get_dw_vars()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
+  [`get_dw_params()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
+  [`get_dw_input_data()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
+  [`get_dw_model()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
+  [`get_dw_engine()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
+  [`get_dw_importance()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
+  : Getters for various deweather model features
+
+## Visualise
+
+Functions for visualizing model components and relationships, including
+variable importance and partial dependence plots.
+
+- [`plot_dw_importance()`](https://openair-project.github.io/deweather/reference/plot_dw_importance.md)
+  : Visualise deweather model feature importance
+- [`plot_dw_partial_1d()`](https://openair-project.github.io/deweather/reference/plot_dw_partial_1d.md)
+  : Create partial dependence plots for deweather models
+- [`plot_dw_partial_2d()`](https://openair-project.github.io/deweather/reference/plot_dw_partial_2d.md)
+  : Create a 2-way partial dependence plot for deweather models
 
 ## Predict
 
-Functions to use
-[deweather](https://openair-project.github.io/deweather/) models to
-predict air pollution concentrations
+Functions to apply a deweathering model for prediction.
 
-- [`metSim()`](https://openair-project.github.io/deweather/reference/metSim.md)
-  : Function to run random meteorological simulations on a gbm model
-
-## Utility
-
-Other assorted functions to support
-[deweather](https://openair-project.github.io/deweather/)
-
-- [`prepData()`](https://openair-project.github.io/deweather/reference/prepData.md)
-  : Function to prepare data frame for modelling
-- [`diurnalGbm()`](https://openair-project.github.io/deweather/reference/diurnalGbm.md)
-  : Plot diurnal changes, removing the effect of meteorology
+- [`predict_dw()`](https://openair-project.github.io/deweather/reference/predict_dw.md)
+  : Use a deweather model to predict with a new dataset
+- [`simulate_dw_met()`](https://openair-project.github.io/deweather/reference/simulate_dw_met.md)
+  : Function to run random meteorological simulations on a deweather
+  model

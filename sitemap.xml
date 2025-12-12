@@ -9,17 +9,17 @@
 <url><loc>https://openair-project.github.io/deweather/authors.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/index.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/news/index.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/buildMod.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/append_dw_vars.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/aqroadside.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/build_dw_model.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/deweather-package.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/diurnalGbm.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/gbmInteractions.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/getters-dw.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/index.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/metSim.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/plot2Way.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/plotInfluence.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/plotPD.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/prepData.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/road_data.html</loc></url>
-<url><loc>https://openair-project.github.io/deweather/reference/testMod.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/plot_dw_importance.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/plot_dw_partial_1d.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/plot_dw_partial_2d.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/predict_dw.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/simulate_dw_met.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/tune_dw_model.html</loc></url>
 </urlset>
 

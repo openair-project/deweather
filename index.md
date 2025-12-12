@@ -30,18 +30,18 @@ non-linear relationships between the variables.
 models in R.
 
 - **Test and build meteorological normalisation models** flexibly using
-  [`testMod()`](https://openair-project.github.io/deweather/reference/testMod.md)
+  [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
   and
-  [`buildMod()`](https://openair-project.github.io/deweather/reference/buildMod.md).
+  [`build_dw_model()`](https://openair-project.github.io/deweather/reference/build_dw_model.md).
 
 - **Plot and examine models** in a myriad of ways, including visualising
-  partial dependencies, using functions like
-  [`plotPD()`](https://openair-project.github.io/deweather/reference/plotPD.md)
+  partial dependencies, using functions like `plot_importance()`,
+  [`plot_dw_partial_1d()`](https://openair-project.github.io/deweather/reference/plot_dw_partial_1d.md)
   and
-  [`plot2Way()`](https://openair-project.github.io/deweather/reference/plot2Way.md).
+  [`plot_dw_partial_2d()`](https://openair-project.github.io/deweather/reference/plot_dw_partial_2d.md).
 
 - **Apply meteorological averaging** using
-  [`metSim()`](https://openair-project.github.io/deweather/reference/metSim.md)
+  [`simulate_dw_met()`](https://openair-project.github.io/deweather/reference/simulate_dw_met.md)
   to obtain a meteorologically normalised air quality timeseries.
 
 Modelling can be computationally intensive and therefore **deweather**
@@ -52,13 +52,27 @@ Linux and Mac OSX.
 
 ------------------------------------------------------------------------
 
+## ⌛ Pre-1.0.0 deweather
+
+**deweather** was overhauled in its 1.0.0 update. We believe this update
+makes `deweather` more modern and flexible, but we appreciate users may
+require access to or prefer the older version.
+
+For this reason, the older, `gbm`-powered version of `deweather` can be
+accessed at <https://github.com/openair-project/deweather-archive>.
+
+Note that the above repository is provided for archival purposes only,
+and is unlikely to recieve any future feature updates.
+
+------------------------------------------------------------------------
+
 ## 📖 Documentation
 
 All **deweather** functions are fully documented; access documentation
 using R in your IDE of choice.
 
 ``` r
-?deweather::buildMod
+?deweather::build_dw_model
 ```
 
 Documentation is also hosted online on the **package website**.

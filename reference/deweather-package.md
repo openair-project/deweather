@@ -2,8 +2,7 @@
 
 Model and account for (or remove) the effect of meteorology on
 atmospheric composition data. The technique uses boosted regression
-trees based on the gbm package. Code can also be run using multiple
-cores if available.
+trees via the tidymodels framework.
 
 ## See also
 
@@ -19,3 +18,8 @@ Useful links:
 
 **Maintainer**: David Carslaw <david.carslaw@york.ac.uk>
 ([ORCID](https://orcid.org/0000-0003-0991-950X))
+
+Authors:
+
+- Jack Davison <jack.davison@ricardo.com>
+  ([ORCID](https://orcid.org/0000-0003-2653-6615))
