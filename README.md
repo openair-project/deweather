@@ -36,11 +36,11 @@
 
 **deweather** makes it straightforward to test, build, and evaluate models in R.
 
-- **Test and build meteorological normalisation models** flexibly using `testMod()` and `buildMod()`.
+- **Test and build meteorological normalisation models** flexibly using `tune_dw_model()` and `build_dw_model()`.
 
-- **Plot and examine models** in a myriad of ways, including visualising partial dependencies, using functions like `plotPD()` and `plot2Way()`.
+- **Plot and examine models** in a myriad of ways, including visualising partial dependencies, using functions like `plot_importance()`, `plot_dw_partial_1d()` and `plot_dw_partial_2d()`.
 
-- **Apply meteorological averaging** using `metSim()` to obtain a meteorologically normalised air quality timeseries.
+- **Apply meteorological averaging** using `simulate_dw_met()` to obtain a meteorologically normalised air quality timeseries.
 
 Modelling can be computationally intensive and therefore **deweather** makes use of the parallel processing, which should work on Windows, Linux and Mac OSX.
 
@@ -50,12 +50,20 @@ Modelling can be computationally intensive and therefore **deweather** makes use
 
 <hr>
 
+## ⌛ Pre-1.0.0 deweather
+
+**deweather** was overhauled in its 1.0.0 update. We believe this update makes `deweather` more modern and flexible, but we appreciate users may require access to or prefer the older version.
+
+For this reason, the older, `gbm`-powered version of `deweather` can be accessed at <https://github.com/openair-project/deweather-archive>.
+
+Note that the above repository is provided for archival purposes only, and is unlikely to recieve any future feature updates.
+
 ## 📖 Documentation
 
 All **deweather** functions are fully documented; access documentation using R in your IDE of choice.
 
 ```r
-?deweather::buildMod
+?deweather::build_dw_model
 ```
 
 Documentation is also hosted online on the **package website**.
