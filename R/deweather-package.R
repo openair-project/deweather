@@ -2,10 +2,13 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom foreach %dopar%
+#' @importFrom parsnip contr_one_hot
+#' @importFrom Rcpp sourceCpp
+#' @importFrom rlang %||%
+#' @importFrom rlang .data
 #' @importFrom rlang :=
-#' @importFrom tibble tibble
 #' @importFrom utils head
 #' @importFrom utils tail
+#' @useDynLib deweather, .registration = TRUE
 ## usethis namespace: end
 NULL

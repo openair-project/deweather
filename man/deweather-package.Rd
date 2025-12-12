@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Model and account for (or remove) the effect of meteorology on atmospheric composition data. The technique uses boosted regression trees based on the gbm package. Code can also be run using multiple cores if available.
+Model and account for (or remove) the effect of meteorology on atmospheric composition data. The technique uses boosted regression trees via the tidymodels framework.
 }
 \seealso{
 Useful links:
@@ -21,6 +21,11 @@ Useful links:
 }
 \author{
 \strong{Maintainer}: David Carslaw \email{david.carslaw@york.ac.uk} (\href{https://orcid.org/0000-0003-0991-950X}{ORCID})
+
+Authors:
+\itemize{
+  \item Jack Davison \email{jack.davison@ricardo.com} (\href{https://orcid.org/0000-0003-2653-6615}{ORCID})
+}
 
 }
 \keyword{internal}

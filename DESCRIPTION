@@ -2,47 +2,63 @@ Type: Package
 Package: deweather
 Title: Remove the influence of weather on air quality data
 Version: 0.7.2.9104
-Authors@R: 
+Authors@R: c(
     person("David", "Carslaw", , "david.carslaw@york.ac.uk", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0003-0991-950X"))
-Maintainer: David Carslaw <david.carslaw@york.ac.uk>
+           comment = c(ORCID = "0000-0003-0991-950X")),
+    person("Jack", "Davison", , "jack.davison@ricardo.com", role = "aut",
+           comment = c(ORCID = "0000-0003-2653-6615"))
+  )
 Description: Model and account for (or remove) the effect of meteorology
     on atmospheric composition data. The technique uses boosted regression
-    trees based on the gbm package. Code can also be run using multiple
-    cores if available.
+    trees via the tidymodels framework.
 License: MIT + file LICENSE
 URL: https://openair-project.github.io/deweather/,
     https://github.com/openair-project/deweather
 BugReports: https://github.com/openair-project/deweather/issues
-Depends:
-    R (>= 4.1)
-Imports:
+Depends: 
+    parsnip,
+    R (>= 4.1.0)
+Imports: 
     cli,
-    doParallel,
+    DALEX,
+    DALEXtra,
+    dials,
     dplyr,
-    foreach,
-    gbm,
     ggplot2,
-    gridExtra,
+    ingredients,
     lubridate,
     mgcv,
     openair,
-    parallel,
     patchwork,
     purrr,
+    Rcpp,
     rlang,
+    rsample,
     scales,
     stats,
-    tibble,
     tidyr,
-    utils
+    tune,
+    utils,
+    vip,
+    workflows
 Suggests: 
+    bonsai,
     knitr,
-    rmarkdown
-Config/Needs/website: openair-project/openairpkgdown
+    lightgbm,
+    mirai,
+    quarto,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    xgboost
+LinkingTo: 
+    Rcpp
+VignetteBuilder: 
+    knitr,
+    quarto
+Config/Needs/website: rmarkdown, openair-project/openairpkgdown
+Config/testthat/edition: 3
 Encoding: UTF-8
 Language: en-GB
-LazyData: yes
-LazyLoad: yes
+LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

@@ -1,153 +1,293 @@
 ---
 title: "Meteorological Normalisation with {deweather}"
+description: >
+  Get started with deweather
+format: html
+knitr:
+  opts_chunk:
+    collapse: true
+    comment: "#>"
 ---
 
-```{r, include = FALSE}
+```{r}
+#| include: false
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
-
-set.seed(123)
-```
-
-```{r setup}
-library(deweather)
 ```
 
 ## Introduction
 
 Meteorology plays a central role in affecting the concentrations of pollutants in the atmosphere. When considering trends in air pollutants it can be very difficult to know whether a change in concentration is due to emissions or meteorology.
 
-The **deweather** package uses a powerful statistical technique based on *boosted regression trees* using the `{gbm}` package ^[Ridgeway G, Developers G (2024). _gbm: Generalized Boosted Regression Models_. R package version 2.2.2, <https://CRAN.R-project.org/package=gbm>]. Statistical models are developed to explain concentrations using meteorological and other variables. These models can be tested on randomly withheld data with the aim of developing the most appropriate model.
+The **deweather** package uses a powerful statistical technique based on *boosted regression trees* using a variety of packages using the `{tidymodels}` framework. This allows for a variety of engines to be employed, with the default being `{xgboost}`. Statistical models are developed to explain concentrations using meteorological and other variables. These models can be tested on randomly withheld data with the aim of developing the most appropriate model.
+
+Much of **deweather** supports parallel processing with the `{mirai}` package, so along with loading the library we'll set some daemons as well as a seed.
+
+```{r}
+#| label: setup
+#| include: false
+library(deweather)
+mirai::daemons(5)
+set.seed(321)
+```
 
 ## Example data set
 
-The **deweather** package comes with a comprehensive data set of air quality and meteorological data. The air quality data is from Marylebone Road in central London (obtained from the `{openair}` package) and the meteorological data from Heathrow Airport (obtained from the `{worldmet}` package).
-
-The `road_data` data frame contains various pollutants such a NO~x~, NO~2~, ethane and isoprene as well as meteorological data including wind speed, wind direction, relative humidity, ambient temperature and cloud cover. Code to obtain this data directly can be found [here](https://github.com/openair-project/deweather/blob/master/data-raw/road_data.R).
+The **deweather** package comes with a comprehensive data set of air quality and meteorological data. The air quality data is from Marylebone Road in central London (obtained from the `{openair}` package) and the meteorological data from Heathrow Airport (obtained from the `{worldmet}` package). The `aqroadside` data frame contains various pollutants such a NO~x~, NO~2~, ethane and isoprene as well as meteorological data including wind speed, wind direction, relative humidity, ambient temperature and cloud cover.
 
 ```{r}
-#| label: "load-pkg"
+#| label: showData
 #| eval: TRUE
-head(road_data)
+head(aqroadside)
 ```
 
-To speed up the examples in this article we'll randomly sample some of `road_data`.
+## Prepare for Model Building
 
-## Construct and test model(s)
+A straightforward way to get started is to use the `append_dw_vars()` function to attach a load of useful model features to your air quality `data.frame`. Variables such as the hour of the day (`"hour"`) and day of the week (`"weekday"`) are used as features to explain some of the variation. `"hour"` for example very usefully acts as a proxy for the diurnal variation in emissions. These temporal emission proxies are also important to include to help the model differentiate between emission versus weather-related changes. For example, emissions tend to change throughout a day and so do variables such as wind speed and ambient temperature (here already present in the data as `"ws"` and `"air_temp"` respectively).
 
-The `testMod()` function is used to build and test various models to help derive the most appropriate.
-
-In this example, we will restrict the data to model to 4 years. Note that variables such as `"hour"` and `"weekday"` are used as variables that can be used to explain some of the variation. `"hour"` for example very usefully acts as a proxy for the diurnal variation in emissions. These temporal emission proxies are also important to include to help the model differentiate between emission versus weather-related changes. For example, emissions tend to change throughout a day and so do variables such as wind speed and ambient temperature.
+Note that, strictly, `append_dw_vars()` does not need to be run directly;  if `build_dw_model()` or `tune_dw_model()` are passed any of `"hour"`, `"weekday"`, `"trend"`, `"yday"`, `"week"`, or `"month"` to `vars`, the parent function will use `append_dw_vars()` itself in the background if those columns do not exist in the input dataframe.
 
 ```{r}
-#| label: "testMod"
-#| eval: TRUE
-#| message: TRUE
-#| fig.height: 4.5
-#| fig.cap: "A statistical summary of a `{deweather}` model test."
-#| fig.alt: "A scatter plot showing predicted nitrogen dioxide on the
-#| x-axis and measured nitrogen dioxide on the y-axis. Alongside is a table
-#| of statistical values describing the model performance, including R,
-#| RMSE, NMGE, NMB, MGE, MB, FAC2 and n."
-library(openair)
-# select only part of the data set
-dat_part <- selectByDate(road_data, year = 2001:2004)
+#| label: model_data
+append_dw_vars(aqroadside) |>
+  dplyr::glimpse()
+```
 
-# to speed up the example, sample rows in `dat_part`
-# not needed in reality
-dat_part <- dplyr::slice_sample(dat_part, prop = 1 / 10)
+## Build a Model
 
-# test a model with commonly used covariates
-mod_test <-
-  testMod(
-    dat_part,
-    vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp", "week"),
-    pollutant = "no2"
+### Tuning a Model
+
+There are many input parameters to `build_dw_model()` and, while sensible defaults have been set, you may be interested in seeing how tweaking them can influence how well the model behaves. This is called "tuning", and the `tune_dw_model()` function provides an interface for this. Any of the boosted decision tree parameters (e.g., `tree_depth` and `trees`) can be set as a range which is then combined with `grid_levels` to create a regular grid of all parameter combinations.
+
+Note that this process can take a while, especially if many parameters are being tuned. One way to speed this up is to invoke parallel processing through the `mirai` package - see <https://tune.tidymodels.org/articles/extras/optimizations.html#parallel-processing> for more information. In this example, we'll also significantly trim down the data to speed things up.
+
+```{r}
+#| label: tune
+tuned_results <-
+  aqroadside |>
+  # want to sample by weekday to get good spread of categorical data
+  append_dw_vars("weekday") |>
+  dplyr::slice_sample(n = 250, by = weekday) |>
+  # tune model
+  tune_dw_model(
+    pollutant = "no2",
+    tree_depth = c(1, 5),
+    trees = c(150, 250),
+    grid_levels = 3L
   )
 ```
 
-The output shows by default the performance of the model when applied to a withheld random 20% (by default) of the data, i.e., the model is evaluated against data not used to build the model. Common model evaluation metrics are also given.
-
-## Build a model
-
-Assuming that a good model can be developed, it can now be explored in more detail using the optimum number of trees from `testMod()`.
+This output has a few useful features. First, we're informed that the best value for `trees` is `r tuned_results$best_params$trees` and for `tree_depth` is `r tuned_results$best_params$tree_depth`.
 
 ```{r}
-#| label: "buildMod"
-#| eval: TRUE
-mod_no2 <- buildMod(
-  dat_part,
-  vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp", "week"),
-  pollutant = "no2",
-  n.trees = mod_test$optimum_trees,
-  n.core = 6
-)
+#| label: bestParams
+tuned_results$best_params
 ```
 
-This function returns a `deweather` object that can be interrogated as shown below.
+We can also see how the tuned model behaved on some reserved testing data. A table of predictions is returned, as well as a table of statistics and a scatter plot of modelled vs measured values.
+
+```{r}
+#| label: metrics
+dplyr::glimpse(tuned_results$final_fit$metrics)
+```
+
+```{r}
+#| label: finalplot
+tuned_results$final_fit$plot
+```
+
+### Finalising a Model
+
+Assuming that a good model can be developed, it can now be explored in more detail. `deweather` has useful defaults for many of the model parameters, but these can be adjusted by the user if required.
+
+```{r}
+#| label: buildMod
+no2_model <-
+  build_dw_model(
+    data = aqroadside,
+    pollutant = "no2",
+    vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp"),
+    engine = "xgboost"
+  )
+```
+
+This function returns a "deweathering model" object. We can see a quick summary of it by simply printing it.
+
+```{r}
+#| label: printnox
+no2_model
+```
+
+We can also pull out specific features of the model using `get_dw_*()` functions. `{deweather}` has many of such 'getter' functions, and they form a consistent, useful API for accessing relevant features of different objects created in the package.
+
+```{r}
+#| label: get
+get_dw_pollutant(no2_model)
+get_dw_vars(no2_model)
+get_dw_input_data(no2_model)
+```
+
+One feature we immediately have access to is the "feature importance" score. This can be obtained as a `data.frame` using a similar approach to the above. This varies depending on the chosen `engine`, but for boosted trees this represents 'Gain' - the fractional contribution of each feature to the model based on the total gain of this feature's splits. A higher percentage means a more important predictive feature.
+
+```{r}
+#| label: getimport
+get_dw_importance(no2_model)
+```
+
+The Gain can be automatically plotted as a bar chart using the `plot_dw_importance()` function. The wind direction is the most predictive feature, and the day of the week being any week day is the least predictive feature.
+
+```{r}
+#| label: fig-plotimport
+#| fig-cap: The feature importance of our model.
+plot_dw_importance(no2_model)
+```
+
+You'll notice that our 'character' variable, the day of the week, has been split out into multiple levels. This is because `{xgboost}` requires numeric variables, so behind the scenes our 'day of the week' variable is split out into a matrix of seven variables. This is informative - for example, we can see here that the day of the week being a weekend is a useful feature. Regardless, if you would like to see factor features as single features, the `aggregate_factors` argument may be of use.
+
+```{r}
+#| label: fig-plotimportagg
+#| fig-cap: The feature importance of our model, with factors aggregated.
+plot_dw_importance(no2_model, aggregate_factors = TRUE)
+```
 
 ## Examine the partial dependencies
 
-### Plot all partial dependencies
+### Basic PD Plots
 
 One of the benefits of the boosted regression tree approach is that the *partial dependencies* can be explored. In simple terms, the partial dependencies show the relationship between the pollutant of interest and the covariates used in the model while holding the value of other covariates at their mean level.
 
+Lets plot a partial dependency for the `hour` variable. We'll set `n` to `100` for speed; this will sample 100 random samples of our original data to construct the plot. We can see that `no2` is highest during the day and lowest overnight, everything else kept equal.
+
 ```{r}
-#| label: "plotAll"
-#| eval: TRUE
-#| fig.width: 7
-#| fig.height: 11
-#| fig.cap: "The 7 partial dependencies of the deweather model."
-#| fig.alt: "Seven line charts showing the partial dependencies of the
-#| deweather model. In order of influence: wind direction, hour of day,
-#| long-term trend, weekday, wind speed, week of the year, and finally air
-#| temperature."
-plotPD(mod_no2, nrow = 4)
+#| label: pd1d
+plot_dw_partial_1d(no2_model, "hour", n = 100)
 ```
 
-### Plot two-way interactions
-
-It can be very useful to plot important two-way interactions. In this example the interaction between `"ws"` and `"air_temp"` is considered. The plot shows that NO~2~ tends to be high when the wind speed is low and the temperature is low, i.e., stable atmospheric conditions. Also NO~2~ tends to be high when the temperature is high, which is most likely due to more O~3~ available to convert NO to NO~2~. In fact, background O~3~ would probably be a useful covariate to add to the model.
+A categorical variable like `weekday` looks slightly different, but achieves a similar result. `no2` is lowest on weekends, all else being equal.
 
 ```{r}
-#| label: "plot2way"
-#| eval: TRUE
-#| fig.width: 5
-#| fig.height: 4.5
-#| out.width: "50%"
-#| fig.cap: "A two-way interaction plot showing the interaction between
-#| wind speed and air temperature"
-#| fig.alt: "A heatmap showing the interaction between air temperature and
-#| wind speed in the deweather model. Nitrogen dioixde is shown to be high
-#| when wind speed is low and temperature is either very low or above around
-#| 25 degrees Celcius."
-plot2Way(mod_no2, variable = c("ws", "air_temp"))
+#| label: pd1d2
+plot_dw_partial_1d(no2_model, "weekday", n = 100)
+```
+
+If a variable isn't given, all variables will be plotted in a `patchwork` assembly in order of importance.
+
+```{r}
+#| label: pd1d3
+plot_dw_partial_1d(no2_model, n = 100)
+```
+
+### Grouped PD
+
+Sometimes, when examining partial dependences, it is useful to consider *grouped* partial dependences. This means, before PDs are calculated, we split the data into groups and calculate PDs for each subset of the data. Let's give this a go now.
+
+```{r}
+#| label: calcPDWkday
+plot_dw_partial_1d(no2_model, "hour", group = "weekday", n = 1000)
+```
+
+Note that `group` need not be categorical; you may provide a continuous variable which will be binned into `group_intervals`. Here we group by `"air_temp"` and split it into 3 equally sized bins.
+
+```{r}
+#| label: calcPDWkday2
+plot_dw_partial_1d(
+  no2_model,
+  "hour",
+  group = "air_temp",
+  group_intervals = 3L,
+  n = 1000
+)
+```
+
+### Two-Way Interactions
+
+Above we needed to treat one of our continuous features as a factor feature.
+
+It can be very useful to plot important two-way interactions. In this example the interaction between `"ws"` and `"air_temp"` is considered. The plot shows that `no2` tends to be high when the wind speed is low and the temperature is low, i.e., stable atmospheric conditions. Also `no2` tends to be high when the temperature is high, which is most likely due to more O~3~ available to convert NO to NO~2~. In fact, background O~3~ would probably be a useful covariate to add to the model.
+
+```{r}
+#| label: pd2d1
+plot_dw_partial_2d(no2_model, "ws", "air_temp", n = 200)
+```
+
+It can be easier to see some of these relationships using a binned scale. `contour = "lines"` will overlay the continuous colour surface with contour lines. `contour = "fill"` will bin the entire colour scale. The number of bins is controlled using the `contour_bins` argument.
+
+```{r}
+#| label: pd2d2
+plot_dw_partial_2d(
+  no2_model,
+  "ws",
+  "air_temp",
+  n = 200,
+  contour = "fill",
+  contour_bins = 10,
+  cols = "turbo"
+)
+```
+
+## Customisation
+
+These plots can be customised like any other `{ggplot2}` object. 
+
+```{r}
+#| label: fig-ggplot
+#| fig-cap: A thoroughly customised partial dependence plot.
+library(ggplot2)
+
+plot_dw_partial_1d(no2_model, "hour",group = "weekday") +
+  theme_light(14) +
+  theme(
+    title = element_text(face = "bold"),
+    plot.subtitle = element_text(face = "plain", size = 11),
+    legend.position = "none"
+  ) +
+  scale_fill_manual(
+    values = c(
+      "orange",
+      "cadetblue",
+      "lightblue4",
+      "lightblue3",
+      "lightblue2",
+      "lightblue1",
+      "orange3"
+    ),
+    aesthetics = c("fill", "color")
+  ) +
+  labs(
+    x = "Hour of the Day",
+    y = "NOx (ug/m3)",
+    fill = "Weekday",
+    color = "Weekday",
+    subtitle = "Weekends (orange) have lower NOx emissions than weekdays (blue)."
+  ) +
+  scale_y_continuous(limits = c(0, NA)) +
+  scale_x_continuous(breaks = seq(0, 24, 4), expand = expansion())
 ```
 
 ## Apply meteorological averaging
 
-An *indication* of the meteorologically-averaged trend is given by the `plotPD()` function above, and can even be isolated using the `variable` argument. 
+An *indication* of the meteorologically-averaged trend is given by the `plot_dw_partial_1d()` function above.
 
 ```{r}
 #| label: "pd-trend"
 #| fig.width: 7
 #| fig.height: 3.5
-#| fig.cap: "The partial dependence plot of the 'trend' component."
-#| fig.alt: "Patial dependence plot of the 'trend' component of the deweather model
-#| with date on the x-axis and NO2 on the y-axis. The trend is jagged, but shows an increase in 2003."
-plotPD(mod_no2, variable = "trend")
+plot_dw_partial_1d(no2_model, "trend", n = 100, intervals = 100)
 ```
 
-A much better indication is given by using the model to predict many times with random sampling of **meteorological** conditions. This sampling is carried out by the `metSim()` function. Note that in this case there is no need to supply the `"trend"` component because it is calculated using `metSim()`.
+A much better indication is given by using the model to predict many times with random sampling of **meteorological** conditions. This sampling is carried out by the `simulate_met()` function.
+
+Note that you'd typically want `n` to be a higher value than what's used in this example; it has been set to `50` for speed. Recall also that some `mirai::daemons()` are set to allow for parallelism.
 
 ```{r}
 #| label: "metSim"
 #| eval: TRUE
-demet <- metSim(mod_no2,
-  newdata = dat_part,
-  metVars = c("ws", "wd", "air_temp")
+demet <- simulate_dw_met(
+  no2_model,
+  vars = c("ws", "wd", "air_temp"),
+  n = 50
 )
 ```
 
@@ -162,10 +302,18 @@ Now it is possible to plot the resulting trend.
 #| fig.alt: "A line chart with date on the x-axis and deweathered NO2 on
 #| the y-axis. The trend is very noisy, but shows an increase in
 #| concentrations in 2003."
-openair::timePlot(demet, "no2", ylab = "Deweathered no2 (ug/m3)")
+library(ggplot2)
+
+ggplot(demet, aes(x = date, y = no2)) +
+  geom_line(linewidth = 0.01) +
+  theme_bw() +
+  labs(
+    y = openair::quickText("NO2"),
+    x = NULL
+  )
 ```
 
-The plot shows the trend in NO~2~ controlling for the main weather variables. The plot now reveals the strong diurnal and weekly cycle in NO~2~ that is driven by variations in the sources of NO~2~ (NO~x~) rather than meteorology i.e. road traffic which has strong hourly and daily variations throughout the year. It can be useful to simply average the results to provide a better indication of the overall trend. For example:
+The plot shows the trend in NO~2~ controlling for the main weather variables. The plot now reveals the strong diurnal and weekly cycle in NO~2~ that is driven by variations in the sources of NO~2~ (NO~x~) rather than meteorology, i.e., road traffic which has strong hourly and daily variations throughout the year. It can be useful to simply average the results to provide a better indication of the overall trend. For example:
 
 ```{r}
 #| label: "plotTrendAve"
@@ -174,7 +322,65 @@ The plot shows the trend in NO~2~ controlling for the main weather variables. Th
 #| fig.height: 3.5
 #| fig.cap: "A time-averaged deweathered nitrogen dioxide trend."
 #| fig.alt: "A line chart with date on the x-axis and deweathered NO2 on
-#| the y-axis. The trend has been time averaged to show weekly mean
+#| the y-axis. The trend has been time averaged to show monthly mean
 #| concentrations, clearly illustrating a sharp increase in 2003."
-openair::timePlot(demet, "no2", avg.time = "week", ylab = "Deweathered no2 (ug/m3)")
+demet |>
+  openair::timeAverage("month") |>
+  ggplot(aes(x = date, y = no2)) +
+  geom_line() +
+  theme_bw() +
+  labs(
+    y = openair::quickText("NO2"),
+    x = NULL
+  )
 ```
+
+With some simple data manipulation, we can compare the meteorological simulation, the partial dependence profile, and the input data. It is clear that the input data has much more noise. The PD profile are simulated data are similar, but the simulated data are higher overall. This highlights that purely relying on the PD profiles (which isolates the trend from even temporal variables like day of the week) may underestimate pollutant concentrations.
+
+```{r}
+# PD - set intervals to something high for a good profile
+pd_trend <- plot_dw_partial_1d(
+  no2_model,
+  "trend",
+  plot = FALSE,
+  n = 50,
+  intervals = 200
+) |>
+  purrr::pluck("trend") |>
+  dplyr::transmute(
+    date = as.POSIXct(trend),
+    no2 = mean
+  )
+
+# input data
+input_data <- get_dw_input_data(no2_model) |>
+  dplyr::transmute(
+    date = as.POSIXct(trend),
+    no2 = no2
+  )
+
+# combine with demet and plot
+dplyr::bind_rows(
+  "Simulated" = demet,
+  "Input" = input_data,
+  "Partial Dep" = pd_trend,
+  .id = "source"
+) |>
+  openair::timeAverage("month", type = "source") |>
+  ggplot(aes(x = date, y = no2, color = source)) +
+  geom_line() +
+  theme_bw() +
+  labs(
+    y = openair::quickText("NO2"),
+    x = NULL
+  ) +
+  scale_color_manual(
+    values = c(
+      "Input" = "grey70",
+      "Partial Dep" = "orange",
+      "Simulated" = "royalblue"
+    )
+  )
+```
+
+Note that the function `predict_dw()` is also provided for generalised use of a deweather model for prediction.
