@@ -6,6 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Meteorological Normalisation with {deweather} • deweather</title>
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/Nunito_Sans-0.4.10/font.css" rel="stylesheet">
@@ -103,13 +108,13 @@ humidity, ambient temperature and cloud cover.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 11</span></span></span>
 <span><span class="co">#&gt;   date                  nox   no2 ethane isoprene benzene    ws    wd air_temp</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2000-01-01 <span style="color: #949494;">00:00:00</span>   388    78   13.5     1.22    7.74  2.1   200      7.4 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2000-01-01 <span style="color: #949494;">01:00:00</span>   886    84   12.0     0.85    5.66  2.1   190      7.83</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2000-01-01 <span style="color: #949494;">02:00:00</span>   816   117   14.7     1.75   11.4   1.8   211.     7.95</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2000-01-01 <span style="color: #949494;">03:00:00</span>   636    97   20.4     4.36   30.8   1.25  240      8.05</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 2000-01-01 <span style="color: #949494;">04:00:00</span>   483    74   18.8     3.08   19.7   1.55  267.     8.6 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 2000-01-01 <span style="color: #949494;">05:00:00</span>   231    65   16.4     2.12   13.1   2.35  269.     8.35</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: RH &lt;dbl&gt;, cl &lt;dbl&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 2000-01-01 <span style="color: #949494;">00:00:00</span>   388    78   13.5     1.22    7.74  2.1    200     7.4 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 2000-01-01 <span style="color: #949494;">01:00:00</span>   886    84   12.0     0.85    5.66  2.1    190     7.83</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 2000-01-01 <span style="color: #949494;">02:00:00</span>   816   117   14.7     1.75   11.4   1.8    215     7.95</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 2000-01-01 <span style="color: #949494;">03:00:00</span>   636    97   20.4     4.36   30.8   1.25   240     8.05</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 2000-01-01 <span style="color: #949494;">04:00:00</span>   483    74   18.8     3.08   19.7   1.55   260     8.6 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 2000-01-01 <span style="color: #949494;">05:00:00</span>   231    65   16.4     2.12   13.1   2.35   270     8.35</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 2 more variables: rh &lt;dbl&gt;, cl &lt;dbl&gt;</span></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="prepare-for-model-building">Prepare for Model Building<a class="anchor" aria-label="anchor" href="#prepare-for-model-building"></a>
@@ -145,9 +150,9 @@ background if those columns do not exist in the input dataframe.</p>
 <span><span class="co">#&gt; $ isoprene <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1.22<span style="color: #949494;">, </span>0.85<span style="color: #949494;">, </span>1.75<span style="color: #949494;">, </span>4.36<span style="color: #949494;">, </span>3.08<span style="color: #949494;">, </span>2.12<span style="color: #949494;">, </span>1.25<span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span>0.4…</span></span>
 <span><span class="co">#&gt; $ benzene  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 7.74<span style="color: #949494;">, </span>5.66<span style="color: #949494;">, </span>11.38<span style="color: #949494;">, </span>30.75<span style="color: #949494;">, </span>19.66<span style="color: #949494;">, </span>13.13<span style="color: #949494;">, </span>7.64<span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">,</span>…</span></span>
 <span><span class="co">#&gt; $ ws       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 2.10<span style="color: #949494;">, </span>2.10<span style="color: #949494;">, </span>1.80<span style="color: #949494;">, </span>1.25<span style="color: #949494;">, </span>1.55<span style="color: #949494;">, </span>2.35<span style="color: #949494;">, </span>1.80<span style="color: #949494;">, </span>1.00<span style="color: #949494;">, </span>0.50<span style="color: #949494;">, </span>0.00<span style="color: #949494;">, </span>0…</span></span>
-<span><span class="co">#&gt; $ wd       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 200.0000<span style="color: #949494;">, </span>190.0000<span style="color: #949494;">, </span>210.5560<span style="color: #949494;">, </span>240.0000<span style="color: #949494;">, </span>267.3591<span style="color: #949494;">, </span>268.9254<span style="color: #949494;">, </span>2…</span></span>
+<span><span class="co">#&gt; $ wd       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 200<span style="color: #949494;">, </span>190<span style="color: #949494;">, </span>215<span style="color: #949494;">, </span>240<span style="color: #949494;">, </span>260<span style="color: #949494;">, </span>270<span style="color: #949494;">, </span>260<span style="color: #949494;">, </span>250<span style="color: #949494;">, </span>240<span style="color: #949494;">, </span><span style="color: #BB0000;">NA</span><span style="color: #949494;">, </span>210<span style="color: #949494;">, </span>275<span style="color: #949494;">, </span>26…</span></span>
 <span><span class="co">#&gt; $ air_temp <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 7.400000<span style="color: #949494;">, </span>7.833333<span style="color: #949494;">, </span>7.950000<span style="color: #949494;">, </span>8.050000<span style="color: #949494;">, </span>8.600000<span style="color: #949494;">, </span>8.350000<span style="color: #949494;">, </span>8…</span></span>
-<span><span class="co">#&gt; $ RH       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 97.33482<span style="color: #949494;">, </span>97.15970<span style="color: #949494;">, </span>99.00136<span style="color: #949494;">, </span>98.67437<span style="color: #949494;">, </span>95.11393<span style="color: #949494;">, </span>97.71058<span style="color: #949494;">, </span>9…</span></span>
+<span><span class="co">#&gt; $ rh       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 97.33482<span style="color: #949494;">, </span>97.15970<span style="color: #949494;">, </span>99.00136<span style="color: #949494;">, </span>98.67437<span style="color: #949494;">, </span>95.11393<span style="color: #949494;">, </span>97.71058<span style="color: #949494;">, </span>9…</span></span>
 <span><span class="co">#&gt; $ cl       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 5.0<span style="color: #949494;">, </span>6.0<span style="color: #949494;">, </span>4.5<span style="color: #949494;">, </span>4.5<span style="color: #949494;">, </span>7.5<span style="color: #949494;">, </span>5.5<span style="color: #949494;">, </span>8.0<span style="color: #949494;">, </span>4.0<span style="color: #949494;">, </span>1.5<span style="color: #949494;">, </span>2.5<span style="color: #949494;">, </span>4.0<span style="color: #949494;">, </span>7.0<span style="color: #949494;">, </span>4…</span></span>
 <span><span class="co">#&gt; $ trend    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 946684800<span style="color: #949494;">, </span>946688400<span style="color: #949494;">, </span>946692000<span style="color: #949494;">, </span>946695600<span style="color: #949494;">, </span>946699200<span style="color: #949494;">, </span>946702…</span></span>
 <span><span class="co">#&gt; $ hour     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 0<span style="color: #949494;">, </span>1<span style="color: #949494;">, </span>2<span style="color: #949494;">, </span>3<span style="color: #949494;">, </span>4<span style="color: #949494;">, </span>5<span style="color: #949494;">, </span>6<span style="color: #949494;">, </span>7<span style="color: #949494;">, </span>8<span style="color: #949494;">, </span>9<span style="color: #949494;">, </span>10<span style="color: #949494;">, </span>11<span style="color: #949494;">, </span>12<span style="color: #949494;">, </span>13<span style="color: #949494;">, </span>14<span style="color: #949494;">, </span>15<span style="color: #949494;">, </span>16<span style="color: #949494;">, </span>17<span style="color: #949494;">,</span>…</span></span>
@@ -212,16 +217,16 @@ statistics and a scatter plot of modelled vs measured values.</p>
 <span><span class="co">#&gt; Columns: 12</span></span>
 <span><span class="co">#&gt; $ pollutant <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> no2</span></span>
 <span><span class="co">#&gt; $ n         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 424</span></span>
-<span><span class="co">#&gt; $ fac2      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.9811321</span></span>
-<span><span class="co">#&gt; $ mb        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> -1.036324</span></span>
-<span><span class="co">#&gt; $ mge       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 18.71052</span></span>
-<span><span class="co">#&gt; $ nmb       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> -0.0108988</span></span>
-<span><span class="co">#&gt; $ nmge      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.1967747</span></span>
-<span><span class="co">#&gt; $ rmse      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 25.25123</span></span>
-<span><span class="co">#&gt; $ r         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.8481663</span></span>
-<span><span class="co">#&gt; $ p         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 1.626224e-118</span></span>
-<span><span class="co">#&gt; $ coe       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.5046585</span></span>
-<span><span class="co">#&gt; $ ioa       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.7523293</span></span></code></pre></div>
+<span><span class="co">#&gt; $ fac2      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.9716981</span></span>
+<span><span class="co">#&gt; $ mb        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> -1.593782</span></span>
+<span><span class="co">#&gt; $ mge       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 19.85444</span></span>
+<span><span class="co">#&gt; $ nmb       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> -0.01676148</span></span>
+<span><span class="co">#&gt; $ nmge      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.208805</span></span>
+<span><span class="co">#&gt; $ rmse      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 27.60343</span></span>
+<span><span class="co">#&gt; $ r         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.8157166</span></span>
+<span><span class="co">#&gt; $ p         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 2.258024e-102</span></span>
+<span><span class="co">#&gt; $ coe       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.4743745</span></span>
+<span><span class="co">#&gt; $ ioa       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.7371873</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tuned_results</span><span class="op">$</span><span class="va">final_fit</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/finalplot-1.png" class="r-plt" width="700"></p>
@@ -247,8 +252,8 @@ quick summary of it by simply printing it.</p>
 <code class="sourceCode R"><span><span class="va">no2_model</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Deweather Model</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> A model for predicting <span style="font-weight: bold;">no2</span> using <span style="color: #00BB00;">wd (45%)</span>, <span style="color: #00BB00;">hour (26.5%)</span>, <span style="color: #00BB00;">trend (12%)</span>, <span style="color: #00BB00;">weekday</span></span></span>
-<span><span class="co">#&gt;   <span style="color: #00BB00;">(7.6%)</span>, <span style="color: #00BB00;">ws (6.4%)</span>, and <span style="color: #00BB00;">air_temp (2.4%)</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> A model for predicting <span style="font-weight: bold;">no2</span> using <span style="color: #00BB00;">wd (42.1%)</span>, <span style="color: #00BB00;">hour (27.9%)</span>, <span style="color: #00BB00;">trend (12.8%)</span>,</span></span>
+<span><span class="co">#&gt;   <span style="color: #00BB00;">weekday (8.2%)</span>, <span style="color: #00BB00;">ws (6.5%)</span>, and <span style="color: #00BB00;">air_temp (2.6%)</span>.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Model Parameters</span> ──</span></span>
@@ -284,16 +289,16 @@ package.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 144,535 × 7</span></span></span>
 <span><span class="co">#&gt;      no2     trend    ws    wd  hour weekday air_temp</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>    78 946<span style="text-decoration: underline;">684</span>800  2.1   200      0 Sat         7.4 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>    84 946<span style="text-decoration: underline;">688</span>400  2.1   190      1 Sat         7.83</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>   117 946<span style="text-decoration: underline;">692</span>000  1.8   211.     2 Sat         7.95</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>    97 946<span style="text-decoration: underline;">695</span>600  1.25  240      3 Sat         8.05</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>    74 946<span style="text-decoration: underline;">699</span>200  1.55  267.     4 Sat         8.6 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>    65 946<span style="text-decoration: underline;">702</span>800  2.35  269.     5 Sat         8.35</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    67 946<span style="text-decoration: underline;">706</span>400  1.8   260      6 Sat         8.2 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    69 946<span style="text-decoration: underline;">710</span>000  1     250      7 Sat         7.1 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    67 946<span style="text-decoration: underline;">713</span>600  0.5   240      8 Sat         6.2 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    57 946<span style="text-decoration: underline;">720</span>800  0.5   210     10 Sat         6.9 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>    78 946<span style="text-decoration: underline;">684</span>800  2.1    200     0 Sat         7.4 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>    84 946<span style="text-decoration: underline;">688</span>400  2.1    190     1 Sat         7.83</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>   117 946<span style="text-decoration: underline;">692</span>000  1.8    215     2 Sat         7.95</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>    97 946<span style="text-decoration: underline;">695</span>600  1.25   240     3 Sat         8.05</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>    74 946<span style="text-decoration: underline;">699</span>200  1.55   260     4 Sat         8.6 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>    65 946<span style="text-decoration: underline;">702</span>800  2.35   270     5 Sat         8.35</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    67 946<span style="text-decoration: underline;">706</span>400  1.8    260     6 Sat         8.2 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    69 946<span style="text-decoration: underline;">710</span>000  1      250     7 Sat         7.1 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    67 946<span style="text-decoration: underline;">713</span>600  0.5    240     8 Sat         6.2 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    57 946<span style="text-decoration: underline;">720</span>800  0.5    210    10 Sat         6.9 </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 144,525 more rows</span></span></span></code></pre></div>
 <p>One feature we immediately have access to is the “feature importance”
 score. This can be obtained as a <code>data.frame</code> using a similar
@@ -307,18 +312,18 @@ important predictive feature.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 2</span></span></span>
 <span><span class="co">#&gt;    var        importance</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> wd           0.450   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> hour         0.265   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> trend        0.120   </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ws           0.064<span style="text-decoration: underline;">5</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> weekdaySun   0.042<span style="text-decoration: underline;">7</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> weekdaySat   0.027<span style="text-decoration: underline;">2</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> air_temp     0.024<span style="text-decoration: underline;">4</span>  </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> weekdayMon   0.003<span style="text-decoration: underline;">00</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> weekdayThu   0.001<span style="text-decoration: underline;">56</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> weekdayWed   0.001<span style="text-decoration: underline;">08</span> </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> weekdayFri   0.000<span style="text-decoration: underline;">332</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> weekdayTue   0.000<span style="text-decoration: underline;">294</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> wd           0.421   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> hour         0.279   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> trend        0.128   </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ws           0.064<span style="text-decoration: underline;">6</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> weekdaySun   0.045<span style="text-decoration: underline;">0</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> weekdaySat   0.028<span style="text-decoration: underline;">2</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> air_temp     0.026<span style="text-decoration: underline;">2</span>  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> weekdayMon   0.002<span style="text-decoration: underline;">57</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> weekdayThu   0.002<span style="text-decoration: underline;">30</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> weekdayWed   0.001<span style="text-decoration: underline;">63</span> </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> weekdayTue   0.001<span style="text-decoration: underline;">000</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> weekdayFri   0.000<span style="text-decoration: underline;">862</span></span></span></code></pre></div>
 <p>The Gain can be automatically plotted as a bar chart using the
 <code><a href="../reference/plot_dw_importance.html">plot_dw_importance()</a></code> function. The wind direction is the
 most predictive feature, and the day of the week being any week day is
