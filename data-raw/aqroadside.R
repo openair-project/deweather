@@ -32,7 +32,7 @@ aqroadside <- select(
   ws,
   wd,
   air_temp,
-  RH,
+  rh = RH,
   cl
 )
 
