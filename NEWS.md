@@ -1,4 +1,4 @@
-# deweather (development version)
+# deweather 1.0.0
 
 ## Major Version Changes
 
