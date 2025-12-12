@@ -58,6 +58,8 @@ For this reason, the older, `gbm`-powered version of `deweather` can be accessed
 
 Note that the above repository is provided for archival purposes only, and is unlikely to recieve any future feature updates.
 
+<hr>
+
 ## 📖 Documentation
 
 All **deweather** functions are fully documented; access documentation using R in your IDE of choice.
