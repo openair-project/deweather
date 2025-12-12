@@ -36,9 +36,10 @@ sample +/-30 days of the date.
 \item \code{"all"}, meaning all dates are shuffled.
 }
 
-The argument for using constrained resampling is that it reduces or
-eliminates potentially implausible conditions such as cold temperatures in
-summer. It is, however, slower than unconstrained sampling.}
+The argument for using constrained resampling is that it resamples
+conditions for a similar time of year and / or hour of the day to minimise
+the resampling of implausible conditions e.g. very warm temperatures during
+winter.}
 
 \item{window_day, window_hour}{The day of year (\code{window_day}) and hour of day
 (\code{window_hour}) windows to sample within when \code{resampling = "constrained"}.
@@ -58,7 +59,7 @@ sessions.}
 a \link[tibble:tibble-package]{tibble}
 }
 \description{
-This function performs Monte Carlo simulations to isolate the effect of
+This function performs random simulations to help isolate the effect of
 emissions changes from meteorological variability in air quality data. It
 works by repeatedly shuffling meteorological variables (like wind and air
 temperature) while keeping temporal patterns intact, then predicting
