@@ -65,7 +65,10 @@ build_dw_model <- function(
     data <- append_dw_vars(data, vars = vars_to_add, abbr = TRUE, .date = .date)
   }
 
-  # if lightgbm, also need bonsai
+  # check engines
+  if (engine == "xgboost") {
+    rlang::check_installed(c("xgboost"))
+  }
   if (engine == "lightgbm") {
     rlang::check_installed(c("lightgbm", "bonsai"))
   }

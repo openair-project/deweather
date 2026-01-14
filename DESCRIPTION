@@ -20,12 +20,9 @@ Depends:
     R (>= 4.1.0)
 Imports: 
     cli,
-    DALEX,
-    DALEXtra,
     dials,
     dplyr,
     ggplot2,
-    ingredients,
     lubridate,
     mgcv,
     openair,

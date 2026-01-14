@@ -1,26 +1,27 @@
-test_that("boosted tree models work", {
-  small_data <- head(aqroadside, n = 1000)
+small_data <- head(aqroadside, n = 1000)
+dw_model <- build_dw_model(small_data, "no2")
 
-  model <- build_dw_model(small_data, "no2")
+test_that("generics work", {
+  expect_no_error(print(dw_model))
+  expect_no_error(head(dw_model))
+  expect_no_error(tail(dw_model))
+  expect_no_error(plot(dw_model))
+  expect_no_error(summary(dw_model))
+})
 
-  expect_no_error(print(model))
-  expect_no_error(head(model))
-  expect_no_error(tail(model))
-  expect_no_error(plot(model))
-  expect_no_error(summary(model))
-
-  expect_equal(get_dw_engine(model), "xgboost")
-  expect_equal(get_dw_pollutant(model), "no2")
+test_that("getters work", {
+  expect_equal(get_dw_engine(dw_model), "xgboost")
+  expect_equal(get_dw_pollutant(dw_model), "no2")
   expect_equal(
-    get_dw_vars(model),
+    get_dw_vars(dw_model),
     c("trend", "ws", "wd", "hour", "weekday", "air_temp")
   )
   expect_equal(
-    names(get_dw_input_data(model)),
+    names(get_dw_input_data(dw_model)),
     c("no2", "trend", "ws", "wd", "hour", "weekday", "air_temp")
   )
   expect_equal(
-    get_dw_params(model),
+    get_dw_params(dw_model),
     list(
       tree_depth = 5,
       trees = 200L,
@@ -32,37 +33,47 @@ test_that("boosted tree models work", {
       stop_iter = 190L
     )
   )
-  expect_equal(get_dw_params(model, "tree_depth"), 5)
+  expect_equal(get_dw_params(dw_model, "tree_depth"), 5)
 
-  imp <- get_dw_importance(model)
+  imp <- get_dw_importance(dw_model)
   expect_type(imp$importance, "double")
   expect_s3_class(imp$var, "factor")
   expect_equal(nrow(imp), 12)
 
-  imp2 <- get_dw_importance(model, aggregate_factors = TRUE)
-  expect_equal(nrow(imp2), length(get_dw_vars(model)))
+  imp2 <- get_dw_importance(dw_model, aggregate_factors = TRUE)
+  expect_equal(nrow(imp2), length(get_dw_vars(dw_model)))
 
-  imp3 <- get_dw_importance(model, sort = FALSE)
+  imp3 <- get_dw_importance(dw_model, sort = FALSE)
   expect_type(imp3$var, "character")
+})
 
-  expect_no_error(plot_dw_importance(model))
-  expect_no_error(plot_dw_importance(model, aggregate_factors = TRUE))
+test_that("plots work", {
+  expect_no_error(plot_dw_importance(dw_model))
+  expect_no_error(plot_dw_importance(dw_model, aggregate_factors = TRUE))
 
-  expect_s3_class(plot_dw_partial_1d(model, n = 10), "gg")
-  expect_s3_class(plot_dw_partial_1d(model, "hour", n = 10), "gg")
-  expect_s3_class(plot_dw_partial_1d(model, c("hour", "ws"), n = 10), "gg")
-
-  expect_s3_class(plot_dw_partial_2d(model, "hour", "ws", n = 10), "gg")
+  expect_s3_class(plot_dw_partial_1d(dw_model, n = 10), "gg")
+  expect_s3_class(plot_dw_partial_1d(dw_model, "hour", n = 10), "gg")
+  expect_s3_class(plot_dw_partial_1d(dw_model, c("hour", "ws"), n = 10), "gg")
   expect_s3_class(
-    plot_dw_partial_2d(model, "hour", "ws", n = 10, contour = "lines"),
+    plot_dw_partial_1d(dw_model, c("hour", "ws"), group = "weekday", n = 10),
     "gg"
   )
   expect_s3_class(
-    plot_dw_partial_2d(model, "hour", "ws", n = 10, contour = "fill"),
+    plot_dw_partial_1d(dw_model, c("hour", "ws"), group = "hour", n = 10),
+    "gg"
+  )
+
+  expect_s3_class(plot_dw_partial_2d(dw_model, "hour", "ws", n = 10), "gg")
+  expect_s3_class(
+    plot_dw_partial_2d(dw_model, "hour", "ws", n = 10, contour = "lines"),
     "gg"
   )
   expect_s3_class(
-    plot_dw_partial_2d(model, "hour", "ws", n = 10, show_conf_int = TRUE),
+    plot_dw_partial_2d(dw_model, "hour", "ws", n = 10, contour = "fill"),
+    "gg"
+  )
+  expect_s3_class(
+    plot_dw_partial_2d(dw_model, "hour", "ws", n = 10, show_conf_int = TRUE),
     "gg"
   )
 })

@@ -59,6 +59,16 @@ plot_dw_partial_2d <- function(
     cli::cli_abort("{.arg exclude_distance} must be between {0} and {1}.")
   }
 
+  if (var_x == var_y) {
+    cli::cli_abort("{.arg var_x} cannot be the same as {.arg var_y}.")
+  }
+
+  if (var_x == "trend" || var_y == "trend") {
+    cli::cli_abort(
+      "{.fun deweather::plot_dw_partial_2d} does not support the 'trend' variable."
+    )
+  }
+
   # get model features
   model <- get_dw_model(dw)
   vars <- get_dw_vars(dw)
@@ -96,55 +106,44 @@ plot_dw_partial_2d <- function(
     }
   }
 
-  # create DALEX explainer
-  explainer <-
-    DALEXtra::explain_tidymodels(
-      model = model,
-      data = dplyr::select(input_data, -dplyr::all_of(pollutant)),
-      y = input_data[[pollutant]],
-      verbose = FALSE
-    )
-
   # rows to use in data
   rows <- sample(
     x = nrow(input_data),
-    size = n %||% (prop * nrow(input_data)),
+    size = n %||% round(prop * nrow(input_data)),
     replace = FALSE
   )
+  obs_df <- input_data[rows, ]
 
   # get 2d CP
-  cp2d <- purrr::map(
-    .x = rows,
-    .f = \(row) {
-      ingredients::ceteris_paribus_2d(
-        explainer = explainer,
-        observation = input_data[row, ],
-        grid_points = intervals,
-        variables = c(var_x, var_y)
-      ) |>
-        dplyr::tibble()
-    },
-    .progress = progress
-  ) |>
-    dplyr::bind_rows()
+  cp2d <-
+    cp_profiles(
+      dw = dw,
+      obs = obs_df,
+      var_x = var_x,
+      var_y = var_y,
+      intervals = intervals,
+      progress = progress
+    )
 
   # calculate mean
   plotdata <-
     dplyr::reframe(
       cp2d,
-      openair::bootMeanDF(.data$y_hat, B = 100),
-      .by = dplyr::all_of(c(var_x, var_y, "vname1", "vname2", "label"))
+      openair::bootMeanDF(.data[[pollutant]], B = 100),
+      .by = dplyr::all_of(c(var_x, var_y))
     )
 
   # exclude too far
-  id <- mgcv::exclude.too.far(
-    d1 = input_data[[var_x]],
-    d2 = input_data[[var_y]],
-    g1 = plotdata[[var_x]],
-    g2 = plotdata[[var_y]],
-    dist = exclude_distance
-  )
-  plotdata <- plotdata[!id, ]
+  if (is.numeric(plotdata[[var_x]]) && is.numeric(plotdata[[var_y]])) {
+    id <- mgcv::exclude.too.far(
+      d1 = input_data[[var_x]],
+      d2 = input_data[[var_y]],
+      g1 = plotdata[[var_x]],
+      g2 = plotdata[[var_y]],
+      dist = exclude_distance
+    )
+    plotdata <- plotdata[!id, ]
+  }
 
   # if not plotting, just return the data
   if (!plot) {

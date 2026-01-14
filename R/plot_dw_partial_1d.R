@@ -61,8 +61,8 @@ plot_dw_partial_1d <- function(
   group_intervals = 3L,
   show_conf_int = TRUE,
   n = NULL,
-  prop = 0.1,
-  cols = "tol",
+  prop = 0.01,
+  cols = "Set1",
   radial_wd = TRUE,
   ncol = NULL,
   nrow = NULL,
@@ -95,94 +95,72 @@ plot_dw_partial_1d <- function(
     cli::cli_abort("{.arg prop} must be between `0` and `1`.")
   }
 
-  # create DALEX explainer
-  explainer <-
-    DALEXtra::explain_tidymodels(
-      model = model,
-      data = dplyr::select(input_data, -dplyr::all_of(pollutant)),
-      y = input_data[[pollutant]],
-      verbose = FALSE
-    )
-
-  # get breaks for a numeric group
+  # cut a numeric group
   if (!is.null(group) && is.numeric(input_data[[group]])) {
     group_breaks <- stats::quantile(
       input_data[[group]],
       probs = seq(0, 1, length.out = group_intervals + 1L),
       na.rm = TRUE
     )
+
+    input_data$group_var <-
+      cut(
+        input_data[[group]],
+        breaks = group_breaks,
+        include.lowest = TRUE
+      )
+  } else if (!is.null(group)) {
+    input_data$group_var <- input_data[[group]]
+  } else {
+    input_data$group_var <- "(all)"
+    group <- "NULL"
   }
 
-  var_types <- purrr::map_vec(vars, \(x) {
-    dw$vars$types[which(dw$vars$names == x)]
-  })
-  var_types <- ifelse(
-    var_types %in% c("numeric", "integer"),
-    "numerical",
-    "categorical"
+  # rows to use in data
+  n_rows <- n %||% round(prop * nrow(input_data))
+  obs_df <- dplyr::slice_sample(
+    input_data,
+    n = n_rows,
+    replace = FALSE,
+    by = "group_var"
   )
 
+  # calculate PD profiles
   pd_data <- list()
-
-  if (any(var_types == "categorical")) {
-    profile <- DALEX::model_profile(
-      explainer = explainer,
-      variables = vars[var_types == "categorical"],
-      groups = group,
-      N = n %||% round(nrow(input_data) * prop),
-      grid_points = intervals,
-      variable_type = "categorical"
+  for (i in vars) {
+    # get 1d CP
+    cp <- cp_profiles(
+      dw = dw,
+      obs = obs_df,
+      var_x = i,
+      var_y = NULL,
+      progress = if (progress) i else FALSE
     )
-    cp <- dplyr::tibble(profile$cp_profiles)
-    pd_data <- append(pd_data, list(cp))
-  }
 
-  if (any(var_types == "numerical")) {
-    profile <- DALEX::model_profile(
-      explainer = explainer,
-      variables = vars[var_types == "numerical"],
-      groups = group,
-      N = n %||% round(nrow(input_data) * prop),
-      grid_points = intervals,
-      variable_type = "numerical"
-    )
-    cp <- dplyr::tibble(profile$cp_profiles)
-    pd_data <- append(pd_data, list(cp))
-  }
-
-  pd_data <- dplyr::bind_rows(pd_data)
-
-  if (is.null(group)) {
-    group <- "(all)"
-    pd_data$group_var <- "(all)"
-  } else {
-    if (is.numeric(pd_data[[group]])) {
-      pd_data$group_var <- ggplot2::cut_number(
-        pd_data[[group]],
-        n = group_intervals
+    if (i == group && is.numeric(cp[[i]])) {
+      cp$`__dummy__` <- cut(
+        cp[[i]],
+        breaks = group_breaks,
+        include.lowest = TRUE
       )
-    } else {
-      pd_data$group_var <- pd_data[[group]]
+      cp <- dplyr::filter(cp, .data$group_var == .data[["__dummy__"]])
+      cp$`__dummy__` <- NULL
     }
-  }
 
-  # summarise for plot
-  plotdata <-
-    split(pd_data, pd_data$`_vname_`) |>
-    purrr::imap(
-      \(df, i) {
-        dplyr::summarise(
-          df,
-          openair::bootMeanDF(.data$`_yhat_`, B = 100),
-          .by = c(i, "_vname_", "group_var")
-        ) |>
-          dplyr::select(-"n")
-      }
-    )
+    # calculate mean
+    pd <-
+      dplyr::reframe(
+        cp,
+        openair::bootMeanDF(.data[[pollutant]], B = 100),
+        .by = dplyr::all_of(c(i, "group_var"))
+      )
+
+    pd_data <- append(pd_data, stats::setNames(list(pd), i))
+  }
 
   # function that plots one variable
-  plot_single_pd <- function(df) {
-    var <- df$`_vname_`[1]
+  plot_single_pd <- function(var) {
+    df <- pd_data[[var]]
 
     # find colours
     colours <- openair::openColours(
@@ -343,15 +321,15 @@ plot_dw_partial_1d <- function(
   }
 
   # ensure plot data is in order of variables
-  plotdata <- plotdata[vars]
+  pd_data <- pd_data[vars]
 
   if (!plot) {
-    return(plotdata)
+    return(pd_data)
   }
 
   plots <-
     purrr::map(
-      plotdata,
+      vars,
       plot_single_pd,
       .progress = progress
     ) |>
