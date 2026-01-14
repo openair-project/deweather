@@ -406,24 +406,6 @@ plot_dw_partial_2d(
   contour_bins = 10,
   cols = "turbo"
 )
-#> Called from: plot_dw_partial_2d(no2_model, "ws", "air_temp", n = 200, contour = "fill", 
-#>     contour_bins = 10, cols = "turbo")
-#> debug: plot <- plot + ggplot2::geom_contour_filled(mapping = ggplot2::aes(z = .data$mean), 
-#>     colour = "black", bins = contour_bins) + ggplot2::scale_fill_manual(values = openair::openColours(cols, 
-#>     n = contour_bins), aesthetics = "fill")
-#> debug: if (radial_wd && (var_x == "wd" || var_y == "wd")) {
-#>     plot <- plot + ggplot2::coord_radial(expand = FALSE, inner.radius = 0.1) + 
-#>         ggplot2::theme(panel.border = ggplot2::element_blank(), 
-#>             axis.line.theta = ggplot2::element_line(linewidth = 0.25)) + 
-#>         ggplot2::scale_x_continuous(limits = c(0, 360), oob = scales::oob_keep, 
-#>             breaks = seq(0, 270, 90), expand = ggplot2::expansion(), 
-#>             labels = c("N", "E", "S", "W"))
-#> } else {
-#>     plot <- plot + ggplot2::coord_cartesian(default = FALSE, 
-#>         expand = FALSE)
-#> }
-#> debug: plot <- plot + ggplot2::coord_cartesian(default = FALSE, expand = FALSE)
-#> debug: return(plot)
 ```
 
 ![](deweather_files/figure-html/pd2d2-1.png)
@@ -604,6 +586,7 @@ dplyr::bind_rows(
       "Simulated" = "royalblue"
     )
   )
+#> Calculating Time Averages ■■■■■■■■■■■                       33% |  ETA:  3s
 #> Warning: Removed 1 row containing missing values or values outside the scale range
 #> (`geom_line()`).
 ```

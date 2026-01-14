@@ -458,25 +458,7 @@ entire colour scale. The number of bins is controlled using the
 <span>  contour <span class="op">=</span> <span class="st">"fill"</span>,</span>
 <span>  contour_bins <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  cols <span class="op">=</span> <span class="st">"turbo"</span></span>
-<span><span class="op">)</span></span>
-<span><span class="co">#&gt; Called from: plot_dw_partial_2d(no2_model, "ws", "air_temp", n = 200, contour = "fill", </span></span>
-<span><span class="co">#&gt;     contour_bins = 10, cols = "turbo")</span></span>
-<span><span class="co">#&gt; debug: plot &lt;- plot + ggplot2::geom_contour_filled(mapping = ggplot2::aes(z = .data$mean), </span></span>
-<span><span class="co">#&gt;     colour = "black", bins = contour_bins) + ggplot2::scale_fill_manual(values = openair::openColours(cols, </span></span>
-<span><span class="co">#&gt;     n = contour_bins), aesthetics = "fill")</span></span>
-<span><span class="co">#&gt; debug: if (radial_wd &amp;&amp; (var_x == "wd" || var_y == "wd")) {</span></span>
-<span><span class="co">#&gt;     plot &lt;- plot + ggplot2::coord_radial(expand = FALSE, inner.radius = 0.1) + </span></span>
-<span><span class="co">#&gt;         ggplot2::theme(panel.border = ggplot2::element_blank(), </span></span>
-<span><span class="co">#&gt;             axis.line.theta = ggplot2::element_line(linewidth = 0.25)) + </span></span>
-<span><span class="co">#&gt;         ggplot2::scale_x_continuous(limits = c(0, 360), oob = scales::oob_keep, </span></span>
-<span><span class="co">#&gt;             breaks = seq(0, 270, 90), expand = ggplot2::expansion(), </span></span>
-<span><span class="co">#&gt;             labels = c("N", "E", "S", "W"))</span></span>
-<span><span class="co">#&gt; } else {</span></span>
-<span><span class="co">#&gt;     plot &lt;- plot + ggplot2::coord_cartesian(default = FALSE, </span></span>
-<span><span class="co">#&gt;         expand = FALSE)</span></span>
-<span><span class="co">#&gt; }</span></span>
-<span><span class="co">#&gt; debug: plot &lt;- plot + ggplot2::coord_cartesian(default = FALSE, expand = FALSE)</span></span>
-<span><span class="co">#&gt; debug: return(plot)</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/pd2d2-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
@@ -637,6 +619,7 @@ underestimate pollutant concentrations.</p>
 <span>      <span class="st">"Simulated"</span> <span class="op">=</span> <span class="st">"royalblue"</span></span>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; Calculating Time Averages <span style="color: #00BB00;">■■■■■■■■■■■                     </span>  33% |  ETA:  3s</span></span>
 <span><span class="co">#&gt; Warning: Removed 1 row containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_line()`).</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
