@@ -27,6 +27,9 @@ plot_dw_importance <-
           paste0(x * 100, "%")
         }
       ) +
+      ggplot2::scale_y_discrete(
+        labels = \(x) sapply(x, openair::quickText)
+      ) +
       ggplot2::labs(y = NULL, x = "Importance") +
       ggplot2::theme_bw()
   }

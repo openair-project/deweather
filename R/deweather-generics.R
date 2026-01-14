@@ -18,7 +18,7 @@ print.Deweather <- function(x, ...) {
   )
 
   cli::cli_h1("Deweather Model")
-  cli::cli_inform(str)
+  cli::cli_text(str)
 
   cli::cli_h2("Model Parameters")
 

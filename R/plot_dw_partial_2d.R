@@ -59,16 +59,6 @@ plot_dw_partial_2d <- function(
     cli::cli_abort("{.arg exclude_distance} must be between {0} and {1}.")
   }
 
-  if (var_x == var_y) {
-    cli::cli_abort("{.arg var_x} cannot be the same as {.arg var_y}.")
-  }
-
-  if (var_x == "trend" || var_y == "trend") {
-    cli::cli_abort(
-      "{.fun deweather::plot_dw_partial_2d} does not support the 'trend' variable."
-    )
-  }
-
   # get model features
   model <- get_dw_model(dw)
   vars <- get_dw_vars(dw)
@@ -97,6 +87,17 @@ plot_dw_partial_2d <- function(
     c("none", "lines", "fill"),
     multiple = FALSE
   )
+
+  # check vars don't conflict
+  if (var_x == var_y) {
+    cli::cli_abort("{.arg var_x} cannot be the same as {.arg var_y}.")
+  }
+
+  if (var_x == "trend" || var_y == "trend") {
+    cli::cli_abort(
+      "{.fun deweather::plot_dw_partial_2d} does not support the 'trend' variable."
+    )
+  }
 
   # need to switch around the variables if radial_wd is desired
   if (radial_wd && (var_x == "wd" || var_y == "wd")) {
@@ -178,10 +179,10 @@ plot_dw_partial_2d <- function(
 
   scale_x <- NULL
   scale_y <- NULL
-  if (var_x == "wd") {
+  if (var_x == "wd" && !radial_wd) {
     scale_x <- wd_scale("x")
   }
-  if (var_y == "wd") {
+  if (var_y == "wd" && !radial_wd) {
     scale_y <- wd_scale("y")
   }
   if (var_x == "hour") {
@@ -230,6 +231,7 @@ plot_dw_partial_2d <- function(
   }
 
   if (contour == "fill") {
+    browser()
     plot <- plot +
       ggplot2::geom_contour_filled(
         mapping = ggplot2::aes(z = .data$mean),
@@ -245,7 +247,7 @@ plot_dw_partial_2d <- function(
   if (radial_wd && (var_x == "wd" || var_y == "wd")) {
     plot <-
       plot +
-      ggplot2::coord_radial(inner.radius = 0.1) +
+      ggplot2::coord_radial(expand = FALSE, inner.radius = 0.1) +
       ggplot2::theme(
         panel.border = ggplot2::element_blank(),
         axis.line.theta = ggplot2::element_line(linewidth = 0.25)
@@ -256,8 +258,7 @@ plot_dw_partial_2d <- function(
         breaks = seq(0, 270, 90),
         expand = ggplot2::expansion(),
         labels = c("N", "E", "S", "W")
-      ) +
-      ggplot2::scale_y_continuous(expand = ggplot2::expansion())
+      )
   } else {
     plot <-
       plot +
