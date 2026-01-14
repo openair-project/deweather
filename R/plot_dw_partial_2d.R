@@ -231,7 +231,6 @@ plot_dw_partial_2d <- function(
   }
 
   if (contour == "fill") {
-    browser()
     plot <- plot +
       ggplot2::geom_contour_filled(
         mapping = ggplot2::aes(z = .data$mean),

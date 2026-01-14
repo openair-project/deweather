@@ -32,10 +32,8 @@ Imports:
     rlang,
     rsample,
     scales,
-    stats,
     tidyr,
     tune,
-    utils,
     vip,
     workflows
 Suggests: 
