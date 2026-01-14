@@ -202,28 +202,18 @@ summary of it by simply printing it.
 no2_model
 #> 
 #> ── Deweather Model ─────────────────────────────────────────────────────────────
-#> • A model for predicting no2 using wd (42.1%), hour (27.9%), trend (12.8%),
-#>   weekday (8.2%), ws (6.5%), and air_temp (2.6%).
-#> 
+#> A model for predicting no2 using wd (42.1%), hour (27.9%), trend (12.8%),
+#> weekday (8.2%), ws (6.5%), and air_temp (2.6%).
 #> 
 #> ── Model Parameters ──
 #> 
-#> 
-#> 
 #> • tree_depth: 5
-#> 
 #> • trees: 200
-#> 
 #> • learn_rate: 0.1
-#> 
 #> • mtry: NULL
-#> 
 #> • min_n: 10
-#> 
 #> • loss_reduction: 0
-#> 
 #> • sample_size: 1
-#> 
 #> • stop_iter: 190
 ```
 
@@ -416,6 +406,24 @@ plot_dw_partial_2d(
   contour_bins = 10,
   cols = "turbo"
 )
+#> Called from: plot_dw_partial_2d(no2_model, "ws", "air_temp", n = 200, contour = "fill", 
+#>     contour_bins = 10, cols = "turbo")
+#> debug: plot <- plot + ggplot2::geom_contour_filled(mapping = ggplot2::aes(z = .data$mean), 
+#>     colour = "black", bins = contour_bins) + ggplot2::scale_fill_manual(values = openair::openColours(cols, 
+#>     n = contour_bins), aesthetics = "fill")
+#> debug: if (radial_wd && (var_x == "wd" || var_y == "wd")) {
+#>     plot <- plot + ggplot2::coord_radial(expand = FALSE, inner.radius = 0.1) + 
+#>         ggplot2::theme(panel.border = ggplot2::element_blank(), 
+#>             axis.line.theta = ggplot2::element_line(linewidth = 0.25)) + 
+#>         ggplot2::scale_x_continuous(limits = c(0, 360), oob = scales::oob_keep, 
+#>             breaks = seq(0, 270, 90), expand = ggplot2::expansion(), 
+#>             labels = c("N", "E", "S", "W"))
+#> } else {
+#>     plot <- plot + ggplot2::coord_cartesian(default = FALSE, 
+#>         expand = FALSE)
+#> }
+#> debug: plot <- plot + ggplot2::coord_cartesian(default = FALSE, expand = FALSE)
+#> debug: return(plot)
 ```
 
 ![](deweather_files/figure-html/pd2d2-1.png)
@@ -596,6 +604,8 @@ dplyr::bind_rows(
       "Simulated" = "royalblue"
     )
   )
+#> Warning: Removed 1 row containing missing values or values outside the scale range
+#> (`geom_line()`).
 ```
 
 ![](deweather_files/figure-html/unnamed-chunk-2-1.png)

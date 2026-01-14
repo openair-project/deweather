@@ -259,7 +259,7 @@ statistics and a scatter plot of modelled vs measured values.</p>
 <span><span class="co">#&gt; $ ioa       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.7371873</span></span></code></pre></div>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tuned_results</span><span class="op">$</span><span class="va">final_fit</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/finalplot-1.png" class="r-plt" width="700"></p>
+<p><img src="deweather_files/figure-html/finalplot-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="finalising-a-model">Finalising a Model<a class="anchor" aria-label="anchor" href="#finalising-a-model"></a>
@@ -282,28 +282,18 @@ quick summary of it by simply printing it.</p>
 <code class="sourceCode R"><span><span class="va">no2_model</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Deweather Model</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────</span></span></span>
-<span><span class="co">#&gt; <span style="color: #00BBBB;">•</span> A model for predicting <span style="font-weight: bold;">no2</span> using <span style="color: #00BB00;">wd (42.1%)</span>, <span style="color: #00BB00;">hour (27.9%)</span>, <span style="color: #00BB00;">trend (12.8%)</span>,</span></span>
-<span><span class="co">#&gt;   <span style="color: #00BB00;">weekday (8.2%)</span>, <span style="color: #00BB00;">ws (6.5%)</span>, and <span style="color: #00BB00;">air_temp (2.6%)</span>.</span></span>
-<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; A model for predicting <span style="font-weight: bold;">no2</span> using <span style="color: #00BB00;">wd (42.1%)</span>, <span style="color: #00BB00;">hour (27.9%)</span>, <span style="color: #00BB00;">trend (12.8%)</span>,</span></span>
+<span><span class="co">#&gt; <span style="color: #00BB00;">weekday (8.2%)</span>, <span style="color: #00BB00;">ws (6.5%)</span>, and <span style="color: #00BB00;">air_temp (2.6%)</span>.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── <span style="font-weight: bold;">Model Parameters</span> ──</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; • <span style="color: #00BB00;">tree_depth</span>: 5</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; • <span style="color: #00BB00;">trees</span>: 200</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; • <span style="color: #00BB00;">learn_rate</span>: 0.1</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; • <span style="color: #00BB00;">mtry</span>: NULL</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; • <span style="color: #00BB00;">min_n</span>: 10</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; • <span style="color: #00BB00;">loss_reduction</span>: 0</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; • <span style="color: #00BB00;">sample_size</span>: 1</span></span>
-<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; • <span style="color: #00BB00;">stop_iter</span>: 190</span></span></code></pre></div>
 <p>We can also pull out specific features of the model using
 <code>get_dw_*()</code> functions. <a href="https://openair-project.github.io/deweather/">deweather</a> has many of
@@ -400,18 +390,18 @@ see that <code>no2</code> is highest during the day and lowest
 overnight, everything else kept equal.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"hour"</span>, n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/pd1d-1.png" class="r-plt" width="700"></p>
+<p><img src="deweather_files/figure-html/pd1d-1.png" class="r-plt" alt="" width="700"></p>
 <p>A categorical variable like <code>weekday</code> looks slightly
 different, but achieves a similar result. <code>no2</code> is lowest on
 weekends, all else being equal.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"weekday"</span>, n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/pd1d2-1.png" class="r-plt" width="700"></p>
+<p><img src="deweather_files/figure-html/pd1d2-1.png" class="r-plt" alt="" width="700"></p>
 <p>If a variable isn’t given, all variables will be plotted in a
 <code>patchwork</code> assembly in order of importance.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/pd1d3-1.png" class="r-plt" width="700"></p>
+<p><img src="deweather_files/figure-html/pd1d3-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="grouped-pd">Grouped PD<a class="anchor" aria-label="anchor" href="#grouped-pd"></a>
@@ -422,7 +412,7 @@ are calculated, we split the data into groups and calculate PDs for each
 subset of the data. Let’s give this a go now.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"hour"</span>, group <span class="op">=</span> <span class="st">"weekday"</span>, n <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/calcPDWkday-1.png" class="r-plt" width="700"></p>
+<p><img src="deweather_files/figure-html/calcPDWkday-1.png" class="r-plt" alt="" width="700"></p>
 <p>Note that <code>group</code> need not be categorical; you may provide
 a continuous variable which will be binned into
 <code>group_intervals</code>. Here we group by <code>"air_temp"</code>
@@ -435,7 +425,7 @@ and split it into 3 equally sized bins.</p>
 <span>  group_intervals <span class="op">=</span> <span class="fl">3L</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">1000</span></span>
 <span><span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/calcPDWkday2-1.png" class="r-plt" width="700"></p>
+<p><img src="deweather_files/figure-html/calcPDWkday2-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="two-way-interactions">Two-Way Interactions<a class="anchor" aria-label="anchor" href="#two-way-interactions"></a>
@@ -453,7 +443,7 @@ NO<sub>2</sub>. In fact, background O<sub>3</sub> would probably be a
 useful covariate to add to the model.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_2d.html">plot_dw_partial_2d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"ws"</span>, <span class="st">"air_temp"</span>, n <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/pd2d1-1.png" class="r-plt" width="700"></p>
+<p><img src="deweather_files/figure-html/pd2d1-1.png" class="r-plt" alt="" width="700"></p>
 <p>It can be easier to see some of these relationships using a binned
 scale. <code>contour = "lines"</code> will overlay the continuous colour
 surface with contour lines. <code>contour = "fill"</code> will bin the
@@ -468,8 +458,26 @@ entire colour scale. The number of bins is controlled using the
 <span>  contour <span class="op">=</span> <span class="st">"fill"</span>,</span>
 <span>  contour_bins <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  cols <span class="op">=</span> <span class="st">"turbo"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/pd2d2-1.png" class="r-plt" width="700"></p>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt; Called from: plot_dw_partial_2d(no2_model, "ws", "air_temp", n = 200, contour = "fill", </span></span>
+<span><span class="co">#&gt;     contour_bins = 10, cols = "turbo")</span></span>
+<span><span class="co">#&gt; debug: plot &lt;- plot + ggplot2::geom_contour_filled(mapping = ggplot2::aes(z = .data$mean), </span></span>
+<span><span class="co">#&gt;     colour = "black", bins = contour_bins) + ggplot2::scale_fill_manual(values = openair::openColours(cols, </span></span>
+<span><span class="co">#&gt;     n = contour_bins), aesthetics = "fill")</span></span>
+<span><span class="co">#&gt; debug: if (radial_wd &amp;&amp; (var_x == "wd" || var_y == "wd")) {</span></span>
+<span><span class="co">#&gt;     plot &lt;- plot + ggplot2::coord_radial(expand = FALSE, inner.radius = 0.1) + </span></span>
+<span><span class="co">#&gt;         ggplot2::theme(panel.border = ggplot2::element_blank(), </span></span>
+<span><span class="co">#&gt;             axis.line.theta = ggplot2::element_line(linewidth = 0.25)) + </span></span>
+<span><span class="co">#&gt;         ggplot2::scale_x_continuous(limits = c(0, 360), oob = scales::oob_keep, </span></span>
+<span><span class="co">#&gt;             breaks = seq(0, 270, 90), expand = ggplot2::expansion(), </span></span>
+<span><span class="co">#&gt;             labels = c("N", "E", "S", "W"))</span></span>
+<span><span class="co">#&gt; } else {</span></span>
+<span><span class="co">#&gt;     plot &lt;- plot + ggplot2::coord_cartesian(default = FALSE, </span></span>
+<span><span class="co">#&gt;         expand = FALSE)</span></span>
+<span><span class="co">#&gt; }</span></span>
+<span><span class="co">#&gt; debug: plot &lt;- plot + ggplot2::coord_cartesian(default = FALSE, expand = FALSE)</span></span>
+<span><span class="co">#&gt; debug: return(plot)</span></span></code></pre></div>
+<p><img src="deweather_files/figure-html/pd2d2-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
 <div class="section level2">
@@ -525,7 +533,7 @@ A thoroughly customised partial dependence plot.
 given by the <code><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d()</a></code> function above.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"trend"</span>, n <span class="op">=</span> <span class="fl">100</span>, intervals <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/pd-trend-1.png" class="r-plt" width="672"></p>
+<p><img src="deweather_files/figure-html/pd-trend-1.png" class="r-plt" alt="" width="672"></p>
 <p>A much better indication is given by using the model to predict many
 times with random sampling of <strong>meteorological</strong>
 conditions. This sampling is carried out by the
@@ -628,8 +636,10 @@ underestimate pollutant concentrations.</p>
 <span>      <span class="st">"Partial Dep"</span> <span class="op">=</span> <span class="st">"orange"</span>,</span>
 <span>      <span class="st">"Simulated"</span> <span class="op">=</span> <span class="st">"royalblue"</span></span>
 <span>    <span class="op">)</span></span>
-<span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" width="700"></p>
+<span>  <span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 1 row containing missing values or values outside the scale range</span></span>
+<span><span class="co">#&gt; (`geom_line()`).</span></span></code></pre></div>
+<p><img src="deweather_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
 <p>Note that the function <code><a href="../reference/predict_dw.html">predict_dw()</a></code> is also provided for
 generalised use of a deweather model for prediction.</p>
 </div>
