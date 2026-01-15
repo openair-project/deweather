@@ -568,16 +568,19 @@ input_data <- get_dw_input_data(no2_model) |>
 dplyr::bind_rows(
   "Simulated" = demet,
   "Input" = input_data,
-  "Partial Dep" = pd_trend,
   .id = "source"
 ) |>
   openair::timeAverage("month", type = "source") |>
+  dplyr::bind_rows(
+    pd_trend |> dplyr::mutate(source = "Partial Dep")
+  ) |>
   ggplot(aes(x = date, y = no2, color = source)) +
   geom_line() +
   theme_bw() +
   labs(
     y = openair::quickText("NO2"),
-    x = NULL
+    x = NULL,
+    color = NULL
   ) +
   scale_color_manual(
     values = c(
@@ -586,9 +589,7 @@ dplyr::bind_rows(
       "Simulated" = "royalblue"
     )
   )
-#> Calculating Time Averages ■■■■■■■■■■■                       33% |  ETA:  3s
-#> Warning: Removed 1 row containing missing values or values outside the scale range
-#> (`geom_line()`).
+#> Calculating Time Averages ■■■■■■■■■■■■■■■■                  50% |  ETA:  1s
 ```
 
 ![](deweather_files/figure-html/unnamed-chunk-2-1.png)

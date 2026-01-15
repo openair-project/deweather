@@ -35,7 +35,8 @@ models in R.
   [`build_dw_model()`](https://openair-project.github.io/deweather/reference/build_dw_model.md).
 
 - **Plot and examine models** in a myriad of ways, including visualising
-  partial dependencies, using functions like `plot_importance()`,
+  partial dependencies, using functions like
+  [`plot_dw_importance()`](https://openair-project.github.io/deweather/reference/plot_dw_importance.md),
   [`plot_dw_partial_1d()`](https://openair-project.github.io/deweather/reference/plot_dw_partial_1d.md)
   and
   [`plot_dw_partial_2d()`](https://openair-project.github.io/deweather/reference/plot_dw_partial_2d.md).
