@@ -95,3 +95,14 @@ cp_profiles <- function(
   ) |>
     dplyr::bind_rows()
 }
+
+#' Check if the deps are installed for a specific engine
+#' @noRd
+check_engine_installed <- function(engine) {
+  if (engine == "xgboost") {
+    rlang::check_installed(c("xgboost"))
+  }
+  if (engine == "lightgbm") {
+    rlang::check_installed(c("lightgbm", "bonsai"))
+  }
+}
