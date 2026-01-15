@@ -589,7 +589,6 @@ dplyr::bind_rows(
       "Simulated" = "royalblue"
     )
   )
-#> Calculating Time Averages ■■■■■■■■■■■■■■■■                  50% |  ETA:  1s
 ```
 
 ![](deweather_files/figure-html/unnamed-chunk-2-1.png)
