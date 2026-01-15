@@ -38,7 +38,7 @@
 
 - **Test and build meteorological normalisation models** flexibly using `tune_dw_model()` and `build_dw_model()`.
 
-- **Plot and examine models** in a myriad of ways, including visualising partial dependencies, using functions like `plot_importance()`, `plot_dw_partial_1d()` and `plot_dw_partial_2d()`.
+- **Plot and examine models** in a myriad of ways, including visualising partial dependencies, using functions like `plot_dw_importance()`, `plot_dw_partial_1d()` and `plot_dw_partial_2d()`.
 
 - **Apply meteorological averaging** using `simulate_dw_met()` to obtain a meteorologically normalised air quality timeseries.
 

@@ -363,16 +363,19 @@ input_data <- get_dw_input_data(no2_model) |>
 dplyr::bind_rows(
   "Simulated" = demet,
   "Input" = input_data,
-  "Partial Dep" = pd_trend,
   .id = "source"
 ) |>
   openair::timeAverage("month", type = "source") |>
+  dplyr::bind_rows(
+    pd_trend |> dplyr::mutate(source = "Partial Dep")
+  ) |>
   ggplot(aes(x = date, y = no2, color = source)) +
   geom_line() +
   theme_bw() +
   labs(
     y = openair::quickText("NO2"),
-    x = NULL
+    x = NULL,
+    color = NULL
   ) +
   scale_color_manual(
     values = c(
