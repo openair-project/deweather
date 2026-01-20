@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @importFrom carrier crate
 #' @importFrom parsnip contr_one_hot
 #' @importFrom Rcpp sourceCpp
 #' @importFrom rlang %||%
