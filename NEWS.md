@@ -40,4 +40,4 @@ The original version of deweather (including its `NEWS.md`) is archived at <http
 
     - `predict_dw()` allows for the use of a deweather model for predictions.
     
-    - `simualte_dw_met()` will simulate a timeseries in which selected meteorological variables are averaged, effectively helping 'remove' the influence of met variables.
+    - `simulate_dw_met()` will simulate a timeseries in which selected meteorological variables are averaged, effectively helping 'remove' the influence of met variables.
