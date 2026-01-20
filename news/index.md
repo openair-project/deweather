@@ -66,6 +66,7 @@ still interested in the old API.
   - [`predict_dw()`](https://openair-project.github.io/deweather/reference/predict_dw.md)
     allows for the use of a deweather model for predictions.
 
-  - `simualte_dw_met()` will simulate a timeseries in which selected
-    meteorological variables are averaged, effectively helping ‘remove’
-    the influence of met variables.
+  - [`simulate_dw_met()`](https://openair-project.github.io/deweather/reference/simulate_dw_met.md)
+    will simulate a timeseries in which selected meteorological
+    variables are averaged, effectively helping ‘remove’ the influence
+    of met variables.
