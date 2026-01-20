@@ -19,7 +19,9 @@ tune_dw_model(
   engine = c("xgboost", "lightgbm"),
   split_prop = 3/4,
   grid_levels = 5,
-  v_partitions = 10
+  v_partitions = 10,
+  ...,
+  .date = "date"
 )
 }
 \arguments{
@@ -39,10 +41,13 @@ columns will be coerced to factors. \code{"hour"}, \code{"weekday"}, \code{"tren
 \item{tree_depth, trees, learn_rate, mtry, min_n, loss_reduction, sample_size, stop_iter}{If length 1, these parameters will be fixed. If length \code{2}, the parameter
 will be tuned within the range defined between the first and last value. For
 example, if \code{tree_depth = c(1, 5)} and \code{grid_levels = 3}, tree depths of \code{1},
-\code{3}, and \code{5} will be tested.}
+\code{3}, and \code{5} will be tested. See \code{\link[=build_dw_model]{build_dw_model()}} for specific parameter
+definitions.}
 
 \item{engine}{A single character string specifying what computational engine
-to use for fitting.}
+to use for fitting. Can be \code{"xgboost"}, \code{"lightgbm"} (boosted trees) or
+\code{"ranger"} (random forest). See the documentation below for more
+information.}
 
 \item{split_prop}{The proportion of data to be retained for
 modeling/analysis. Passed to the \code{prop} argument of
@@ -55,6 +60,13 @@ use to make the regular grid. Passed to the \code{levels} argument of
 \item{v_partitions}{The number of partitions of the data set to use for
 v-fold cross-validation. Passed to the \code{v} argument of
 \code{\link[rsample:vfold_cv]{rsample::vfold_cv()}}.}
+
+\item{...}{Not current used.}
+
+\item{.date}{The name of the 'date' column which defines the air quality
+timeseries. Passed to \code{\link[=append_dw_vars]{append_dw_vars()}} if needed. Also used to extract
+the time zone of the data for later restoration if \code{trend} is used as a
+variable.}
 }
 \description{
 This function performs hyperparameter tuning for a gradient boosting model
@@ -73,11 +85,61 @@ The function performs the following steps:
 \item Performs grid search with cross-validation to find optimal hyperparameters
 \item Fits a final model using the best hyperparameters
 \item Generates predictions and performance metrics
+}
 
 At least one hyperparameter must be specified as a range (vector of length
 2) for tuning to occur. Single values are treated as fixed parameters.
 }
+\section{Modelling Approaches and Parameters}{
+
+\subsection{Types of Model}{
+
+There are two modelling approaches available to \code{\link[=build_dw_model]{build_dw_model()}}:
+\itemize{
+\item Boosted Trees (\code{xgboost}, \code{lightgbm})
+\item Random Forest (\code{ranger})
 }
+
+Each of these approaches take different parameters.
+}
+
+\subsection{Boosted Trees}{
+
+Two engines are available for boosted tree models:
+\itemize{
+\item \code{"xgboost"}
+\item \code{"lightgbm"}
+}
+
+The following parameters apply:
+\itemize{
+\item \code{tree_depth}: Tree Depth
+\item \code{trees}: # Trees
+\item \code{learn_rate}: Learning Rate
+\item \code{mtry}: # Randomly Selected Predictors
+\item \code{min_n}: Minimal Node Size
+\item \code{loss_reduction}: Minimum Loss Reduction
+\item \code{sample_size}: Proportion Observations Sampled (\code{xgboost} only)
+\item \code{stop_iter}: # Iterations Before Stopping (\code{xgboost} only)
+}
+}
+
+\subsection{Random Forest}{
+
+One engine is available for random forest models:
+\itemize{
+\item \code{"ranger"}
+}
+
+The following parameters apply:
+\itemize{
+\item \code{mtry}: # Randomly Selected Predictors
+\item \code{trees}: # Trees
+\item \code{min_n}: Minimal Node Size
+}
+}
+}
+
 \author{
 Jack Davison
 }

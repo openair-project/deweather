@@ -4,11 +4,17 @@
 #' @export
 #' @author Jack Davison
 print.Deweather <- function(x, ...) {
+  scale_fun <- if (x$engine$method == "boost_tree") {
+    scales::label_percent()
+  } else {
+    scales::label_comma()
+  }
+
   labs <-
     get_dw_importance(x, aggregate_factors = TRUE, sort = TRUE) |>
     dplyr::arrange(dplyr::desc(.data$importance)) |>
     dplyr::mutate(
-      importance = paste0(round(.data$importance * 100, 1), "%"),
+      importance = scale_fun(.data$importance),
       lab = paste0(.data$var, " (", .data$importance, ")")
     ) |>
     dplyr::pull("lab")

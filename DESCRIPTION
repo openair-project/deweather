@@ -42,6 +42,7 @@ Suggests:
     bonsai,
     knitr,
     lightgbm,
+    ranger,
     rmarkdown,
     testthat (>= 3.0.0),
     xgboost

@@ -355,12 +355,15 @@ plot_dw_partial_1d <- function(
     }
 
     # add title
-    gain <- scales::label_percent(0.1)(importance$importance[
-      importance$var == var
-    ])
+    scale_fun <- if (dw$engine$method == "boost_tree") {
+      scales::label_percent(0.1)
+    } else {
+      \(x) paste("Perm. Imp:", scales::label_comma()(x))
+    }
+    gain <- scale_fun(importance$importance[importance$var == var])
     plot <- plot +
       ggplot2::labs(
-        title = paste0(var, " (", gain, ")")
+        title = openair::quickText(paste0(var, " (", gain, ")"))
       )
 
     return(plot)

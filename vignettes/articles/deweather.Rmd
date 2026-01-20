@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 
 Meteorology plays a central role in affecting the concentrations of pollutants in the atmosphere. When considering trends in air pollutants it can be very difficult to know whether a change in concentration is due to emissions or meteorology.
 
-The **deweather** package uses a powerful statistical technique based on *boosted regression trees* using a variety of packages using the `{tidymodels}` framework. This allows for a variety of engines to be employed, with the default being `{xgboost}`. Statistical models are developed to explain concentrations using meteorological and other variables. These models can be tested on randomly withheld data with the aim of developing the most appropriate model.
+By default, the **deweather** package uses a powerful statistical technique based on *boosted regression trees* using a variety of packages using the `{tidymodels}` framework. This allows for a variety of engines to be employed, with the default being `{xgboost}`. Statistical models are developed to explain concentrations using meteorological and other variables. These models can be tested on randomly withheld data with the aim of developing the most appropriate model.
 
 Much of **deweather** supports parallel processing with the `{mirai}` package, so along with loading the library we'll set some daemons as well as a seed.
 

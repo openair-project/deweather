@@ -4,7 +4,7 @@
 
 Version 1.0.0 of deweather is a complete re-write of the `deweather` package. This new version:
 
-- Uses the `tidymodels` framework, allowing for more flexibility in plotting engines. `deweather` 1.0.0 launches with both `xgboost` and `lightgbm` engines available.
+- Uses the `tidymodels` framework, allowing for more flexibility in model engines. `deweather` 1.0.0 launches with `xgboost`, `lightgbm` and `ranger` engines available.
 
 - Provides much more flexible partial dependency calculations, including grouped PDs.
 

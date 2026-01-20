@@ -15,6 +15,11 @@ plot_dw_importance <-
     check_deweather(dw)
     importance <-
       get_dw_importance(dw, aggregate_factors = aggregate_factors, sort = sort)
+    scale_fun <- if (dw$engine$method == "boost_tree") {
+      scales::label_percent()
+    } else {
+      scales::label_comma()
+    }
 
     ggplot2::ggplot(
       importance,
@@ -23,9 +28,8 @@ plot_dw_importance <-
       ggplot2::geom_col(fill = openair::openColours(cols, n = 1L)) +
       ggplot2::scale_x_continuous(
         expand = ggplot2::expansion(c(0, .1)),
-        labels = function(x) {
-          paste0(x * 100, "%")
-        }
+        breaks = scales::pretty_breaks(),
+        labels = scale_fun
       ) +
       ggplot2::scale_y_discrete(
         labels = \(x) sapply(x, openair::quickText)

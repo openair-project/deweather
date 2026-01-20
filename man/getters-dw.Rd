@@ -33,8 +33,8 @@ vector.}
 
 \item{aggregate_factors}{Defaults to \code{FALSE}. If \code{TRUE}, the importance of
 factor inputs (e.g., Weekday) will be summed into a single variable. This
-only applies to certain engines which report factor importance as
-disaggregate features.}
+only applies to certain engines (e.g., \code{"xgboost"}) which report factor
+importance as disaggregate features.}
 
 \item{sort}{If \code{TRUE}, the default, features will be sorted by their
 importance. If \code{FALSE}, they will be sorted alphabetically. In

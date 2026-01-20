@@ -16,7 +16,7 @@ build_dw_model(
   loss_reduction = 0,
   sample_size = 1L,
   stop_iter = 190L,
-  engine = c("xgboost", "lightgbm"),
+  engine = c("xgboost", "lightgbm", "ranger"),
   ...,
   .date = "date"
 )
@@ -35,35 +35,48 @@ columns will be coerced to factors. \code{"hour"}, \code{"weekday"}, \code{"tren
 \code{"yday"}, \code{"week"}, and \code{"month"} are special terms and will be passed to
 \code{\link[=append_dw_vars]{append_dw_vars()}} if not present in \code{names(data)}.}
 
-\item{tree_depth}{An integer for the maximum depth of the tree (i.e. number
-of splits) (specific engines only).}
+\item{tree_depth}{Tree Depth \verb{<xgboost|lightgbm>}
 
-\item{trees}{An integer for the number of trees contained in
-the ensemble.}
+An integer for the maximum depth of the tree (i.e., number of splits).}
 
-\item{learn_rate}{A number for the rate at which the boosting algorithm adapts
-from iteration-to-iteration (specific engines only). This is sometimes referred to
-as the shrinkage parameter.}
+\item{trees}{Number of Trees \verb{<xgboost|lightgbm|ranger>}
 
-\item{mtry}{A number for the number (or proportion) of predictors that will
-be randomly sampled at each split when creating the tree models
-(specific engines only).}
+An integer for the number of trees contained in the ensemble.}
 
-\item{min_n}{An integer for the minimum number of data points
-in a node that is required for the node to be split further.}
+\item{learn_rate}{Learning Rate \verb{<xgboost|lightgbm>}
 
-\item{loss_reduction}{A number for the reduction in the loss function required
-to split further (specific engines only).}
+A number for the rate at which the boosting algorithm adapts from
+iteration-to-iteration. This is sometimes referred to as the shrinkage
+parameter.}
 
-\item{sample_size}{A number for the number (or proportion) of data that is
-exposed to the fitting routine. For \code{xgboost}, the sampling is done at
-each iteration while \code{C5.0} samples once during training.}
+\item{mtry}{Number of Randomly Selected Predictors
+\verb{<xgboost|lightgbm|ranger>}
 
-\item{stop_iter}{The number of iterations without improvement before
-stopping (specific engines only).}
+A number for the number (or proportion) of predictors that will be randomly
+sampled at each split when creating the tree models.}
+
+\item{min_n}{Minimal Node Size \verb{<xgboost|lightgbm|ranger>}
+
+An integer for the minimum number of data points in a node that is required
+for the node to be split further.}
+
+\item{loss_reduction}{Minimum Loss Reduction \verb{<xgboost|lightgbm>}
+
+A number for the reduction in the loss function required to split further.}
+
+\item{sample_size}{Proportion Observations Sampled \verb{<xgboost>}
+
+A number for the number (or proportion) of data that is exposed to the
+fitting routine.}
+
+\item{stop_iter}{Number of Iterations Before Stopping \verb{<xgboost>}
+
+The number of iterations without improvement before stopping.}
 
 \item{engine}{A single character string specifying what computational engine
-to use for fitting.}
+to use for fitting. Can be \code{"xgboost"}, \code{"lightgbm"} (boosted trees) or
+\code{"ranger"} (random forest). See the documentation below for more
+information.}
 
 \item{...}{Not current used.}
 
@@ -76,8 +89,62 @@ variable.}
 a 'Deweather' object for further analysis
 }
 \description{
-This function builds a boosted decision tree machine learning model with
-useful methods for interrogating it in an air quality and meteorological
-context. Currently, only the \link[xgboost:xgboost]{xgboost} engine is
-supported.
+This function builds a 'deweathering' machine learning model with useful
+methods for interrogating it in an air quality and meteorological context. It
+uses any number of variables (most usefully meteorological variables like
+wind speed and wind direction and temporal variables defined in
+\code{\link[=append_dw_vars]{append_dw_vars()}}) to fit a model predicting a given \code{pollutant}. While
+these models are useful for 'removing' the effects of meteorology from an air
+quality time series (e.g., through \code{\link[=simulate_dw_met]{simulate_dw_met()}}), they are also useful
+for explanatory analysis (e.g., through \code{\link[=plot_dw_partial_1d]{plot_dw_partial_1d()}}).
 }
+\section{Modelling Approaches and Parameters}{
+
+\subsection{Types of Model}{
+
+There are two modelling approaches available to \code{\link[=build_dw_model]{build_dw_model()}}:
+\itemize{
+\item Boosted Trees (\code{xgboost}, \code{lightgbm})
+\item Random Forest (\code{ranger})
+}
+
+Each of these approaches take different parameters.
+}
+
+\subsection{Boosted Trees}{
+
+Two engines are available for boosted tree models:
+\itemize{
+\item \code{"xgboost"}
+\item \code{"lightgbm"}
+}
+
+The following parameters apply:
+\itemize{
+\item \code{tree_depth}: Tree Depth
+\item \code{trees}: # Trees
+\item \code{learn_rate}: Learning Rate
+\item \code{mtry}: # Randomly Selected Predictors
+\item \code{min_n}: Minimal Node Size
+\item \code{loss_reduction}: Minimum Loss Reduction
+\item \code{sample_size}: Proportion Observations Sampled (\code{xgboost} only)
+\item \code{stop_iter}: # Iterations Before Stopping (\code{xgboost} only)
+}
+}
+
+\subsection{Random Forest}{
+
+One engine is available for random forest models:
+\itemize{
+\item \code{"ranger"}
+}
+
+The following parameters apply:
+\itemize{
+\item \code{mtry}: # Randomly Selected Predictors
+\item \code{trees}: # Trees
+\item \code{min_n}: Minimal Node Size
+}
+}
+}
+
