@@ -23,7 +23,7 @@ Imports:
     cli,
     dials,
     dplyr,
-    ggplot2,
+    ggplot2 (>= 4.0.0),
     lubridate,
     mgcv,
     mirai,
