@@ -26,6 +26,7 @@ factor or character data type.}
 a \link[ggplot2:ggplot2-package]{ggplot2} figure
 }
 \description{
-Visualise the feature importance (\% Gain for boosted tree models) for each
-variable of a deweather model, with some customisation.
+Visualise the feature importance (\% Gain for boosted tree models, permutation
+importance for random forest models) for each variable of a deweather model
+as a bar chart, with some customisation.
 }

@@ -354,17 +354,21 @@ plot_dw_partial_1d <- function(
         )
     }
 
-    # add title
+    # add title - if boost tree, add importance gain %, else just variable name
     scale_fun <- if (dw$engine$method == "boost_tree") {
-      scales::label_percent(0.1)
+      gain <- scales::label_percent(0.1)(importance$importance[
+        importance$var == var
+      ])
+      plot <- plot +
+        ggplot2::labs(
+          title = openair::quickText(paste0(var, " (", gain, ")"))
+        )
     } else {
-      \(x) paste("Perm. Imp:", scales::label_comma()(x))
+      plot <- plot +
+        ggplot2::labs(
+          title = openair::quickText(var)
+        )
     }
-    gain <- scale_fun(importance$importance[importance$var == var])
-    plot <- plot +
-      ggplot2::labs(
-        title = openair::quickText(paste0(var, " (", gain, ")"))
-      )
 
     return(plot)
   }
@@ -372,10 +376,12 @@ plot_dw_partial_1d <- function(
   # ensure plot data is in order of variables
   pd_data <- pd_data[vars]
 
+  # if not plotting, just return list of data
   if (!plot) {
     return(pd_data)
   }
 
+  # create plots
   plots <-
     purrr::map(
       vars,
@@ -384,13 +390,16 @@ plot_dw_partial_1d <- function(
     ) |>
     stats::setNames(vars)
 
+  # if more than one plot, return a patchwork
   if (length(plots) > 1) {
+    # strip away most legends
     for (i in 1:length(plots)) {
       if (i != 1) {
         plots[[i]] <- plots[[i]] + ggplot2::theme(legend.position = "none")
       }
     }
 
+    # combine into patchwork
     plots <-
       patchwork::wrap_plots(plots) +
       patchwork::plot_layout(

@@ -16,7 +16,7 @@ tune_dw_model(
   loss_reduction = 0,
   sample_size = 1L,
   stop_iter = 190L,
-  engine = c("xgboost", "lightgbm"),
+  engine = c("xgboost", "lightgbm", "ranger"),
   split_prop = 3/4,
   grid_levels = 5,
   v_partitions = 10,

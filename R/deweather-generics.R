@@ -4,20 +4,21 @@
 #' @export
 #' @author Jack Davison
 print.Deweather <- function(x, ...) {
-  scale_fun <- if (x$engine$method == "boost_tree") {
-    scales::label_percent()
+  if (x$engine$method == "boost_tree") {
+    labs <-
+      get_dw_importance(x, aggregate_factors = TRUE, sort = TRUE) |>
+      dplyr::arrange(dplyr::desc(.data$importance)) |>
+      dplyr::mutate(
+        importance = scales::label_percent(0.1)(.data$importance),
+        lab = paste0(.data$var, " (", .data$importance, ")")
+      ) |>
+      dplyr::pull("lab")
   } else {
-    scales::label_comma()
+    labs <-
+      get_dw_importance(x, aggregate_factors = TRUE, sort = TRUE) |>
+      dplyr::arrange(dplyr::desc(.data$importance)) |>
+      dplyr::pull("var")
   }
-
-  labs <-
-    get_dw_importance(x, aggregate_factors = TRUE, sort = TRUE) |>
-    dplyr::arrange(dplyr::desc(.data$importance)) |>
-    dplyr::mutate(
-      importance = scale_fun(.data$importance),
-      lab = paste0(.data$var, " (", .data$importance, ")")
-    ) |>
-    dplyr::pull("lab")
 
   str <- c(
     "*" = "A model for predicting {.strong {get_dw_pollutant(x)}} using {.field {labs}}."

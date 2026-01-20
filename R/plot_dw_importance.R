@@ -1,7 +1,8 @@
 #' Visualise deweather model feature importance
 #'
-#' Visualise the feature importance (% Gain for boosted tree models) for each
-#' variable of a deweather model, with some customisation.
+#' Visualise the feature importance (% Gain for boosted tree models, permutation
+#' importance for random forest models) for each variable of a deweather model
+#' as a bar chart, with some customisation.
 #'
 #' @inheritParams get_dw_importance
 #'
@@ -15,6 +16,7 @@ plot_dw_importance <-
     check_deweather(dw)
     importance <-
       get_dw_importance(dw, aggregate_factors = aggregate_factors, sort = sort)
+
     scale_fun <- if (dw$engine$method == "boost_tree") {
       scales::label_percent()
     } else {

@@ -197,16 +197,26 @@ build_dw_model <- function(
         stop_iter = !!stop_iter
       )
 
+    # list parameters
     params <- list(
       tree_depth = tree_depth,
       trees = trees,
       learn_rate = learn_rate,
       mtry = mtry,
       min_n = min_n,
-      loss_reduction = loss_reduction,
-      sample_size = sample_size,
-      stop_iter = stop_iter
+      loss_reduction = loss_reduction
     )
+
+    # if xgboost, also include extra 2 params
+    if (engine == "xgboost") {
+      params <- append(
+        params,
+        list(
+          sample_size = sample_size,
+          stop_iter = stop_iter
+        )
+      )
+    }
   }
 
   if (engine_method == "rand_forest") {
@@ -219,6 +229,7 @@ build_dw_model <- function(
         min_n = !!min_n
       )
 
+    # need a second spec for importance calcs
     model_spec_importance <-
       parsnip::rand_forest(
         mode = "regression",
@@ -231,6 +242,7 @@ build_dw_model <- function(
         importance = "impurity_corrected"
       )
 
+    # list parameters - only three
     params <- list(
       trees = trees,
       mtry = mtry,
