@@ -51,7 +51,7 @@ dependence profile. If \code{NULL} (default), uses \code{prop} to determine the
 sample size.}
 
 \item{prop}{The proportion of input data to use for calculating the partial
-dependence profile, between 0 and 1. Default is \code{0.1} (10\% of data).
+dependence profile, between 0 and 1. Default is \code{0.01} (1\% of input data).
 Ignored if \code{n} is specified.}
 
 \item{cols}{Colours to use for plotting. See \code{\link[openair:openColours]{openair::openColours()}}.}

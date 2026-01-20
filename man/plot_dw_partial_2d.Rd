@@ -14,7 +14,7 @@ plot_dw_partial_2d(
   exclude_distance = 0.05,
   show_conf_int = FALSE,
   n = NULL,
-  prop = 0.05,
+  prop = 0.01,
   cols = "viridis",
   radial_wd = FALSE,
   plot = TRUE,
@@ -52,7 +52,7 @@ dependence profile. If \code{NULL} (default), uses \code{prop} to determine the
 sample size.}
 
 \item{prop}{The proportion of input data to use for calculating the partial
-dependence profile, between 0 and 1. Default is \code{0.1} (10\% of data).
+dependence profile, between 0 and 1. Default is \code{0.01} (1\% of input data).
 Ignored if \code{n} is specified.}
 
 \item{cols}{Colours to use for plotting. See \code{\link[openair:openColours]{openair::openColours()}}.}

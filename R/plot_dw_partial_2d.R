@@ -47,7 +47,7 @@ plot_dw_partial_2d <- function(
   exclude_distance = 0.05,
   show_conf_int = FALSE,
   n = NULL,
-  prop = 0.05,
+  prop = 0.01,
   cols = "viridis",
   radial_wd = FALSE,
   plot = TRUE,

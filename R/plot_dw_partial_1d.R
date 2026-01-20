@@ -32,7 +32,7 @@
 #'   sample size.
 #'
 #' @param prop The proportion of input data to use for calculating the partial
-#'   dependence profile, between 0 and 1. Default is `0.1` (10% of data).
+#'   dependence profile, between 0 and 1. Default is `0.01` (1% of input data).
 #'   Ignored if `n` is specified.
 #'
 #' @param ylim The limits of the y-axis. Passed to the `ylim` argument of
