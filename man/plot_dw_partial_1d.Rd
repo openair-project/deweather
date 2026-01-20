@@ -11,9 +11,11 @@ plot_dw_partial_1d(
   group = NULL,
   group_intervals = 3L,
   show_conf_int = TRUE,
+  show_rug = TRUE,
   n = NULL,
   prop = 0.01,
   cols = "Set1",
+  ylim = NULL,
   radial_wd = TRUE,
   ncol = NULL,
   nrow = NULL,
@@ -41,6 +43,9 @@ numeric.}
 shown? In \code{\link[=plot_dw_partial_1d]{plot_dw_partial_1d()}} these are shown using transparent ribbons
 (for numeric variables) and rectangles (for categorical variables).}
 
+\item{show_rug}{Should a 'rug' (ticks along the x-axis) be shown which
+identifies the exact intervals for each parameter?}
+
 \item{n}{The number of observations to use for calculating the partial
 dependence profile. If \code{NULL} (default), uses \code{prop} to determine the
 sample size.}
@@ -50,6 +55,11 @@ dependence profile, between 0 and 1. Default is \code{0.1} (10\% of data).
 Ignored if \code{n} is specified.}
 
 \item{cols}{Colours to use for plotting. See \code{\link[openair:openColours]{openair::openColours()}}.}
+
+\item{ylim}{The limits of the y-axis. Passed to the \code{ylim} argument of
+\code{\link[ggplot2:coord_cartesian]{ggplot2::coord_cartesian()}} (or \code{rlim} of \code{\link[ggplot2:coord_radial]{ggplot2::coord_radial()}} if
+\code{radial_wd} is \code{TRUE}). The default, \code{NULL}, allows each partial dependence
+panel to have its own y-axis scale.}
 
 \item{radial_wd}{Should the \code{"wd"} (wind direction) variable be plotted on a
 radial axis? This can enhance interpretability, but makes it inconsistent

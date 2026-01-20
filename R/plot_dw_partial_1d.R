@@ -24,6 +24,9 @@
 #'   shown? In [plot_dw_partial_1d()] these are shown using transparent ribbons
 #'   (for numeric variables) and rectangles (for categorical variables).
 #'
+#' @param show_rug Should a 'rug' (ticks along the x-axis) be shown which
+#'   identifies the exact intervals for each parameter?
+#'
 #' @param n The number of observations to use for calculating the partial
 #'   dependence profile. If `NULL` (default), uses `prop` to determine the
 #'   sample size.
@@ -31,6 +34,11 @@
 #' @param prop The proportion of input data to use for calculating the partial
 #'   dependence profile, between 0 and 1. Default is `0.1` (10% of data).
 #'   Ignored if `n` is specified.
+#'
+#' @param ylim The limits of the y-axis. Passed to the `ylim` argument of
+#'   [ggplot2::coord_cartesian()] (or `rlim` of [ggplot2::coord_radial()] if
+#'   `radial_wd` is `TRUE`). The default, `NULL`, allows each partial dependence
+#'   panel to have its own y-axis scale.
 #'
 #' @param cols Colours to use for plotting. See [openair::openColours()].
 #'
@@ -60,9 +68,11 @@ plot_dw_partial_1d <- function(
   group = NULL,
   group_intervals = 3L,
   show_conf_int = TRUE,
+  show_rug = TRUE,
   n = NULL,
   prop = 0.01,
   cols = "Set1",
+  ylim = NULL,
   radial_wd = TRUE,
   ncol = NULL,
   nrow = NULL,
@@ -251,8 +261,9 @@ plot_dw_partial_1d <- function(
         x = openair::quickText(var)
       )
 
-    # make wind direction radial
+    # wind direction needs special handling
     if (var == "wd") {
+      # if radial, needs its own scale and coord
       if (radial_wd) {
         plot <-
           plot +
@@ -267,14 +278,16 @@ plot_dw_partial_1d <- function(
             limits = c(0, 360),
             expand = ggplot2::expansion()
           ) +
-          ggplot2::coord_radial(r.axis.inside = 315) +
+          ggplot2::coord_radial(r.axis.inside = 315, rlim = ylim) +
           ggplot2::theme(
             panel.border = ggplot2::element_blank(),
             axis.line.theta = ggplot2::element_line(linewidth = 0.25)
           )
 
+        # set to 'free' else other panels will be forced to square
         plot <- patchwork::free(plot)
       } else {
+        # treat as cartesian
         plot <-
           plot +
           ggplot2::scale_x_continuous(
@@ -287,6 +300,39 @@ plot_dw_partial_1d <- function(
               "360\n(N)"
             ),
             limits = c(0, 360)
+          ) +
+          ggplot2::coord_cartesian(
+            ylim = ylim
+          )
+
+        if (show_rug) {
+          plot <-
+            plot +
+            ggplot2::geom_rug(
+              data = dplyr::distinct(df, .data[[var]]),
+              mapping = ggplot2::aes(y = NULL, x = .data[[var]]),
+              color = "black",
+              inherit.aes = FALSE
+            )
+        }
+      }
+    } else {
+      # default cartesian handling
+      plot <-
+        plot +
+        ggplot2::coord_cartesian(
+          ylim = ylim
+        )
+
+      if (
+        show_rug && (is.numeric(df[[var]]) || lubridate::is.POSIXct(df[[var]]))
+      ) {
+        plot <- plot +
+          ggplot2::geom_rug(
+            data = dplyr::distinct(df, .data[[var]]),
+            mapping = ggplot2::aes(y = NULL, x = .data[[var]]),
+            color = "black",
+            inherit.aes = FALSE
           )
       }
     }
