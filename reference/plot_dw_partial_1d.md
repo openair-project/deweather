@@ -75,8 +75,8 @@ plot_dw_partial_1d(
 - prop:
 
   The proportion of input data to use for calculating the partial
-  dependence profile, between 0 and 1. Default is `0.1` (10% of data).
-  Ignored if `n` is specified.
+  dependence profile, between 0 and 1. Default is `0.01` (1% of input
+  data). Ignored if `n` is specified.
 
 - cols:
 

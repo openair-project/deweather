@@ -18,7 +18,7 @@ plot_dw_partial_2d(
   exclude_distance = 0.05,
   show_conf_int = FALSE,
   n = NULL,
-  prop = 0.05,
+  prop = 0.01,
   cols = "viridis",
   radial_wd = FALSE,
   plot = TRUE,
@@ -78,8 +78,8 @@ plot_dw_partial_2d(
 - prop:
 
   The proportion of input data to use for calculating the partial
-  dependence profile, between 0 and 1. Default is `0.1` (10% of data).
-  Ignored if `n` is specified.
+  dependence profile, between 0 and 1. Default is `0.01` (1% of input
+  data). Ignored if `n` is specified.
 
 - cols:
 
