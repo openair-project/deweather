@@ -15,9 +15,11 @@ plot_dw_partial_1d(
   group = NULL,
   group_intervals = 3L,
   show_conf_int = TRUE,
+  show_rug = TRUE,
   n = NULL,
   prop = 0.01,
   cols = "Set1",
+  ylim = NULL,
   radial_wd = TRUE,
   ncol = NULL,
   nrow = NULL,
@@ -59,6 +61,11 @@ plot_dw_partial_1d(
   `plot_dw_partial_1d()` these are shown using transparent ribbons (for
   numeric variables) and rectangles (for categorical variables).
 
+- show_rug:
+
+  Should a 'rug' (ticks along the x-axis) be shown which identifies the
+  exact intervals for each parameter?
+
 - n:
 
   The number of observations to use for calculating the partial
@@ -75,6 +82,15 @@ plot_dw_partial_1d(
 
   Colours to use for plotting. See
   [`openair::openColours()`](https://openair-project.github.io/openair/reference/openColours.html).
+
+- ylim:
+
+  The limits of the y-axis. Passed to the `ylim` argument of
+  [`ggplot2::coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html)
+  (or `rlim` of
+  [`ggplot2::coord_radial()`](https://ggplot2.tidyverse.org/reference/coord_radial.html)
+  if `radial_wd` is `TRUE`). The default, `NULL`, allows each partial
+  dependence panel to have its own y-axis scale.
 
 - radial_wd:
 
