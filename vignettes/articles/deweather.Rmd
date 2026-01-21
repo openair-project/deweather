@@ -74,7 +74,7 @@ tuned_results <-
   tune_dw_model(
     pollutant = "no2",
     tree_depth = c(1, 5),
-    trees = c(150, 250),
+    min_n = c(5, 10),
     grid_levels = 3L
   )
 ```
@@ -84,6 +84,13 @@ This output has a few useful features. First, we're informed that the best value
 ```{r}
 #| label: bestParams
 tuned_results$best_params
+```
+
+If we want to interrogate this more, the `metrics` object shows a summary for all of the different hyperparameters that have been tuned. Examining the full set of metrics, rather than only the single best configuration, allows you to assess whether the marginal performance gain of the "best" model justifies its additional computational cost, complexity, or instability.
+
+```{r}
+#| label: allMetrics
+tuned_results$metrics
 ```
 
 We can also see how the tuned model behaved on some reserved testing data. A table of predictions is returned, as well as a table of statistics and a scatter plot of modelled vs measured values.

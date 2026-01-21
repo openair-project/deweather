@@ -15,7 +15,6 @@ tune_dw_model(
   min_n = 10L,
   loss_reduction = 0,
   sample_size = 1L,
-  stop_iter = 190L,
   engine = c("xgboost", "lightgbm", "ranger"),
   split_prop = 3/4,
   grid_levels = 5,
@@ -38,8 +37,9 @@ columns will be coerced to factors. \code{"hour"}, \code{"weekday"}, \code{"tren
 \code{"yday"}, \code{"week"}, and \code{"month"} are special terms and will be passed to
 \code{\link[=append_dw_vars]{append_dw_vars()}} if not present in \code{names(data)}.}
 
-\item{tree_depth, trees, learn_rate, mtry, min_n, loss_reduction, sample_size, stop_iter}{If length 1, these parameters will be fixed. If length \code{2}, the parameter
-will be tuned within the range defined between the first and last value. For
+\item{tree_depth, trees, learn_rate, mtry, min_n, loss_reduction, sample_size}{If
+length 1, these parameters will be fixed. If length \code{2}, the parameter will
+be tuned within the range defined between the first and last value. For
 example, if \code{tree_depth = c(1, 5)} and \code{grid_levels = 3}, tree depths of \code{1},
 \code{3}, and \code{5} will be tested. See \code{\link[=build_dw_model]{build_dw_model()}} for specific parameter
 definitions.}

@@ -9,10 +9,9 @@
 #'
 #' @inheritParams build_dw_model
 #'
-#' @param
-#' tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size,stop_iter
-#' If length 1, these parameters will be fixed. If length `2`, the parameter
-#' will be tuned within the range defined between the first and last value. For
+#' @param tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size If
+#' length 1, these parameters will be fixed. If length `2`, the parameter will
+#' be tuned within the range defined between the first and last value. For
 #' example, if `tree_depth = c(1, 5)` and `grid_levels = 3`, tree depths of `1`,
 #' `3`, and `5` will be tested. See [build_dw_model()] for specific parameter
 #' definitions.
@@ -61,7 +60,6 @@ tune_dw_model <- function(
   min_n = 10L,
   loss_reduction = 0,
   sample_size = 1L,
-  stop_iter = 190L,
   engine = c("xgboost", "lightgbm", "ranger"),
   split_prop = 3 / 4,
   grid_levels = 5,
@@ -118,7 +116,6 @@ tune_dw_model <- function(
   min_n_spec <- min_n
   loss_reduction_spec <- loss_reduction
   sample_size_spec <- sample_size
-  stop_iter_spec <- stop_iter
 
   if (length(tree_depth) > 1 && engine_method == "boost_tree") {
     grid <- append(grid, list(dials::tree_depth(range = tree_depth)))
@@ -126,8 +123,14 @@ tune_dw_model <- function(
   }
 
   if (length(trees) > 1) {
-    grid <- append(grid, list(dials::trees(range = trees)))
-    trees_spec <- parsnip::tune()
+    if (engine == "xgboost") {
+      cli::cli_inform(c(
+        "i" = "Tuning {.arg trees} is not supported for the {.pkg xgboost} engine."
+      ))
+    } else {
+      grid <- append(grid, list(dials::trees(range = trees)))
+      trees_spec <- parsnip::tune()
+    }
   }
 
   if (length(learn_rate) > 1 && engine_method == "boost_tree") {
@@ -159,15 +162,6 @@ tune_dw_model <- function(
     sample_size_spec <- parsnip::tune()
   }
 
-  if (
-    length(stop_iter) > 1 &&
-      engine_method == "boost_tree" &&
-      engine != "lightgbm"
-  ) {
-    grid <- append(grid, list(dials::stop_iter(range = stop_iter)))
-    stop_iter_spec <- parsnip::tune()
-  }
-
   if (length(grid) == 0) {
     cli::cli_abort(
       "At least one parameter (e.g., {.arg trees}) must be given as a range of two values. Note that not all engines use all parameters."
@@ -188,8 +182,7 @@ tune_dw_model <- function(
         mtry = !!mtry_spec,
         min_n = !!min_n_spec,
         loss_reduction = !!loss_reduction_spec,
-        sample_size = !!sample_size_spec,
-        stop_iter = !!stop_iter_spec
+        sample_size = !!sample_size_spec
       )
   }
 
@@ -228,8 +221,9 @@ tune_dw_model <- function(
     )
   )
 
-  # get best models
-  five_best_models <- tune::show_best(results, metric = "rmse")
+  # get metrics
+  metrics <- tune::collect_metrics(results) |>
+    dplyr::select(-".config", -".estimator")
 
   # get the best overall model
   best_params <- tune::select_best(results, metric = "rmse") |>
@@ -298,13 +292,23 @@ tune_dw_model <- function(
       y = openair::quickText(paste("Modelled", pollutant))
     )
 
-  # return params
+  # return output
   list(
+    pollutant = pollutant,
+    vars = list(
+      names = vars,
+      types = as.character(purrr::map(data, class)[vars])
+    ),
     best_params = as.list(best_params),
+    metrics = metrics,
     final_fit = list(
       predictions = final_predictions,
       metrics = final_metrics,
       plot = plot
+    ),
+    engine = list(
+      engine = engine,
+      method = define_engine_method(engine)
     )
   )
 }
