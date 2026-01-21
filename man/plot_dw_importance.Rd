@@ -11,8 +11,8 @@ plot_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE, cols = "tol")
 
 \item{aggregate_factors}{Defaults to \code{FALSE}. If \code{TRUE}, the importance of
 factor inputs (e.g., Weekday) will be summed into a single variable. This
-only applies to certain engines which report factor importance as
-disaggregate features.}
+only applies to certain engines (e.g., \code{"xgboost"}) which report factor
+importance as disaggregate features.}
 
 \item{sort}{If \code{TRUE}, the default, features will be sorted by their
 importance. If \code{FALSE}, they will be sorted alphabetically. In
@@ -26,6 +26,7 @@ factor or character data type.}
 a \link[ggplot2:ggplot2-package]{ggplot2} figure
 }
 \description{
-Visualise the feature importance (\% Gain for boosted tree models) for each
-variable of a deweather model, with some customisation.
+Visualise the feature importance (\% Gain for boosted tree models, permutation
+importance for random forest models) for each variable of a deweather model
+as a bar chart, with some customisation.
 }

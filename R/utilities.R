@@ -105,4 +105,26 @@ check_engine_installed <- function(engine) {
   if (engine == "lightgbm") {
     rlang::check_installed(c("lightgbm", "bonsai"))
   }
+  if (engine == "ranger") {
+    rlang::check_installed(c("ranger"))
+  }
+}
+
+
+#' Get the engine method
+#' @noRd
+define_engine_method <- function(engine) {
+  x <- dplyr::case_match(
+    engine,
+    c("xgboost", "lightgbm") ~ "boost_tree",
+    c("ranger") ~ "rand_forest",
+    .default = "unknown"
+  )
+  if (x == "unknown") {
+    cli::cli_abort(
+      "No engine method has been defined for the '{engine}' engine.",
+      .internal = TRUE
+    )
+  }
+  return(x)
 }

@@ -10,11 +10,12 @@
 #' @inheritParams build_dw_model
 #'
 #' @param
-#' tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size,stop_iter
-#' If length 1, these parameters will be fixed. If length `2`, the parameter
-#' will be tuned within the range defined between the first and last value. For
-#' example, if `tree_depth = c(1, 5)` and `grid_levels = 3`, tree depths of `1`,
-#' `3`, and `5` will be tested.
+#'   tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size,stop_iter
+#'   If length 1, these parameters will be fixed. If length `2`, the parameter
+#'   will be tuned within the range defined between the first and last value.
+#'   For example, if `tree_depth = c(1, 5)` and `grid_levels = 3`, tree depths
+#'   of `1`, `3`, and `5` will be tested. See [build_dw_model()] for specific
+#'   parameter definitions.
 #'
 #' @param split_prop The proportion of data to be retained for
 #'   modeling/analysis. Passed to the `prop` argument of
@@ -30,20 +31,22 @@
 #'
 #' @details The function performs the following steps:
 #'
-#' - Removes rows with missing values in the pollutant or predictor variables
+#'   - Removes rows with missing values in the pollutant or predictor variables
 #'
-#' - Splits data into training and testing sets
+#'   - Splits data into training and testing sets
 #'
-#' - Creates a tuning grid for any parameters specified as ranges
+#'   - Creates a tuning grid for any parameters specified as ranges
 #'
-#' - Performs grid search with cross-validation to find optimal hyperparameters
+#'   - Performs grid search with cross-validation to find optimal hyperparameters
 #'
-#' - Fits a final model using the best hyperparameters
+#'   - Fits a final model using the best hyperparameters
 #'
-#' - Generates predictions and performance metrics
+#'   - Generates predictions and performance metrics
 #'
 #'   At least one hyperparameter must be specified as a range (vector of length
 #'   2) for tuning to occur. Single values are treated as fixed parameters.
+#'
+#' @inheritSection build_dw_model Modelling Approaches and Parameters
 #'
 #' @author Jack Davison
 #' @export
@@ -52,20 +55,24 @@ tune_dw_model <- function(
   pollutant,
   vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp"),
   tree_depth = 5,
-  trees = 200L,
+  trees = 50L,
   learn_rate = 0.1,
   mtry = NULL,
   min_n = 10L,
   loss_reduction = 0,
   sample_size = 1L,
-  stop_iter = 190L,
-  engine = c("xgboost", "lightgbm"),
+  stop_iter = 45L,
+  engine = c("xgboost", "lightgbm", "ranger"),
   split_prop = 3 / 4,
   grid_levels = 5,
-  v_partitions = 10
+  v_partitions = 10,
+  ...,
+  .date = "date"
 ) {
   # check inputs
+  rlang::check_dots_empty()
   engine <- rlang::arg_match(engine, multiple = FALSE)
+  engine_method <- define_engine_method(engine)
   vars <- rlang::arg_match(
     vars,
     unique(c(dwVars, names(data))),
@@ -76,7 +83,7 @@ tune_dw_model <- function(
   # append_dw_vars function
   if (any(!vars %in% names(data))) {
     vars_to_add <- vars[!vars %in% names(data)]
-    data <- append_dw_vars(data, vars = vars_to_add, abbr = TRUE)
+    data <- append_dw_vars(data, vars = vars_to_add, abbr = TRUE, .date = .date)
   }
 
   # check engine packages
@@ -113,7 +120,7 @@ tune_dw_model <- function(
   sample_size_spec <- sample_size
   stop_iter_spec <- stop_iter
 
-  if (length(tree_depth) > 1) {
+  if (length(tree_depth) > 1 && engine_method == "boost_tree") {
     grid <- append(grid, list(dials::tree_depth(range = tree_depth)))
     tree_depth_spec <- parsnip::tune()
   }
@@ -123,7 +130,7 @@ tune_dw_model <- function(
     trees_spec <- parsnip::tune()
   }
 
-  if (length(learn_rate) > 1) {
+  if (length(learn_rate) > 1 && engine_method == "boost_tree") {
     grid <- append(grid, list(dials::learn_rate(range = learn_rate)))
     learn_rate_spec <- parsnip::tune()
   }
@@ -138,43 +145,64 @@ tune_dw_model <- function(
     min_n_spec <- parsnip::tune()
   }
 
-  if (length(loss_reduction) > 1) {
+  if (length(loss_reduction) > 1 && engine_method == "boost_tree") {
     grid <- append(grid, list(dials::loss_reduction(range = loss_reduction)))
     loss_reduction_spec <- parsnip::tune()
   }
 
-  if (length(sample_size) > 1) {
+  if (
+    length(sample_size) > 1 &&
+      engine_method == "boost_tree" &&
+      engine != "lightgbm"
+  ) {
     grid <- append(grid, list(dials::sample_size(range = sample_size)))
     sample_size_spec <- parsnip::tune()
   }
 
-  if (length(stop_iter) > 1) {
+  if (
+    length(stop_iter) > 1 &&
+      engine_method == "boost_tree" &&
+      engine != "lightgbm"
+  ) {
     grid <- append(grid, list(dials::stop_iter(range = stop_iter)))
     stop_iter_spec <- parsnip::tune()
   }
 
   if (length(grid) == 0) {
     cli::cli_abort(
-      "At least one parameter (e.g., {.arg tree_depth}) must be given as a range of two values."
+      "At least one parameter (e.g., {.arg trees}) must be given as a range of two values. Note that not all engines use all parameters."
     )
   }
 
   grid <- dials::grid_regular(x = grid, levels = grid_levels)
 
   # get tuning spec
-  tune_spec <-
-    parsnip::boost_tree(
-      mode = "regression",
-      engine = engine,
-      tree_depth = !!tree_depth_spec,
-      trees = !!trees_spec,
-      learn_rate = !!learn_rate_spec,
-      mtry = !!mtry_spec,
-      min_n = !!min_n_spec,
-      loss_reduction = !!loss_reduction_spec,
-      sample_size = !!sample_size_spec,
-      stop_iter = !!stop_iter_spec
-    )
+  if (engine_method == "boost_tree") {
+    tune_spec <-
+      parsnip::boost_tree(
+        mode = "regression",
+        engine = engine,
+        tree_depth = !!tree_depth_spec,
+        trees = !!trees_spec,
+        learn_rate = !!learn_rate_spec,
+        mtry = !!mtry_spec,
+        min_n = !!min_n_spec,
+        loss_reduction = !!loss_reduction_spec,
+        sample_size = !!sample_size_spec,
+        stop_iter = !!stop_iter_spec
+      )
+  }
+
+  if (engine_method == "rand_forest") {
+    tune_spec <-
+      parsnip::rand_forest(
+        mode = "regression",
+        engine = engine,
+        trees = !!trees_spec,
+        mtry = !!mtry_spec,
+        min_n = !!min_n_spec
+      )
+  }
 
   # get training folds
   folds <- rsample::vfold_cv(data_train, v = v_partitions)
@@ -200,8 +228,9 @@ tune_dw_model <- function(
     )
   )
 
-  # get best models
-  five_best_models <- tune::show_best(results, metric = "rmse")
+  # get metrics
+  metrics <- tune::collect_metrics(results) |>
+    dplyr::select(-".config", -".estimator")
 
   # get the best overall model
   best_params <- tune::select_best(results, metric = "rmse") |>
@@ -270,13 +299,23 @@ tune_dw_model <- function(
       y = openair::quickText(paste("Modelled", pollutant))
     )
 
-  # return params
+  # return output
   list(
+    pollutant = pollutant,
+    vars = list(
+      names = vars,
+      types = as.character(purrr::map(data, class)[vars])
+    ),
     best_params = as.list(best_params),
+    metrics = metrics,
     final_fit = list(
       predictions = final_predictions,
       metrics = final_metrics,
       plot = plot
+    ),
+    engine = list(
+      engine = engine,
+      method = define_engine_method(engine)
     )
   )
 }

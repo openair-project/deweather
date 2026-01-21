@@ -16,7 +16,7 @@ URL: https://openair-project.github.io/deweather/,
     https://github.com/openair-project/deweather
 BugReports: https://github.com/openair-project/deweather/issues
 Depends: 
-    parsnip,
+    parsnip (>= 1.4.1),
     R (>= 4.1.0)
 Imports: 
     carrier,
@@ -42,6 +42,7 @@ Suggests:
     bonsai,
     knitr,
     lightgbm,
+    ranger,
     rmarkdown,
     testthat (>= 3.0.0),
     xgboost

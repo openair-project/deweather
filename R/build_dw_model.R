@@ -1,9 +1,13 @@
 #' Build a Deweather Model
 #'
-#' This function builds a boosted decision tree machine learning model with
-#' useful methods for interrogating it in an air quality and meteorological
-#' context. Currently, only the [xgboost][xgboost::xgboost()] engine is
-#' supported.
+#' This function builds a 'deweathering' machine learning model with useful
+#' methods for interrogating it in an air quality and meteorological context. It
+#' uses any number of variables (most usefully meteorological variables like
+#' wind speed and wind direction and temporal variables defined in
+#' [append_dw_vars()]) to fit a model predicting a given `pollutant`. While
+#' these models are useful for 'removing' the effects of meteorology from an air
+#' quality time series (e.g., through [simulate_dw_met()]), they are also useful
+#' for explanatory analysis (e.g., through [plot_dw_partial_1d()]).
 #'
 #' @param data An input `data.frame` containing one pollutant column (defined
 #'   using `pollutant`) and a collection of feature columns (defined using
@@ -18,6 +22,49 @@
 #'   `"yday"`, `"week"`, and `"month"` are special terms and will be passed to
 #'   [append_dw_vars()] if not present in `names(data)`.
 #'
+#' @param mtry Number of Randomly Selected Predictors
+#'   `<xgboost|lightgbm|ranger>`
+#'
+#'   A number for the number (or proportion) of predictors that will be randomly
+#'   sampled at each split when creating the tree models.
+#'
+#' @param trees Number of Trees `<xgboost|lightgbm|ranger>`
+#'
+#'   An integer for the number of trees contained in the ensemble.
+#'
+#' @param min_n Minimal Node Size `<xgboost|lightgbm|ranger>`
+#'
+#'   An integer for the minimum number of data points in a node that is required
+#'   for the node to be split further.
+#'
+#' @param tree_depth Tree Depth `<xgboost|lightgbm>`
+#'
+#'   An integer for the maximum depth of the tree (i.e., number of splits).
+#'
+#' @param learn_rate Learning Rate `<xgboost|lightgbm>`
+#'
+#'   A number for the rate at which the boosting algorithm adapts from
+#'   iteration-to-iteration. This is sometimes referred to as the shrinkage
+#'   parameter.
+#'
+#' @param loss_reduction Minimum Loss Reduction `<xgboost|lightgbm>`
+#'
+#'   A number for the reduction in the loss function required to split further.
+#'
+#' @param sample_size Proportion Observations Sampled `<xgboost>`
+#'
+#'   A number for the number (or proportion) of data that is exposed to the
+#'   fitting routine.
+#'
+#' @param stop_iter Number of Iterations Before Stopping `<xgboost>`
+#'
+#'   The number of iterations without improvement before stopping.
+#'
+#' @param engine A single character string specifying what computational engine
+#'   to use for fitting. Can be `"xgboost"`, `"lightgbm"` (boosted trees) or
+#'   `"ranger"` (random forest). See the documentation below for more
+#'   information.
+#'
 #' @param ... Not current used.
 #'
 #' @param .date The name of the 'date' column which defines the air quality
@@ -25,7 +72,57 @@
 #'   the time zone of the data for later restoration if `trend` is used as a
 #'   variable.
 #'
-#' @inheritParams parsnip::boost_tree
+#' @section Modelling Approaches and Parameters:
+#'
+#'   ## Types of Model
+#'
+#'   There are two modelling approaches available to [build_dw_model()]:
+#'
+#'   - Boosted Trees (`xgboost`, `lightgbm`)
+#'
+#'   - Random Forest (`ranger`)
+#'
+#'   Each of these approaches take different parameters.
+#'
+#'   ## Boosted Trees
+#'
+#'   Two engines are available for boosted tree models:
+#'
+#'   - `"xgboost"`
+#'
+#'   - `"lightgbm"`
+#'
+#'   The following parameters apply:
+#'
+#'   - `tree_depth`: Tree Depth
+#'
+#'   - `trees`: # Trees
+#'
+#'   - `learn_rate`: Learning Rate
+#'
+#'   - `mtry`: # Randomly Selected Predictors
+#'
+#'   - `min_n`: Minimal Node Size
+#'
+#'   - `loss_reduction`: Minimum Loss Reduction
+#'
+#'   - `sample_size`: Proportion Observations Sampled (`xgboost` only)
+#'
+#'   - `stop_iter`: # Iterations Before Stopping (`xgboost` only)
+#'
+#'   ## Random Forest
+#'
+#'   One engine is available for random forest models:
+#'
+#'   - `"ranger"`
+#'
+#'   The following parameters apply:
+#'
+#'   - `mtry`: # Randomly Selected Predictors
+#'
+#'   - `trees`: # Trees
+#'
+#'   - `min_n`: Minimal Node Size
 #'
 #' @return a 'Deweather' object for further analysis
 #'
@@ -35,20 +132,21 @@ build_dw_model <- function(
   pollutant,
   vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp"),
   tree_depth = 5,
-  trees = 200L,
+  trees = 50L,
   learn_rate = 0.1,
   mtry = NULL,
   min_n = 10L,
   loss_reduction = 0,
   sample_size = 1L,
-  stop_iter = 190L,
-  engine = c("xgboost", "lightgbm"),
+  stop_iter = 45L,
+  engine = c("xgboost", "lightgbm", "ranger"),
   ...,
   .date = "date"
 ) {
   # check inputs
   rlang::check_dots_empty()
   engine <- rlang::arg_match(engine, multiple = FALSE)
+  engine_method <- define_engine_method(engine)
   vars <- rlang::arg_match(
     vars,
     unique(c(dwVars, names(data))),
@@ -84,19 +182,73 @@ build_dw_model <- function(
   )
 
   # define model spec
-  model_spec <-
-    parsnip::boost_tree(
-      mode = "regression",
-      engine = engine,
-      tree_depth = !!tree_depth,
-      trees = !!trees,
-      learn_rate = !!learn_rate,
-      mtry = !!mtry,
-      min_n = !!min_n,
-      loss_reduction = !!loss_reduction,
-      sample_size = !!sample_size,
-      stop_iter = !!stop_iter
+  if (engine_method == "boost_tree") {
+    model_spec <-
+      parsnip::boost_tree(
+        mode = "regression",
+        engine = engine,
+        tree_depth = !!tree_depth,
+        trees = !!trees,
+        learn_rate = !!learn_rate,
+        mtry = !!mtry,
+        min_n = !!min_n,
+        loss_reduction = !!loss_reduction,
+        sample_size = !!sample_size,
+        stop_iter = !!stop_iter
+      )
+
+    # list parameters
+    params <- list(
+      tree_depth = tree_depth,
+      trees = trees,
+      learn_rate = learn_rate,
+      mtry = mtry,
+      min_n = min_n,
+      loss_reduction = loss_reduction
     )
+
+    # if xgboost, also include extra 2 params
+    if (engine == "xgboost") {
+      params <- append(
+        params,
+        list(
+          sample_size = sample_size,
+          stop_iter = stop_iter
+        )
+      )
+    }
+  }
+
+  if (engine_method == "rand_forest") {
+    model_spec <-
+      parsnip::rand_forest(
+        mode = "regression",
+        engine = engine,
+        trees = !!trees,
+        mtry = !!mtry,
+        min_n = !!min_n
+      )
+
+    # need a second spec for importance calcs
+    model_spec_importance <-
+      parsnip::rand_forest(
+        mode = "regression",
+        trees = !!trees,
+        mtry = !!mtry,
+        min_n = !!min_n
+      ) |>
+      parsnip::set_engine(
+        engine = engine,
+        importance = "impurity_corrected"
+      )
+
+    # list parameters - only three
+    params <- list(
+      trees = trees,
+      mtry = mtry,
+      min_n = min_n
+    )
+  }
 
   # build a formula object from poll & vars
   formula <- stats::reformulate(vars, pollutant)
@@ -104,9 +256,17 @@ build_dw_model <- function(
   # fit the model
   model <- parsnip::fit(model_spec, formula, data = data)
 
-  # get importance
-  importance <- vip::vi(model$fit) |>
-    stats::setNames(c("var", "importance"))
+  if (engine_method == "boost_tree") {
+    # get importance
+    importance <- vip::vi(model$fit) |>
+      stats::setNames(c("var", "importance"))
+  } else {
+    # get importance
+    importance <- parsnip::fit(model_spec_importance, formula, data = data) |>
+      purrr::pluck("fit") |>
+      vip::vi() |>
+      stats::setNames(c("var", "importance"))
+  }
 
   # reverse the factor levels (for plotting mainly)
   importance$var <- factor(importance$var, rev(importance$var))
@@ -118,22 +278,16 @@ build_dw_model <- function(
       names = vars,
       types = as.character(purrr::map(data, class)[vars])
     ),
-    params = list(
-      tree_depth = tree_depth,
-      trees = trees,
-      learn_rate = learn_rate,
-      mtry = mtry,
-      min_n = min_n,
-      loss_reduction = loss_reduction,
-      sample_size = sample_size,
-      stop_iter = stop_iter
-    ),
+    params = params,
     data = list(
       input = data,
       importance = dplyr::tibble(importance)
     ),
     model = model,
-    engine = "xgboost",
+    engine = list(
+      engine = engine,
+      method = engine_method
+    ),
     tz = tz
   )
 

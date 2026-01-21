@@ -14,8 +14,8 @@
 #'
 #' @param aggregate_factors Defaults to `FALSE`. If `TRUE`, the importance of
 #'   factor inputs (e.g., Weekday) will be summed into a single variable. This
-#'   only applies to certain engines which report factor importance as
-#'   disaggregate features.
+#'   only applies to certain engines (e.g., `"xgboost"`) which report factor
+#'   importance as disaggregate features.
 #'
 #' @param sort If `TRUE`, the default, features will be sorted by their
 #'   importance. If `FALSE`, they will be sorted alphabetically. In
@@ -81,7 +81,7 @@ get_dw_model <- function(dw) {
 #' @export
 get_dw_engine <- function(dw) {
   check_deweather(dw)
-  dw$engine
+  dw$engine$engine
 }
 
 
