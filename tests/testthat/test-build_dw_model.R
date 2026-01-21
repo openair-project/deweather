@@ -32,13 +32,13 @@ for (engine in c("xgboost", "ranger")) {
         get_dw_params(dw_model),
         list(
           tree_depth = 5,
-          trees = 200L,
+          trees = 50L,
           learn_rate = 0.1,
           mtry = NULL,
           min_n = 10L,
           loss_reduction = 0,
           sample_size = 1L,
-          stop_iter = 190L
+          stop_iter = 45L
         )
       )
     }
@@ -47,14 +47,14 @@ for (engine in c("xgboost", "ranger")) {
       expect_equal(
         get_dw_params(dw_model),
         list(
-          trees = 200L,
+          trees = 50L,
           mtry = NULL,
           min_n = 10L
         )
       )
     }
 
-    expect_equal(get_dw_params(dw_model, "trees"), 200L)
+    expect_equal(get_dw_params(dw_model, "trees"), 50L)
 
     # importance is more complex
     imp <- get_dw_importance(dw_model)

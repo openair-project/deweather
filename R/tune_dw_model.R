@@ -54,12 +54,13 @@ tune_dw_model <- function(
   pollutant,
   vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp"),
   tree_depth = 5,
-  trees = 200L,
+  trees = 50L,
   learn_rate = 0.1,
   mtry = NULL,
   min_n = 10L,
   loss_reduction = 0,
   sample_size = 1L,
+  stop_iter = 45L,
   engine = c("xgboost", "lightgbm", "ranger"),
   split_prop = 3 / 4,
   grid_levels = 5,
@@ -116,6 +117,7 @@ tune_dw_model <- function(
   min_n_spec <- min_n
   loss_reduction_spec <- loss_reduction
   sample_size_spec <- sample_size
+  stop_iter_spec <- stop_iter
 
   if (length(tree_depth) > 1 && engine_method == "boost_tree") {
     grid <- append(grid, list(dials::tree_depth(range = tree_depth)))
@@ -123,14 +125,8 @@ tune_dw_model <- function(
   }
 
   if (length(trees) > 1) {
-    if (engine == "xgboost") {
-      cli::cli_inform(c(
-        "i" = "Tuning {.arg trees} is not supported for the {.pkg xgboost} engine."
-      ))
-    } else {
-      grid <- append(grid, list(dials::trees(range = trees)))
-      trees_spec <- parsnip::tune()
-    }
+    grid <- append(grid, list(dials::trees(range = trees)))
+    trees_spec <- parsnip::tune()
   }
 
   if (length(learn_rate) > 1 && engine_method == "boost_tree") {
@@ -162,6 +158,15 @@ tune_dw_model <- function(
     sample_size_spec <- parsnip::tune()
   }
 
+  if (
+    length(stop_iter) > 1 &&
+      engine_method == "boost_tree" &&
+      engine != "lightgbm"
+  ) {
+    grid <- append(grid, list(dials::stop_iter(range = stop_iter)))
+    stop_iter_spec <- parsnip::tune()
+  }
+
   if (length(grid) == 0) {
     cli::cli_abort(
       "At least one parameter (e.g., {.arg trees}) must be given as a range of two values. Note that not all engines use all parameters."
@@ -182,7 +187,8 @@ tune_dw_model <- function(
         mtry = !!mtry_spec,
         min_n = !!min_n_spec,
         loss_reduction = !!loss_reduction_spec,
-        sample_size = !!sample_size_spec
+        sample_size = !!sample_size_spec,
+        stop_iter = !!stop_iter_spec
       )
   }
 
