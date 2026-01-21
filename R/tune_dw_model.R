@@ -9,12 +9,13 @@
 #'
 #' @inheritParams build_dw_model
 #'
-#' @param tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size If
-#' length 1, these parameters will be fixed. If length `2`, the parameter will
-#' be tuned within the range defined between the first and last value. For
-#' example, if `tree_depth = c(1, 5)` and `grid_levels = 3`, tree depths of `1`,
-#' `3`, and `5` will be tested. See [build_dw_model()] for specific parameter
-#' definitions.
+#' @param
+#'   tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size,stop_iter
+#'   If length 1, these parameters will be fixed. If length `2`, the parameter
+#'   will be tuned within the range defined between the first and last value.
+#'   For example, if `tree_depth = c(1, 5)` and `grid_levels = 3`, tree depths
+#'   of `1`, `3`, and `5` will be tested. See [build_dw_model()] for specific
+#'   parameter definitions.
 #'
 #' @param split_prop The proportion of data to be retained for
 #'   modeling/analysis. Passed to the `prop` argument of
