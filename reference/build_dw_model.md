@@ -1,10 +1,17 @@
 # Build a Deweather Model
 
-This function builds a boosted decision tree machine learning model with
-useful methods for interrogating it in an air quality and meteorological
-context. Currently, only the
-[xgboost](https://rdrr.io/pkg/xgboost/man/xgboost.html) engine is
-supported.
+This function builds a 'deweathering' machine learning model with useful
+methods for interrogating it in an air quality and meteorological
+context. It uses any number of variables (most usefully meteorological
+variables like wind speed and wind direction and temporal variables
+defined in
+[`append_dw_vars()`](https://openair-project.github.io/deweather/reference/append_dw_vars.md))
+to fit a model predicting a given `pollutant`. While these models are
+useful for 'removing' the effects of meteorology from an air quality
+time series (e.g., through
+[`simulate_dw_met()`](https://openair-project.github.io/deweather/reference/simulate_dw_met.md)),
+they are also useful for explanatory analysis (e.g., through
+[`plot_dw_partial_1d()`](https://openair-project.github.io/deweather/reference/plot_dw_partial_1d.md)).
 
 ## Usage
 
@@ -14,14 +21,14 @@ build_dw_model(
   pollutant,
   vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp"),
   tree_depth = 5,
-  trees = 200L,
+  trees = 50L,
   learn_rate = 0.1,
   mtry = NULL,
   min_n = 10L,
   loss_reduction = 0,
   sample_size = 1L,
-  stop_iter = 190L,
-  engine = c("xgboost", "lightgbm"),
+  stop_iter = 45L,
+  engine = c("xgboost", "lightgbm", "ranger"),
   ...,
   .date = "date"
 )
@@ -51,50 +58,64 @@ build_dw_model(
 
 - tree_depth:
 
-  An integer for the maximum depth of the tree (i.e. number of splits)
-  (specific engines only).
+  Tree Depth `<xgboost|lightgbm>`
+
+  An integer for the maximum depth of the tree (i.e., number of splits).
 
 - trees:
+
+  Number of Trees `<xgboost|lightgbm|ranger>`
 
   An integer for the number of trees contained in the ensemble.
 
 - learn_rate:
 
+  Learning Rate `<xgboost|lightgbm>`
+
   A number for the rate at which the boosting algorithm adapts from
-  iteration-to-iteration (specific engines only). This is sometimes
-  referred to as the shrinkage parameter.
+  iteration-to-iteration. This is sometimes referred to as the shrinkage
+  parameter.
 
 - mtry:
 
+  Number of Randomly Selected Predictors `<xgboost|lightgbm|ranger>`
+
   A number for the number (or proportion) of predictors that will be
-  randomly sampled at each split when creating the tree models (specific
-  engines only).
+  randomly sampled at each split when creating the tree models.
 
 - min_n:
+
+  Minimal Node Size `<xgboost|lightgbm|ranger>`
 
   An integer for the minimum number of data points in a node that is
   required for the node to be split further.
 
 - loss_reduction:
 
+  Minimum Loss Reduction `<xgboost|lightgbm>`
+
   A number for the reduction in the loss function required to split
-  further (specific engines only).
+  further.
 
 - sample_size:
 
+  Proportion Observations Sampled `<xgboost>`
+
   A number for the number (or proportion) of data that is exposed to the
-  fitting routine. For `xgboost`, the sampling is done at each iteration
-  while `C5.0` samples once during training.
+  fitting routine.
 
 - stop_iter:
 
-  The number of iterations without improvement before stopping (specific
-  engines only).
+  Number of Iterations Before Stopping `<xgboost>`
+
+  The number of iterations without improvement before stopping.
 
 - engine:
 
   A single character string specifying what computational engine to use
-  for fitting.
+  for fitting. Can be `"xgboost"`, `"lightgbm"` (boosted trees) or
+  `"ranger"` (random forest). See the documentation below for more
+  information.
 
 - ...:
 
@@ -111,3 +132,55 @@ build_dw_model(
 ## Value
 
 a 'Deweather' object for further analysis
+
+## Modelling Approaches and Parameters
+
+### Types of Model
+
+There are two modelling approaches available to `build_dw_model()`:
+
+- Boosted Trees (`xgboost`, `lightgbm`)
+
+- Random Forest (`ranger`)
+
+Each of these approaches take different parameters.
+
+### Boosted Trees
+
+Two engines are available for boosted tree models:
+
+- `"xgboost"`
+
+- `"lightgbm"`
+
+The following parameters apply:
+
+- `tree_depth`: Tree Depth
+
+- `trees`: \# Trees
+
+- `learn_rate`: Learning Rate
+
+- `mtry`: \# Randomly Selected Predictors
+
+- `min_n`: Minimal Node Size
+
+- `loss_reduction`: Minimum Loss Reduction
+
+- `sample_size`: Proportion Observations Sampled (`xgboost` only)
+
+- `stop_iter`: \# Iterations Before Stopping (`xgboost` only)
+
+### Random Forest
+
+One engine is available for random forest models:
+
+- `"ranger"`
+
+The following parameters apply:
+
+- `mtry`: \# Randomly Selected Predictors
+
+- `trees`: \# Trees
+
+- `min_n`: Minimal Node Size

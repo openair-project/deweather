@@ -16,17 +16,19 @@ tune_dw_model(
   pollutant,
   vars = c("trend", "ws", "wd", "hour", "weekday", "air_temp"),
   tree_depth = 5,
-  trees = 200L,
+  trees = 50L,
   learn_rate = 0.1,
   mtry = NULL,
   min_n = 10L,
   loss_reduction = 0,
   sample_size = 1L,
-  stop_iter = 190L,
-  engine = c("xgboost", "lightgbm"),
+  stop_iter = 45L,
+  engine = c("xgboost", "lightgbm", "ranger"),
   split_prop = 3/4,
   grid_levels = 5,
-  v_partitions = 10
+  v_partitions = 10,
+  ...,
+  .date = "date"
 )
 ```
 
@@ -59,11 +61,16 @@ tune_dw_model(
   parameter will be tuned within the range defined between the first and
   last value. For example, if `tree_depth = c(1, 5)` and
   `grid_levels = 3`, tree depths of `1`, `3`, and `5` will be tested.
+  See
+  [`build_dw_model()`](https://openair-project.github.io/deweather/reference/build_dw_model.md)
+  for specific parameter definitions.
 
 - engine:
 
   A single character string specifying what computational engine to use
-  for fitting.
+  for fitting. Can be `"xgboost"`, `"lightgbm"` (boosted trees) or
+  `"ranger"` (random forest). See the documentation below for more
+  information.
 
 - split_prop:
 
@@ -83,6 +90,18 @@ tune_dw_model(
   cross-validation. Passed to the `v` argument of
   [`rsample::vfold_cv()`](https://rsample.tidymodels.org/reference/vfold_cv.html).
 
+- ...:
+
+  Not current used.
+
+- .date:
+
+  The name of the 'date' column which defines the air quality
+  timeseries. Passed to
+  [`append_dw_vars()`](https://openair-project.github.io/deweather/reference/append_dw_vars.md)
+  if needed. Also used to extract the time zone of the data for later
+  restoration if `trend` is used as a variable.
+
 ## Details
 
 The function performs the following steps:
@@ -101,9 +120,62 @@ The function performs the following steps:
 
 - Generates predictions and performance metrics
 
-  At least one hyperparameter must be specified as a range (vector of
-  length 2) for tuning to occur. Single values are treated as fixed
-  parameters.
+At least one hyperparameter must be specified as a range (vector of
+length 2) for tuning to occur. Single values are treated as fixed
+parameters.
+
+## Modelling Approaches and Parameters
+
+### Types of Model
+
+There are two modelling approaches available to
+[`build_dw_model()`](https://openair-project.github.io/deweather/reference/build_dw_model.md):
+
+- Boosted Trees (`xgboost`, `lightgbm`)
+
+- Random Forest (`ranger`)
+
+Each of these approaches take different parameters.
+
+### Boosted Trees
+
+Two engines are available for boosted tree models:
+
+- `"xgboost"`
+
+- `"lightgbm"`
+
+The following parameters apply:
+
+- `tree_depth`: Tree Depth
+
+- `trees`: \# Trees
+
+- `learn_rate`: Learning Rate
+
+- `mtry`: \# Randomly Selected Predictors
+
+- `min_n`: Minimal Node Size
+
+- `loss_reduction`: Minimum Loss Reduction
+
+- `sample_size`: Proportion Observations Sampled (`xgboost` only)
+
+- `stop_iter`: \# Iterations Before Stopping (`xgboost` only)
+
+### Random Forest
+
+One engine is available for random forest models:
+
+- `"ranger"`
+
+The following parameters apply:
+
+- `mtry`: \# Randomly Selected Predictors
+
+- `trees`: \# Trees
+
+- `min_n`: Minimal Node Size
 
 ## Author
 

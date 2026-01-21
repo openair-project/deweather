@@ -1,7 +1,8 @@
 # Visualise deweather model feature importance
 
-Visualise the feature importance (% Gain for boosted tree models) for
-each variable of a deweather model, with some customisation.
+Visualise the feature importance (% Gain for boosted tree models,
+permutation importance for random forest models) for each variable of a
+deweather model as a bar chart, with some customisation.
 
 ## Usage
 
@@ -20,8 +21,8 @@ plot_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE, cols = "tol")
 
   Defaults to `FALSE`. If `TRUE`, the importance of factor inputs (e.g.,
   Weekday) will be summed into a single variable. This only applies to
-  certain engines which report factor importance as disaggregate
-  features.
+  certain engines (e.g., `"xgboost"`) which report factor importance as
+  disaggregate features.
 
 - sort:
 

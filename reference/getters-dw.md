@@ -40,8 +40,8 @@ get_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE)
 
   Defaults to `FALSE`. If `TRUE`, the importance of factor inputs (e.g.,
   Weekday) will be summed into a single variable. This only applies to
-  certain engines which report factor importance as disaggregate
-  features.
+  certain engines (e.g., `"xgboost"`) which report factor importance as
+  disaggregate features.
 
 - sort:
 

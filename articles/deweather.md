@@ -7,14 +7,14 @@ pollutants in the atmosphere. When considering trends in air pollutants
 it can be very difficult to know whether a change in concentration is
 due to emissions or meteorology.
 
-The **deweather** package uses a powerful statistical technique based on
-*boosted regression trees* using a variety of packages using the
-[tidymodels](https://tidymodels.tidymodels.org) framework. This allows
-for a variety of engines to be employed, with the default being
-[xgboost](https://github.com/dmlc/xgboost). Statistical models are
-developed to explain concentrations using meteorological and other
-variables. These models can be tested on randomly withheld data with the
-aim of developing the most appropriate model.
+By default, the **deweather** package uses a powerful statistical
+technique based on *boosted regression trees* using a variety of
+packages using the [tidymodels](https://tidymodels.tidymodels.org)
+framework. This allows for a variety of engines to be employed, with the
+default being [xgboost](https://github.com/dmlc/xgboost). Statistical
+models are developed to explain concentrations using meteorological and
+other variables. These models can be tested on randomly withheld data
+with the aim of developing the most appropriate model.
 
 Much of **deweather** supports parallel processing with the
 [mirai](https://mirai.r-lib.org) package, so along with loading the
@@ -130,25 +130,53 @@ tuned_results <-
   tune_dw_model(
     pollutant = "no2",
     tree_depth = c(1, 5),
-    trees = c(150, 250),
+    min_n = c(5, 10),
     grid_levels = 3L
   )
-#> → A | warning: `early_stop` was reduced to 149.
-#> There were issues with some computations   A: x1
-#> There were issues with some computations   A: x1
-#> 
 ```
 
 This output has a few useful features. First, we’re informed that the
-best value for `trees` is 150 and for `tree_depth` is 5.
+best value for `trees` is and for `tree_depth` is 5.
 
 ``` r
 tuned_results$best_params
-#> $trees
-#> [1] 150
+#> $min_n
+#> [1] 10
 #> 
 #> $tree_depth
 #> [1] 5
+```
+
+If we want to interrogate this more, the `metrics` object shows a
+summary for all of the different hyperparameters that have been tuned.
+Examining the full set of metrics, rather than only the single best
+configuration, allows you to assess whether the marginal performance
+gain of the “best” model justifies its additional computational cost,
+complexity, or instability.
+
+``` r
+tuned_results$metrics
+#> # A tibble: 18 × 6
+#>    min_n tree_depth .metric   mean     n std_err
+#>    <int>      <int> <chr>    <dbl> <int>   <dbl>
+#>  1     5          1 rmse    37.5      10  0.850 
+#>  2     5          1 rsq      0.443    10  0.0173
+#>  3     5          3 rmse    31.2      10  0.720 
+#>  4     5          3 rsq      0.599    10  0.0200
+#>  5     5          5 rmse    29.7      10  0.728 
+#>  6     5          5 rsq      0.628    10  0.0194
+#>  7     7          1 rmse    37.5      10  0.850 
+#>  8     7          1 rsq      0.443    10  0.0173
+#>  9     7          3 rmse    31.1      10  0.693 
+#> 10     7          3 rsq      0.600    10  0.0201
+#> 11     7          5 rmse    29.6      10  0.645 
+#> 12     7          5 rsq      0.632    10  0.0199
+#> 13    10          1 rmse    37.5      10  0.850 
+#> 14    10          1 rsq      0.443    10  0.0173
+#> 15    10          3 rmse    31.1      10  0.661 
+#> 16    10          3 rsq      0.601    10  0.0197
+#> 17    10          5 rmse    29.5      10  0.651 
+#> 18    10          5 rsq      0.633    10  0.0201
 ```
 
 We can also see how the tuned model behaved on some reserved testing
@@ -161,16 +189,16 @@ dplyr::glimpse(tuned_results$final_fit$metrics)
 #> Columns: 12
 #> $ pollutant <fct> no2
 #> $ n         <int> 424
-#> $ fac2      <dbl> 0.9716981
-#> $ mb        <dbl> -1.593782
-#> $ mge       <dbl> 19.85444
-#> $ nmb       <dbl> -0.01676148
-#> $ nmge      <dbl> 0.208805
-#> $ rmse      <dbl> 27.60343
-#> $ r         <dbl> 0.8157166
-#> $ p         <dbl> 2.258024e-102
-#> $ coe       <dbl> 0.4743745
-#> $ ioa       <dbl> 0.7371873
+#> $ fac2      <dbl> 0.9646226
+#> $ mb        <dbl> -0.7177397
+#> $ mge       <dbl> 20.14728
+#> $ nmb       <dbl> -0.00754832
+#> $ nmge      <dbl> 0.2118848
+#> $ rmse      <dbl> 28.02095
+#> $ r         <dbl> 0.8123823
+#> $ p         <dbl> 6.764055e-101
+#> $ coe       <dbl> 0.4666219
+#> $ ioa       <dbl> 0.733311
 ```
 
 ``` r
@@ -202,19 +230,19 @@ summary of it by simply printing it.
 no2_model
 #> 
 #> ── Deweather Model ─────────────────────────────────────────────────────────────
-#> A model for predicting no2 using wd (42.1%), hour (27.9%), trend (12.8%),
-#> weekday (8.2%), ws (6.5%), and air_temp (2.6%).
+#> A model for predicting no2 using wd (43.9%), hour (29.0%), trend (10.8%),
+#> weekday (8.4%), ws (5.8%), and air_temp (2.0%).
 #> 
 #> ── Model Parameters ──
 #> 
 #> • tree_depth: 5
-#> • trees: 200
+#> • trees: 50
 #> • learn_rate: 0.1
 #> • mtry: NULL
 #> • min_n: 10
 #> • loss_reduction: 0
 #> • sample_size: 1
-#> • stop_iter: 190
+#> • stop_iter: 45
 ```
 
 We can also pull out specific features of the model using `get_dw_*()`
@@ -257,18 +285,18 @@ get_dw_importance(no2_model)
 #> # A tibble: 12 × 2
 #>    var        importance
 #>    <fct>           <dbl>
-#>  1 wd           0.421   
-#>  2 hour         0.279   
-#>  3 trend        0.128   
-#>  4 ws           0.0646  
-#>  5 weekdaySun   0.0450  
-#>  6 weekdaySat   0.0282  
-#>  7 air_temp     0.0262  
-#>  8 weekdayMon   0.00257 
-#>  9 weekdayThu   0.00230 
-#> 10 weekdayWed   0.00163 
-#> 11 weekdayTue   0.001000
-#> 12 weekdayFri   0.000862
+#>  1 wd           0.439   
+#>  2 hour         0.290   
+#>  3 trend        0.108   
+#>  4 ws           0.0583  
+#>  5 weekdaySun   0.0479  
+#>  6 weekdaySat   0.0296  
+#>  7 air_temp     0.0196  
+#>  8 weekdayMon   0.00216 
+#>  9 weekdayThu   0.00166 
+#> 10 weekdayWed   0.00108 
+#> 11 weekdayTue   0.000806
+#> 12 weekdayFri   0.000550
 ```
 
 The Gain can be automatically plotted as a bar chart using the
