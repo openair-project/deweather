@@ -76,7 +76,6 @@ tune_dw_model <- function(
   .date = "date"
 ) {
   # check inputs
-  rlang::check_dots_empty()
   engine <- rlang::arg_match(engine, multiple = FALSE)
   engine_method <- define_engine_method(engine)
   vars <- rlang::arg_match(
@@ -193,12 +192,13 @@ tune_dw_model <- function(
     }
   }
 
+  # add ... to fixed params, if used
+  fixed_params <- append(fixed_params, rlang::list2(...))
+
   # get tuning spec
   if (engine_method == "boost_tree") {
     tune_spec <-
       parsnip::boost_tree(
-        mode = "regression",
-        engine = engine,
         tree_depth = !!tree_depth_spec,
         trees = !!trees_spec,
         learn_rate = !!learn_rate_spec,
@@ -207,18 +207,26 @@ tune_dw_model <- function(
         loss_reduction = !!loss_reduction_spec,
         sample_size = !!sample_size_spec,
         stop_iter = !!stop_iter_spec
-      )
+      ) |>
+      parsnip::set_engine(
+        engine = engine,
+        ...
+      ) |>
+      parsnip::set_mode("regression")
   }
 
   if (engine_method == "rand_forest") {
     tune_spec <-
       parsnip::rand_forest(
-        mode = "regression",
-        engine = engine,
         trees = !!trees_spec,
         mtry = !!mtry_spec,
         min_n = !!min_n_spec
-      )
+      ) |>
+      parsnip::set_engine(
+        engine,
+        ...
+      ) |>
+      parsnip::set_mode("regression")
   }
 
   # get training folds

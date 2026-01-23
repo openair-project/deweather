@@ -70,7 +70,7 @@ tail.Deweather <- function(x, ...) {
 print.tuneDeweather <- function(x, ...) {
   cli::cli_h1("Deweather Tuning")
   cli::cli_text(
-    "A tuning object for finding appropriate hyperparameters for predicting {.strong {get_tdw_pollutant(x)}} using {.field {get_tdw_vars(tdw)}}."
+    "A tuning object for finding appropriate hyperparameters for predicting {.strong {get_tdw_pollutant(x)}} using {.field {get_tdw_vars(x)}}."
   )
   cli::cli_ul(
     c(
@@ -90,7 +90,7 @@ plot.tuneDeweather <- function(x, ...) {
 #' @method summary tuneDeweather
 #' @export
 summary.tuneDeweather <- function(object, ...) {
-  get_tdw_tuning_metrics(object)
+  get_tdw_tuning_metrics(object, ...)
 }
 
 # Utilities ---------------------------------------------------------------

@@ -17,6 +17,12 @@
 #' @param params A named list. These parameters are used to override the
 #'   `best_params` defined within `tdw`. For example, if the 'best' parameter
 #'   for `trees` is 50, `params = list(trees = 100)` will set it to 100 instead.
+#'   This also includes engine-specific parameters (e.g., `lambda` for the
+#'   `xgboost` engine).
+#'
+#' @param ... Not currently used. To add engine-specific models, add them to
+#'   [tune_dw_model()] and they will be picked up automatically, or use
+#'   [build_dw_model()] directly.
 #'
 #' @inheritParams build_dw_model
 #'
@@ -30,12 +36,16 @@ finalise_tdw_model <- function(
   ...,
   .date = "date"
 ) {
+  rlang::check_dots_empty()
+
+  # extract relevant features of tuned object
   pollutant <- get_tdw_pollutant(tdw)
   vars <- get_tdw_vars(tdw)
   engine <- get_tdw_engine(tdw)
   best_params <- get_tdw_best_params(tdw)
 
-  build_dw_model(
+  # argument list for building model
+  args <- list(
     data = data,
     pollutant = pollutant,
     vars = vars,
@@ -47,7 +57,29 @@ finalise_tdw_model <- function(
     loss_reduction = params$loss_reduction %||% best_params$loss_reduction,
     sample_size = params$sample_size %||% best_params$sample_size,
     stop_iter = params$stop_iter %||% best_params$stop_iter,
-    engine = engine,
-    .date = .date
+    engine = engine
   )
+
+  # engine params are those in 'best_params' that aren't in 'args' (i.e., ones
+  # we're not assuming are there)
+  engine_specific_params <-
+    names(best_params)[!names(best_params) %in% names(args)]
+
+  # if there are any engine params, add them to the arguments
+  if (length(engine_specific_params) > 0L) {
+    engine_params <- best_params[engine_specific_params]
+
+    # overwrite with params arg, if provided
+    for (i in engine_specific_params) {
+      engine_params[[i]] <- params[[i]] %||% engine_params[[i]]
+    }
+
+    args <- append(args, best_params[engine_specific_params])
+  }
+
+  # add .date
+  args <- append(args, list(.date = .date))
+
+  # build model
+  rlang::exec(build_dw_model, !!!args)
 }

@@ -17,9 +17,13 @@ users will have provided \code{\link[=tune_dw_model]{tune_dw_model()}} with a sa
 
 \item{params}{A named list. These parameters are used to override the
 \code{best_params} defined within \code{tdw}. For example, if the 'best' parameter
-for \code{trees} is 50, \code{params = list(trees = 100)} will set it to 100 instead.}
+for \code{trees} is 50, \code{params = list(trees = 100)} will set it to 100 instead.
+This also includes engine-specific parameters (e.g., \code{lambda} for the
+\code{xgboost} engine).}
 
-\item{...}{Not current used.}
+\item{...}{Not currently used. To add engine-specific models, add them to
+\code{\link[=tune_dw_model]{tune_dw_model()}} and they will be picked up automatically, or use
+\code{\link[=build_dw_model]{build_dw_model()}} directly.}
 
 \item{.date}{The name of the 'date' column which defines the air quality
 timeseries. Passed to \code{\link[=append_dw_vars]{append_dw_vars()}} if needed. Also used to extract

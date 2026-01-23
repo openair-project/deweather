@@ -66,7 +66,9 @@ v-fold cross-validation. Passed to the \code{v} argument of
 of \code{\link[tune:control_grid]{tune::control_grid()}}. Note that logging does not occur when parallel
 processing is used.}
 
-\item{...}{Not current used.}
+\item{...}{Used to pass additional engine-specific parameters to the model
+(for example, \code{lambda} for the \code{xgboost} engine). Currently, these
+engine-specific parameters cannot be 'tuned' in \code{\link[=tune_dw_model]{tune_dw_model()}}.}
 
 \item{.date}{The name of the 'date' column which defines the air quality
 timeseries. Passed to \code{\link[=append_dw_vars]{append_dw_vars()}} if needed. Also used to extract

@@ -65,7 +65,9 @@
 #'   `"ranger"` (random forest). See the documentation below for more
 #'   information.
 #'
-#' @param ... Not current used.
+#' @param ... Used to pass additional engine-specific parameters to the model
+#'   (for example, `lambda` for the `xgboost` engine). Currently, these
+#'   engine-specific parameters cannot be 'tuned' in [tune_dw_model()].
 #'
 #' @param .date The name of the 'date' column which defines the air quality
 #'   timeseries. Passed to [append_dw_vars()] if needed. Also used to extract
@@ -145,7 +147,6 @@ build_dw_model <- function(
   .date = "date"
 ) {
   # check inputs
-  rlang::check_dots_empty()
   engine <- rlang::arg_match(engine, multiple = FALSE)
   engine_method <- define_engine_method(engine)
   vars <- rlang::arg_match(
@@ -186,8 +187,6 @@ build_dw_model <- function(
   if (engine_method == "boost_tree") {
     model_spec <-
       parsnip::boost_tree(
-        mode = "regression",
-        engine = engine,
         tree_depth = !!tree_depth,
         trees = !!trees,
         learn_rate = !!learn_rate,
@@ -196,7 +195,12 @@ build_dw_model <- function(
         loss_reduction = !!loss_reduction,
         sample_size = !!sample_size,
         stop_iter = !!stop_iter
-      )
+      ) |>
+      parsnip::set_engine(
+        engine,
+        ...
+      ) |>
+      parsnip::set_mode("regression")
 
     # list parameters
     params <- list(
@@ -223,25 +227,30 @@ build_dw_model <- function(
   if (engine_method == "rand_forest") {
     model_spec <-
       parsnip::rand_forest(
-        mode = "regression",
         engine = engine,
         trees = !!trees,
         mtry = !!mtry,
         min_n = !!min_n
-      )
+      ) |>
+      parsnip::set_engine(
+        engine,
+        ...
+      ) |>
+      parsnip::set_mode("regression")
 
     # need a second spec for importance calcs
     model_spec_importance <-
       parsnip::rand_forest(
-        mode = "regression",
         trees = !!trees,
         mtry = !!mtry,
         min_n = !!min_n
       ) |>
       parsnip::set_engine(
         engine = engine,
-        importance = "impurity_corrected"
-      )
+        importance = "impurity_corrected",
+        ...
+      ) |>
+      parsnip::set_mode("regression")
 
     # list parameters - only three
     params <- list(
@@ -250,6 +259,9 @@ build_dw_model <- function(
       min_n = min_n
     )
   }
+
+  # add ... to params, if used
+  params <- append(params, rlang::list2(...))
 
   # build a formula object from poll & vars
   formula <- stats::reformulate(vars, pollutant)

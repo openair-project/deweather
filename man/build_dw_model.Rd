@@ -78,7 +78,9 @@ to use for fitting. Can be \code{"xgboost"}, \code{"lightgbm"} (boosted trees) o
 \code{"ranger"} (random forest). See the documentation below for more
 information.}
 
-\item{...}{Not current used.}
+\item{...}{Used to pass additional engine-specific parameters to the model
+(for example, \code{lambda} for the \code{xgboost} engine). Currently, these
+engine-specific parameters cannot be 'tuned' in \code{\link[=tune_dw_model]{tune_dw_model()}}.}
 
 \item{.date}{The name of the 'date' column which defines the air quality
 timeseries. Passed to \code{\link[=append_dw_vars]{append_dw_vars()}} if needed. Also used to extract
