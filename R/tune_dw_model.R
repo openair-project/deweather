@@ -10,12 +10,12 @@
 #' @inheritParams build_dw_model
 #'
 #' @param
-#'   tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size,stop_iter
-#'   If length 1, these parameters will be fixed. If length `2`, the parameter
-#'   will be tuned within the range defined between the first and last value.
-#'   For example, if `tree_depth = c(1, 5)` and `grid_levels = 3`, tree depths
-#'   of `1`, `3`, and `5` will be tested. See [build_dw_model()] for specific
-#'   parameter definitions.
+#' tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size,stop_iter
+#' If length 1, these parameters will be fixed. If length `2`, the parameter
+#' will be tuned within the range defined between the first and last value. For
+#' example, if `tree_depth = c(1, 5)` and `grid_levels = 3`, tree depths of `1`,
+#' `3`, and `5` will be tested. See [build_dw_model()] for specific parameter
+#' definitions.
 #'
 #' @param split_prop The proportion of data to be retained for
 #'   modeling/analysis. Passed to the `prop` argument of
@@ -28,6 +28,10 @@
 #' @param v_partitions The number of partitions of the data set to use for
 #'   v-fold cross-validation. Passed to the `v` argument of
 #'   [rsample::vfold_cv()].
+#'
+#' @param progress Log progress in the console? Passed to the `verbose` argument
+#'   of [tune::control_grid()]. Note that logging does not occur when parallel
+#'   processing is used.
 #'
 #' @details The function performs the following steps:
 #'
@@ -48,6 +52,7 @@
 #'
 #' @inheritSection build_dw_model Modelling Approaches and Parameters
 #'
+#' @family Model Tuning Functions
 #' @author Jack Davison
 #' @export
 tune_dw_model <- function(
@@ -66,6 +71,7 @@ tune_dw_model <- function(
   split_prop = 3 / 4,
   grid_levels = 5,
   v_partitions = 10,
+  progress = TRUE,
   ...,
   .date = "date"
 ) {
@@ -111,6 +117,7 @@ tune_dw_model <- function(
   # build tuning grid
   grid <- list()
 
+  # define specs, potentially to be overwritten
   tree_depth_spec <- tree_depth
   trees_spec <- trees
   learn_rate_spec <- learn_rate
@@ -120,61 +127,71 @@ tune_dw_model <- function(
   sample_size_spec <- sample_size
   stop_iter_spec <- stop_iter
 
-  if (length(tree_depth) > 1 && engine_method == "boost_tree") {
-    grid <- append(grid, list(dials::tree_depth(range = tree_depth)))
-    tree_depth_spec <- parsnip::tune()
-  }
+  # start list of fixed params for later
+  fixed_params <- list()
 
   if (length(trees) > 1) {
     grid <- append(grid, list(dials::trees(range = trees)))
     trees_spec <- parsnip::tune()
-  }
-
-  if (length(learn_rate) > 1 && engine_method == "boost_tree") {
-    grid <- append(grid, list(dials::learn_rate(range = learn_rate)))
-    learn_rate_spec <- parsnip::tune()
+  } else {
+    fixed_params <- append(fixed_params, list(trees = trees))
   }
 
   if (length(mtry) > 1) {
     grid <- append(grid, list(dials::mtry(range = mtry)))
     mtry_spec <- parsnip::tune()
+  } else {
+    fixed_params <- append(fixed_params, list(mtry = mtry))
   }
 
   if (length(min_n) > 1) {
     grid <- append(grid, list(dials::min_n(range = min_n)))
     min_n_spec <- parsnip::tune()
+  } else {
+    fixed_params <- append(fixed_params, list(min_n = min_n))
   }
 
-  if (length(loss_reduction) > 1 && engine_method == "boost_tree") {
-    grid <- append(grid, list(dials::loss_reduction(range = loss_reduction)))
-    loss_reduction_spec <- parsnip::tune()
-  }
+  if (engine_method == "boost_tree") {
+    if (length(tree_depth) > 1) {
+      grid <- append(grid, list(dials::tree_depth(range = tree_depth)))
+      tree_depth_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(fixed_params, list(tree_depth = tree_depth))
+    }
 
-  if (
-    length(sample_size) > 1 &&
-      engine_method == "boost_tree" &&
-      engine != "lightgbm"
-  ) {
-    grid <- append(grid, list(dials::sample_size(range = sample_size)))
-    sample_size_spec <- parsnip::tune()
-  }
+    if (length(learn_rate) > 1) {
+      grid <- append(grid, list(dials::learn_rate(range = learn_rate)))
+      learn_rate_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(fixed_params, list(learn_rate = learn_rate))
+    }
 
-  if (
-    length(stop_iter) > 1 &&
-      engine_method == "boost_tree" &&
-      engine != "lightgbm"
-  ) {
-    grid <- append(grid, list(dials::stop_iter(range = stop_iter)))
-    stop_iter_spec <- parsnip::tune()
-  }
+    if (length(loss_reduction) > 1) {
+      grid <- append(grid, list(dials::loss_reduction(range = loss_reduction)))
+      learn_rate_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(loss_reduction = loss_reduction)
+      )
+    }
 
-  if (length(grid) == 0) {
-    cli::cli_abort(
-      "At least one parameter (e.g., {.arg trees}) must be given as a range of two values. Note that not all engines use all parameters."
-    )
-  }
+    if (engine == "xgboost") {
+      if (length(sample_size) > 1) {
+        grid <- append(grid, list(dials::sample_size(range = sample_size)))
+        learn_rate_spec <- parsnip::tune()
+      } else {
+        fixed_params <- append(fixed_params, list(sample_size = sample_size))
+      }
 
-  grid <- dials::grid_regular(x = grid, levels = grid_levels)
+      if (length(stop_iter) > 1) {
+        grid <- append(grid, list(dials::stop_iter(range = stop_iter)))
+        learn_rate_spec <- parsnip::tune()
+      } else {
+        fixed_params <- append(fixed_params, list(stop_iter = stop_iter))
+      }
+    }
+  }
 
   # get tuning spec
   if (engine_method == "boost_tree") {
@@ -216,13 +233,20 @@ tune_dw_model <- function(
     workflows::add_model(tune_spec) |>
     workflows::add_formula(formula)
 
+  # deal with grid
+  if (length(grid) == 0) {
+    grid <- 1L
+  } else {
+    grid <- dials::grid_regular(x = grid, levels = grid_levels)
+  }
+
   # get results from grid
   results <- tune::tune_grid(
     wf,
     resamples = folds,
     grid = grid,
     control = tune::control_grid(
-      verbose = TRUE,
+      verbose = progress,
       allow_par = TRUE,
       parallel_over = "everything"
     )
@@ -230,7 +254,8 @@ tune_dw_model <- function(
 
   # get metrics
   metrics <- tune::collect_metrics(results) |>
-    dplyr::select(-".config", -".estimator")
+    dplyr::select(-".config", -".estimator") |>
+    dplyr::rename("metric" = ".metric")
 
   # get the best overall model
   best_params <- tune::select_best(results, metric = "rmse") |>
@@ -265,57 +290,33 @@ tune_dw_model <- function(
   # get model stats
   final_metrics <-
     final_predictions |>
-    openair::modStats(type = "pollutant") |>
-    dplyr::rename_with(tolower)
-
-  # plot a scatter plot
-  axisrange <- range(c(0, final_predictions$obs, final_predictions$mod))
-  plot <-
-    final_predictions |>
-    ggplot2::ggplot(
-      ggplot2::aes(x = .data$obs, y = .data$mod)
-    ) +
-    ggplot2::geom_abline(
-      color = "#9E0142FF",
-      alpha = 0.5,
-      lty = 5,
-      slope = 0.5
-    ) +
-    ggplot2::geom_abline(color = "#9E0142FF", alpha = 0.5, lty = 5, slope = 2) +
-    ggplot2::geom_abline(color = "#9E0142FF", lwd = 1.5) +
-    ggplot2::geom_point() +
-    ggplot2::theme_bw() +
-    ggplot2::scale_x_continuous(
-      limits = axisrange,
-      expand = ggplot2::expansion(c(0, .1))
-    ) +
-    ggplot2::scale_y_continuous(
-      limits = axisrange,
-      expand = ggplot2::expansion(c(0, .1))
-    ) +
-    ggplot2::coord_cartesian(ratio = 1L) +
-    ggplot2::labs(
-      x = openair::quickText(paste("Observed", pollutant)),
-      y = openair::quickText(paste("Modelled", pollutant))
-    )
+    openair::modStats() |>
+    dplyr::rename_with(tolower) |>
+    dplyr::select(-dplyr::any_of("default"))
 
   # return output
-  list(
+  out <- list(
     pollutant = pollutant,
     vars = list(
       names = vars,
       types = as.character(purrr::map(data, class)[vars])
     ),
-    best_params = as.list(best_params),
+    best_params = append(
+      as.list(best_params),
+      fixed_params
+    ),
     metrics = metrics,
     final_fit = list(
       predictions = final_predictions,
-      metrics = final_metrics,
-      plot = plot
+      metrics = final_metrics
     ),
     engine = list(
       engine = engine,
       method = define_engine_method(engine)
     )
   )
+
+  class(out) <- "tuneDeweather"
+
+  return(out)
 }

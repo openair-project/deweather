@@ -21,21 +21,32 @@ reference:
     deweathering functions.
   contents: aqroadside
 
-- title: Build
+- title: Tune
   desc: >
-    Core functions for tuning and fitting deweathering models, including
-    parameter tuning, model construction and adding derived variables.
+    Tune hyperparameters for a deweathering model before it is fit. A 'best' 
+    parameter set is automatically determined, but other functions are provided 
+    to allow for closer interrogation so that these can be refined.
   contents:
   - tune_dw_model
+  - plot_tdw_metrics 
+  - plot_tdw_scatter
+    
+- title: Build
+  desc: >
+    Core functions for fitting deweathering models, used throughout the rest 
+    of the `deweather` package for interpretation and prediction.
+  contents:
   - build_dw_model
+  - finalise_tdw_model
   - append_dw_vars
 
 - title: Examine
   desc: >
-    Methods to examine a deweathering model; currently 'getters' to extract
-    specific features of a built model.
+    'getters' to extract specific features of a built `deweather` model or a 
+    `deweather` 'tuning' object.
   contents:
   - get_dw_pollutant
+  - get_tdw_pollutant
 
 - title: Visualise
   desc: >

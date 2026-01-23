@@ -1,9 +1,13 @@
 test_that("tuning works", {
+  # create reduced data for tuning
   tunedata <- head(deweather::aqroadside, n = 200)
 
-  expect_error(tune_dw_model(tunedata, "no2"))
+  # expect a warning if you don't actually tune anything
+  expect_warning(tune_dw_model(tunedata, "no2"))
 
+  # loop over engines
   for (engine in c("xgboost", "ranger")) {
+    # tune data
     tuned <-
       with(
         mirai::daemons(4),
@@ -17,25 +21,40 @@ test_that("tuning works", {
         )
       )
 
+    # should be a named list
     expect_named(tuned)
 
+    # expected items
     expect_equal(
       names(tuned),
       c("pollutant", "vars", "best_params", "metrics", "final_fit", "engine")
     )
 
+    # all params should be present
     if (engine == "xgboost") {
-      expect_equal(names(tuned$best_params), c("min_n", "tree_depth"))
+      expect_equal(
+        names(tuned$best_params),
+        c(
+          "min_n",
+          "tree_depth",
+          "trees",
+          "mtry",
+          "learn_rate",
+          "loss_reduction",
+          "sample_size",
+          "stop_iter"
+        )
+      )
     } else {
-      expect_equal(names(tuned$best_params), c("min_n"))
+      expect_equal(names(tuned$best_params), c("min_n", "trees", "mtry"))
     }
 
+    # getters
     expect_equal(tuned$engine$engine, engine)
 
-    expect_equal(names(tuned$final_fit), c("predictions", "metrics", "plot"))
+    expect_equal(names(tuned$final_fit), c("predictions", "metrics"))
 
     expect_s3_class(tuned$final_fit$predictions, "data.frame")
     expect_s3_class(tuned$final_fit$metrics, "data.frame")
-    expect_s3_class(tuned$final_fit$plot, "gg")
   }
 })

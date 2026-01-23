@@ -3,10 +3,10 @@
 \name{get_dw_pollutant}
 \alias{get_dw_pollutant}
 \alias{get_dw_vars}
+\alias{get_dw_engine}
 \alias{get_dw_params}
 \alias{get_dw_input_data}
 \alias{get_dw_model}
-\alias{get_dw_engine}
 \alias{get_dw_importance}
 \title{Getters for various deweather model features}
 \usage{
@@ -14,22 +14,22 @@ get_dw_pollutant(dw)
 
 get_dw_vars(dw)
 
+get_dw_engine(dw)
+
 get_dw_params(dw, param = NULL)
 
 get_dw_input_data(dw)
 
 get_dw_model(dw)
 
-get_dw_engine(dw)
-
 get_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE)
 }
 \arguments{
-\item{dw}{A deweather model created with \code{\link[=build_dw_model]{build_dw_model()}}.}
+\item{dw}{A \code{deweather} model created with \code{\link[=build_dw_model]{build_dw_model()}}.}
 
-\item{param}{For \code{\link[=get_dw_params]{get_dw_params()}}. The default (\code{NULL}) returns a list of
-model parameters. \code{param} will return one specific parameter as a character
-vector.}
+\item{param}{For \code{\link[=get_dw_params]{get_dw_params()}} and \code{\link[=get_tdw_best_params]{get_tdw_best_params()}}. The default
+(\code{NULL}) returns a list of model parameters. \code{param} will return one
+specific parameter as a character vector.}
 
 \item{aggregate_factors}{Defaults to \code{FALSE}. If \code{TRUE}, the importance of
 factor inputs (e.g., Weekday) will be summed into a single variable. This
@@ -52,7 +52,12 @@ Typically a character vector, except:
 }
 \description{
 \code{deweather} provides multiple 'getter' functions for extracting relevant
-model features from a deweather model. These are a useful convenience,
-particularly in conjunction with R's \link[=pipeOp]{pipe} operator (\verb{|>}).
+model features from a deweather model and/or tuning objects. These are a
+useful convenience, particularly in conjunction with R's \link[=pipeOp]{pipe}
+operator (\verb{|>}).
+}
+\seealso{
+Other Object 'Getter' Functions: 
+\code{\link{get_tdw_pollutant}()}
 }
 \concept{Object 'Getter' Functions}

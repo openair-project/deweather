@@ -20,6 +20,7 @@ tune_dw_model(
   split_prop = 3/4,
   grid_levels = 5,
   v_partitions = 10,
+  progress = TRUE,
   ...,
   .date = "date"
 )
@@ -39,10 +40,10 @@ columns will be coerced to factors. \code{"hour"}, \code{"weekday"}, \code{"tren
 \code{\link[=append_dw_vars]{append_dw_vars()}} if not present in \code{names(data)}.}
 
 \item{tree_depth, trees, learn_rate, mtry, min_n, loss_reduction, sample_size, stop_iter}{If length 1, these parameters will be fixed. If length \code{2}, the parameter
-will be tuned within the range defined between the first and last value.
-For example, if \code{tree_depth = c(1, 5)} and \code{grid_levels = 3}, tree depths
-of \code{1}, \code{3}, and \code{5} will be tested. See \code{\link[=build_dw_model]{build_dw_model()}} for specific
-parameter definitions.}
+will be tuned within the range defined between the first and last value. For
+example, if \code{tree_depth = c(1, 5)} and \code{grid_levels = 3}, tree depths of \code{1},
+\code{3}, and \code{5} will be tested. See \code{\link[=build_dw_model]{build_dw_model()}} for specific parameter
+definitions.}
 
 \item{engine}{A single character string specifying what computational engine
 to use for fitting. Can be \code{"xgboost"}, \code{"lightgbm"} (boosted trees) or
@@ -60,6 +61,10 @@ use to make the regular grid. Passed to the \code{levels} argument of
 \item{v_partitions}{The number of partitions of the data set to use for
 v-fold cross-validation. Passed to the \code{v} argument of
 \code{\link[rsample:vfold_cv]{rsample::vfold_cv()}}.}
+
+\item{progress}{Log progress in the console? Passed to the \code{verbose} argument
+of \code{\link[tune:control_grid]{tune::control_grid()}}. Note that logging does not occur when parallel
+processing is used.}
 
 \item{...}{Not current used.}
 
@@ -140,6 +145,12 @@ The following parameters apply:
 }
 }
 
+\seealso{
+Other Model Tuning Functions: 
+\code{\link{plot_tdw_metrics}()},
+\code{\link{plot_tdw_scatter}()}
+}
 \author{
 Jack Davison
 }
+\concept{Model Tuning Functions}

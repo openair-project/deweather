@@ -148,3 +148,6 @@ The following parameters apply:
 }
 }
 
+\seealso{
+\code{\link[=finalise_tdw_model]{finalise_tdw_model()}}
+}

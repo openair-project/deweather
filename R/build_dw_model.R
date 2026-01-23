@@ -126,6 +126,7 @@
 #'
 #' @return a 'Deweather' object for further analysis
 #'
+#' @seealso [finalise_tdw_model()]
 #' @export
 build_dw_model <- function(
   data,
