@@ -1,0 +1,58 @@
+---
+config:
+  theme: redux
+  layout: elk
+---
+flowchart TB
+    %% Major objects and their grouped internal nodes
+    subgraph tdw["Tuning Object"]
+        tdwtuning["Tuning Outputs"]
+        tdwtesting["Testing Outputs"]
+    end
+
+    subgraph tdwtuning["Tuning Results"]
+        tuningmetrics["Tuning Metrics"]
+        bestmetrics["Best Params"]
+    end
+
+    subgraph tdwtesting["Testing Results"]
+        testpreds["Testing Predictions"]
+        testmetrics["Testing Metrics"]
+    end
+
+    subgraph dwplots["Model Interrogation Plots"]
+        plotpd1d["1D Partial<br/>Dependence Plot"]
+        plotpd2d["2D Partial<br/>Dependence Plot"]
+        plotimport["Variable Importance<br/>Barchart"]
+    end
+
+    subgraph tdwplots["Tuning Plots"]
+        plotscatter["Testing Scatterplot"]
+        plotmetrics["Tuning Metrics Lineplot"]
+    end
+
+    %% Main workflow
+    Data["Dataset"] -- tune_dw_model() --> tdw
+    Data == build_dw_model() ==> dw["Deweather Model"]
+    tdw -- finalise_dw_model() --> dw
+
+    %% Cross-connections and data flow
+    bestmetrics -.-> tdwtesting & dw
+    dw == simulate_dw_met() ==> datadeweathered@{ label: "'Deweathered'<br/>  Dataset" }
+
+    %% Plotting/model interrogation
+    dw -- plot_dw_partial_1d() --> plotpd1d
+    dw -- plot_dw_partial_2d() --> plotpd2d
+    dw -- plot_dw_importance()  --> plotimport
+
+    tdw -- plot_tdw_testing_scatter() --> plotscatter
+    tdw -- plot_tdw_tuning_metrics()  --> plotmetrics
+
+    testpreds -.-> plotscatter
+    tuningmetrics -.-> plotmetrics
+
+    %% Style node shapes and borders
+    datadeweathered@{ shape: rect }
+    style Data            stroke-width:4px,stroke-dasharray:0,color:#000000
+    style dw              stroke-width:4px,stroke-dasharray:0
+    style datadeweathered stroke-width:4px,stroke-dasharray:0

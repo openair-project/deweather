@@ -28,8 +28,8 @@ reference:
     to allow for closer interrogation so that these can be refined.
   contents:
   - tune_dw_model
-  - plot_tdw_metrics 
-  - plot_tdw_scatter
+  - plot_tdw_tuning_metrics 
+  - plot_tdw_testing_scatter
     
 - title: Build
   desc: >

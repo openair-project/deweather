@@ -1,6 +1,6 @@
 #' Plot Tuning Metrics from [tune_dw_model()]
 #'
-#' This function creates a plot of the tuning metrics from a `tuneDeweather`
+#' This function creates a plot of the tuning metrics from a `TuneDeweather`
 #' object created using [tune_dw_model()]. It visualises how different
 #' hyperparameter values affect model performance (RMSE and RSQ). This allows
 #' for the 'best' parameters to be refined through visual inspection. This plot
@@ -24,7 +24,7 @@
 #' @author Jack Davison
 #' @family Model Tuning Functions
 #' @export
-plot_tdw_metrics <- function(
+plot_tdw_tuning_metrics <- function(
   tdw,
   x = NULL,
   group = NULL,
@@ -32,7 +32,7 @@ plot_tdw_metrics <- function(
   show_std_err = TRUE,
   cols = "Set1"
 ) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
 
   metrics <- get_tdw_tuning_metrics(tdw)
   metrics$metric <- toupper(metrics$metric)
@@ -86,8 +86,7 @@ plot_tdw_metrics <- function(
   }
 
   # nice spacing for dodging
-  widths <- diff(unique(metrics[[x]])) / 2
-  pos <- ggplot2::position_dodge2(width = widths[1])
+  if (is.numeric(metrics[[x]])) {}
 
   # geom for points
   if (show_std_err) {
@@ -108,15 +107,6 @@ plot_tdw_metrics <- function(
       group = .data$metric_group
     )
   ) +
-    ggplot2::geom_line(
-      show.legend = FALSE,
-      position = pos,
-      alpha = ifelse(show_std_err, 0.3, 1)
-    ) +
-    pointgeom(
-      show.legend = dplyr::n_distinct(metrics[[group]]) > 1L,
-      position = pos
-    ) +
     ggplot2::theme_bw() +
     ggplot2::theme(strip.background = ggplot2::element_blank()) +
     ggplot2::scale_color_manual(
@@ -125,6 +115,30 @@ plot_tdw_metrics <- function(
         n = dplyr::n_distinct(metrics[[group]])
       )
     )
+
+  # most metrics are numeric, but a few aren't (e.g., splitrule in ranger)
+  if (is.numeric(metrics[[x]])) {
+    widths <- diff(unique(metrics[[x]])) / 2
+    pos <- ggplot2::position_dodge2(width = widths[1])
+
+    plt <- plt +
+      ggplot2::geom_line(
+        show.legend = FALSE,
+        position = pos,
+        alpha = ifelse(show_std_err, 0.3, 1)
+      ) +
+      pointgeom(
+        show.legend = dplyr::n_distinct(metrics[[group]]) > 1L,
+        position = pos
+      )
+  } else {
+    pos <- ggplot2::position_dodge2(width = 0.5)
+    plt <- plt +
+      pointgeom(
+        show.legend = dplyr::n_distinct(metrics[[group]]) > 1L,
+        position = pos
+      )
+  }
 
   # facet
   if (dplyr::n_distinct(metrics[[facet]]) > 1L) {

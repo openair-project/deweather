@@ -134,7 +134,7 @@ get_dw_importance <-
 #' @order 1
 #' @export
 get_tdw_pollutant <- function(tdw) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
   tdw$pollutant
 }
 
@@ -142,7 +142,7 @@ get_tdw_pollutant <- function(tdw) {
 #' @order 2
 #' @export
 get_tdw_vars <- function(tdw) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
   tdw$vars$names
 }
 
@@ -150,7 +150,7 @@ get_tdw_vars <- function(tdw) {
 #' @order 3
 #' @export
 get_tdw_engine <- function(tdw) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
   tdw$engine$engine
 }
 
@@ -158,7 +158,7 @@ get_tdw_engine <- function(tdw) {
 #' @order 4
 #' @export
 get_tdw_best_params <- function(tdw, param = NULL) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
   params <- tdw$best_params
   if (is.null(param)) {
     return(params)
@@ -172,7 +172,7 @@ get_tdw_best_params <- function(tdw, param = NULL) {
 #' @order 5
 #' @export
 get_tdw_tuning_metrics <- function(tdw, metric = NULL) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
   x <- tdw$metrics
   if (!is.null(metric)) {
     opts <- unique(x$metric)
@@ -186,7 +186,7 @@ get_tdw_tuning_metrics <- function(tdw, metric = NULL) {
 #' @order 6
 #' @export
 get_tdw_testing_metrics <- function(tdw, metric = NULL) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
   x <- as.list(tdw$final_fit$metrics)
   if (!is.null(metric)) {
     rlang::arg_match(metric, names(x))
@@ -199,6 +199,6 @@ get_tdw_testing_metrics <- function(tdw, metric = NULL) {
 #' @order 7
 #' @export
 get_tdw_testing_data <- function(tdw) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
   tdw$final_fit$predictions
 }

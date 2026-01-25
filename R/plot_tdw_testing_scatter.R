@@ -32,7 +32,7 @@
 #'
 #' @family Model Tuning Functions
 #' @export
-plot_tdw_scatter <- function(
+plot_tdw_testing_scatter <- function(
   tdw,
   method = c("scatter", "bin", "hexbin"),
   group = NULL,
@@ -42,7 +42,7 @@ plot_tdw_scatter <- function(
   cols = "viridis",
   cols_ablines = c("black", "grey50")
 ) {
-  check_deweather(tdw, "tuneDeweather")
+  check_deweather(tdw, "TuneDeweather")
   method <- rlang::arg_match(method)
 
   # extract objects for plotting

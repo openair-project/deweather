@@ -65,9 +65,33 @@
 #'   `"ranger"` (random forest). See the documentation below for more
 #'   information.
 #'
-#' @param ... Used to pass additional engine-specific parameters to the model
-#'   (for example, `lambda` for the `xgboost` engine). Currently, these
-#'   engine-specific parameters cannot be 'tuned' in [tune_dw_model()].
+#' @param ... Used to pass additional engine-specific parameters to the model.
+#'   The parameters listed here can be tuned using [tune_dw_model()]. All other
+#'   parameters must be fixed.
+#'
+#'   For `xgboost`:
+#'
+#'   - `alpha`: L1 regularization term on weights.
+#'
+#'   - `lambda`: L2 regularization term on weights.
+#'
+#'   For `lightgbm`:
+#'
+#'   - `num_leaves`: max number of leaves in one tree.
+#'
+#'   For `ranger`:
+#'
+#'   - `regularization.factor`: Regularization factor (gain penalization).
+#'
+#'   - `regularization.usedepth`: Consider the depth in regularization? (`TRUE`/`FALSE`).
+#'
+#'   - `splitrule`: Splitting rule. One of [dials::ranger_reg_rules].
+#'
+#'   - `alpha`: Significance threshold to allow splitting (for `splitrule = "maxstat"`).
+#'
+#'   - `minprop`: Lower quantile of covariate distribution to be considered for splitting (for `splitrule = "maxstat"`).
+#'
+#'   - `num.random.splits`: Number of random splits to consider for each candidate splitting variable (for `splitrule = "extratrees"`).
 #'
 #' @param .date The name of the 'date' column which defines the air quality
 #'   timeseries. Passed to [append_dw_vars()] if needed. Also used to extract
@@ -94,7 +118,7 @@
 #'
 #'   - `"lightgbm"`
 #'
-#'   The following parameters apply:
+#'   The following universal parameters apply and are tunable:
 #'
 #'   - `tree_depth`: Tree Depth
 #'
@@ -112,19 +136,43 @@
 #'
 #'   - `stop_iter`: # Iterations Before Stopping (`xgboost` only)
 #'
+#'   The following `xgboost`-specific parameters are tunable:
+#'
+#'   - `alpha`: L1 regularization term on weights. Increasing this value will make model more conservative
+#'
+#'   - `lambda`: L2 regularization term on weights. Increasing this value will make model more conservative
+#'
+#'   The following `lightgbm`-specific parameters are tunable:
+#'
+#'   - `num_leaves`: max number of leaves in one tree
+#'
 #'   ## Random Forest
 #'
 #'   One engine is available for random forest models:
 #'
 #'   - `"ranger"`
 #'
-#'   The following parameters apply:
+#'   The following universal parameters apply and are tunable:
 #'
 #'   - `mtry`: # Randomly Selected Predictors
 #'
 #'   - `trees`: # Trees
 #'
 #'   - `min_n`: Minimal Node Size
+#'
+#'   The following `ranger`-specific parameters are tunable:
+#'
+#'   - `regularization.factor`: Regularization factor (gain penalization)
+#'
+#'   - `regularization.usedepth`: Consider the depth in regularization? (`TRUE`/`FALSE`)
+#'
+#'   - `splitrule`: Splitting rule. One of [dials::ranger_reg_rules]
+#'
+#'   - `alpha`: Significance threshold to allow splitting (for `splitrule = "maxstat"`)
+#'
+#'   - `minprop`: Lower quantile of covariate distribution to be considered for splitting (for `splitrule = "maxstat"`)
+#'
+#'   - `num.random.splits`: Number of random splits to consider for each candidate splitting variable (for `splitrule = "extratrees"`)
 #'
 #' @return a 'Deweather' object for further analysis
 #'
@@ -197,7 +245,7 @@ build_dw_model <- function(
         stop_iter = !!stop_iter
       ) |>
       parsnip::set_engine(
-        engine,
+        engine = engine,
         ...
       ) |>
       parsnip::set_mode("regression")
@@ -227,13 +275,12 @@ build_dw_model <- function(
   if (engine_method == "rand_forest") {
     model_spec <-
       parsnip::rand_forest(
-        engine = engine,
         trees = !!trees,
         mtry = !!mtry,
         min_n = !!min_n
       ) |>
       parsnip::set_engine(
-        engine,
+        engine = engine,
         ...
       ) |>
       parsnip::set_mode("regression")

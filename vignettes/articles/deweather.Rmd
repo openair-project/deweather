@@ -33,6 +33,10 @@ mirai::daemons(5)
 set.seed(321)
 ```
 
+```{r}
+knitr::include_graphics("deweather_flowchart.svg")
+```
+
 ## Example data set
 
 The **deweather** package comes with a comprehensive data set of air quality and meteorological data. The air quality data is from Marylebone Road in central London (obtained from the `{openair}` package) and the meteorological data from Heathrow Airport (obtained from the `{worldmet}` package). The `aqroadside` data frame contains various pollutants such a NO~x~, NO~2~, ethane and isoprene as well as meteorological data including wind speed, wind direction, relative humidity, ambient temperature and cloud cover.
@@ -93,10 +97,10 @@ If we want to interrogate this more, the `metrics` object shows a summary for al
 get_tdw_tuning_metrics(tuned_results)
 ```
 
-It can be useful to see this data in a plot; the `plot_tdw_metrics()` function allows for this to be done fairly flexibly. Note that this function is likely of most use with between 1 and 3 tuned hyperparmaeters; any more and its likely to be too messy to be interpretable. It may be useful to look for the 'elbow' in the data, where the decrease in RMSE or increase in RSQ goes from a large gradient to a small one. Around this elbow is likely a good value to set your hyperparameter.
+It can be useful to see this data in a plot; the `plot_tdw_tuning_metrics()` function allows for this to be done fairly flexibly. Note that this function is likely of most use with between 1 and 3 tuned hyperparmaeters; any more and its likely to be too messy to be interpretable. It may be useful to look for the 'elbow' in the data, where the decrease in RMSE or increase in RSQ goes from a large gradient to a small one. Around this elbow is likely a good value to set your hyperparameter.
 
 ```{r}
-plot_tdw_metrics(tuned_results, x = "tree_depth", group = "min_n")
+plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "min_n")
 ```
 
 We can also see how the tuned model behaved on some reserved testing data, using the 'best parameters' it has decided on. A set of predictions is included (which can be usefully plotted as a scatter chart or binned surface), as well as a set of metrics to evaluate.
@@ -110,7 +114,7 @@ get_tdw_testing_metrics(tuned_results) |>
 ```{r}
 #| label: finalplot
 #| fig-height: 6
-plot_tdw_scatter(tuned_results)
+plot_tdw_testing_scatter(tuned_results)
 ```
 
 ### Finalising a Model

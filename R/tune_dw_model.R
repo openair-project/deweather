@@ -84,6 +84,9 @@ tune_dw_model <- function(
     multiple = TRUE
   )
 
+  # contain ...
+  extra_params <- rlang::list2(...)
+
   # if any of the vars given aren't in data, they can be appended by the
   # append_dw_vars function
   if (any(!vars %in% names(data))) {
@@ -192,11 +195,50 @@ tune_dw_model <- function(
     }
   }
 
-  # add ... to fixed params, if used
-  fixed_params <- append(fixed_params, rlang::list2(...))
+  # xgboost handling
+  if (engine == "xgboost") {
+    alpha <- extra_params$alpha %||% 0
+    alpha_spec <- alpha
 
-  # get tuning spec
-  if (engine_method == "boost_tree") {
+    lambda <- extra_params$lambda %||% 1
+    lambda_spec <- lambda
+
+    if (length(alpha) > 1) {
+      grid <- append(
+        grid,
+        list(dials::penalty_L1(range = alpha))
+      )
+      alpha_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(alpha = alpha)
+      )
+    }
+
+    if (length(lambda) > 1) {
+      grid <- append(
+        grid,
+        list(dials::penalty_L2(range = lambda))
+      )
+      lambda_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(lambda = lambda)
+      )
+    }
+
+    engine_params <- list(
+      alpha = alpha_spec,
+      lambda = lambda_spec
+    )
+    extra_engine_params <- extra_params[
+      !names(extra_params) %in% names(engine_params)
+    ]
+    engine_params <- append(engine_params, extra_engine_params)
+    fixed_params <- append(fixed_params, extra_engine_params)
+
     tune_spec <-
       parsnip::boost_tree(
         tree_depth = !!tree_depth_spec,
@@ -210,12 +252,169 @@ tune_dw_model <- function(
       ) |>
       parsnip::set_engine(
         engine = engine,
-        ...
+        !!!engine_params
       ) |>
       parsnip::set_mode("regression")
   }
 
-  if (engine_method == "rand_forest") {
+  # lightgbm handling
+  if (engine == "lightgbm") {
+    num_leaves <- extra_params$num_leaves %||% 31
+    num_leaves_spec <- num_leaves
+
+    if (length(num_leaves) > 1) {
+      grid <- append(
+        grid,
+        list(dials::num_leaves(range = num_leaves))
+      )
+      num_leaves_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(num_leaves = num_leaves)
+      )
+    }
+
+    engine_params <- list(
+      num_leaves = num_leaves_spec
+    )
+    extra_engine_params <- extra_params[
+      !names(extra_params) %in% names(engine_params)
+    ]
+    engine_params <- append(engine_params, extra_engine_params)
+    fixed_params <- append(fixed_params, extra_engine_params)
+
+    tune_spec <-
+      parsnip::boost_tree(
+        tree_depth = !!tree_depth_spec,
+        trees = !!trees_spec,
+        learn_rate = !!learn_rate_spec,
+        mtry = !!mtry_spec,
+        min_n = !!min_n_spec,
+        loss_reduction = !!loss_reduction_spec
+      ) |>
+      parsnip::set_engine(
+        engine = engine,
+        !!!engine_params
+      ) |>
+      parsnip::set_mode("regression")
+  }
+
+  if (engine == "ranger") {
+    regularization.factor <- extra_params$regularization.factor %||% 1
+    regularization.factor_spec <- regularization.factor
+
+    if (length(regularization.factor) > 1) {
+      grid <- append(
+        grid,
+        list(dials::regularization_factor(range = regularization.factor))
+      )
+      regularization.factor_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(regularization.factor = regularization.factor)
+      )
+    }
+
+    regularization.usedepth <- extra_params$regularization.usedepth %||% FALSE
+    regularization.usedepth_spec <- regularization.usedepth
+
+    if (length(regularization.usedepth) > 1) {
+      grid <- append(
+        grid,
+        list(dials::regularize_depth(values = regularization.usedepth))
+      )
+      regularization.usedepth_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(regularization.usedepth = regularization.usedepth)
+      )
+    }
+
+    alpha <- extra_params$alpha %||% 0.5
+    alpha_spec <- alpha
+
+    if (length(alpha) > 1) {
+      grid <- append(
+        grid,
+        list(dials::significance_threshold(range = alpha))
+      )
+      alpha_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(alpha = alpha)
+      )
+    }
+
+    minprop <- extra_params$minprop %||% 0.1
+    minprop_spec <- minprop
+
+    if (length(minprop) > 1) {
+      grid <- append(
+        grid,
+        list(dials::lower_quantile(range = minprop))
+      )
+      minprop_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(minprop = minprop)
+      )
+    }
+
+    splitrule <- extra_params$splitrule %||% NULL
+    splitrule_spec <- splitrule
+
+    if (length(splitrule) > 1) {
+      grid <- append(
+        grid,
+        list(dials::splitting_rule(values = splitrule))
+      )
+      splitrule_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(splitrule = splitrule)
+      )
+    }
+
+    num.random.splits <- extra_params$num.random.splits %||% 1
+    num.random.splits_spec <- num.random.splits
+
+    if (length(num.random.splits) > 1) {
+      grid <- append(
+        grid,
+        list(dials::num_random_splits(range = num.random.splits))
+      )
+      num.random.splits_spec <- parsnip::tune()
+    } else {
+      fixed_params <- append(
+        fixed_params,
+        list(num.random.splits = num.random.splits)
+      )
+    }
+
+    engine_params <- list(
+      regularization.factor = regularization.factor_spec,
+      regularization.usedepth = regularization.usedepth_spec,
+      alpha = alpha_spec,
+      minprop = minprop_spec,
+      splitrule = splitrule_spec,
+      num.random.splits = num.random.splits_spec
+    )
+    extra_engine_params <- extra_params[
+      !names(extra_params) %in% names(engine_params)
+    ]
+    engine_params <- append(engine_params, extra_engine_params)
+    fixed_params <- append(fixed_params, extra_engine_params)
+
+    extra_engine_params <- extra_params[
+      !names(extra_params) %in% names(engine_params)
+    ]
+
     tune_spec <-
       parsnip::rand_forest(
         trees = !!trees_spec,
@@ -223,8 +422,8 @@ tune_dw_model <- function(
         min_n = !!min_n_spec
       ) |>
       parsnip::set_engine(
-        engine,
-        ...
+        engine = engine,
+        !!!engine_params
       ) |>
       parsnip::set_mode("regression")
   }
@@ -246,6 +445,20 @@ tune_dw_model <- function(
     grid <- 1L
   } else {
     grid <- dials::grid_regular(x = grid, levels = grid_levels)
+
+    # reconcile parsnip names with engine-specific names
+    names(grid) <- dplyr::case_match(
+      names(grid),
+      "regularization_factor" ~ "regularization.factor",
+      "regularize_depth" ~ "regularization.usedepth",
+      "significance_threshold" ~ "alpha",
+      "lower_quantile" ~ "minprop",
+      "splitting_rule" ~ "splitrule",
+      "num_random_splits" ~ "num.random.splits",
+      "penalty_L2" ~ "lambda",
+      "penalty_L1" ~ "alpha",
+      .default = names(grid)
+    )
   }
 
   # get results from grid
@@ -324,7 +537,7 @@ tune_dw_model <- function(
     )
   )
 
-  class(out) <- "tuneDeweather"
+  class(out) <- "TuneDeweather"
 
   return(out)
 }

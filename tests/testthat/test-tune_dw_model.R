@@ -42,11 +42,26 @@ test_that("tuning works", {
           "learn_rate",
           "loss_reduction",
           "sample_size",
-          "stop_iter"
+          "stop_iter",
+          "alpha",
+          "lambda"
         )
       )
     } else {
-      expect_equal(names(tuned$best_params), c("min_n", "trees", "mtry"))
+      expect_equal(
+        names(tuned$best_params),
+        c(
+          "min_n",
+          "trees",
+          "mtry",
+          "regularization.factor",
+          "regularization.usedepth",
+          "alpha",
+          "minprop",
+          "splitrule",
+          "num.random.splits"
+        )
+      )
     }
 
     # getters

@@ -64,10 +64,10 @@ tail.Deweather <- function(x, ...) {
 
 # Tuned -------------------------------------------------------------------
 
-#' @method print tuneDeweather
+#' @method print TuneDeweather
 #' @export
 #' @author Jack Davison
-print.tuneDeweather <- function(x, ...) {
+print.TuneDeweather <- function(x, ...) {
   cli::cli_h1("Deweather Tuning")
   cli::cli_text(
     "A tuning object for finding appropriate hyperparameters for predicting {.strong {get_tdw_pollutant(x)}} using {.field {get_tdw_vars(x)}}."
@@ -76,20 +76,20 @@ print.tuneDeweather <- function(x, ...) {
     c(
       "Use {.fun deweather::get_tdw_best_params} to see the 'best' parameters.",
       "Use {.fun deweather::get_tdw_tuning_metrics} to see the a summary of tuning results.",
-      "Use {.fun deweather::plot_tdw_scatter} and {.fun deweather::plot_tdw_metrics} to visualise this object."
+      "Use {.fun deweather::plot_tdw_tuning_metrics} and {.fun deweather::plot_tdw_testing_scatter} to visualise this object."
     )
   )
 }
 
-#' @method plot tuneDeweather
+#' @method plot TuneDeweather
 #' @export
-plot.tuneDeweather <- function(x, ...) {
-  plot_tdw_metrics(x, ...)
+plot.TuneDeweather <- function(x, ...) {
+  plot_tdw_tuning_metrics(x, ...)
 }
 
-#' @method summary tuneDeweather
+#' @method summary TuneDeweather
 #' @export
-summary.tuneDeweather <- function(object, ...) {
+summary.TuneDeweather <- function(object, ...) {
   get_tdw_tuning_metrics(object, ...)
 }
 
@@ -120,7 +120,7 @@ dw_map <- function(x, FUN, ...) {
 #' @noRd
 check_deweather <- function(
   dw,
-  what = c("Deweather", "tuneDeweather")
+  what = c("Deweather", "TuneDeweather")
 ) {
   what <- rlang::arg_match(what)
 
@@ -132,7 +132,7 @@ check_deweather <- function(
     }
   }
 
-  if (what == "tuneDeweather") {
+  if (what == "TuneDeweather") {
     if (!inherits(dw, what)) {
       cli::cli_abort(
         "{.arg tdw} must be a '{what}' object created using {.fun deweather::tune_dw_model}."
