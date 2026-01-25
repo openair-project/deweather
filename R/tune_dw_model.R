@@ -170,7 +170,7 @@ tune_dw_model <- function(
 
     if (length(loss_reduction) > 1) {
       grid <- append(grid, list(dials::loss_reduction(range = loss_reduction)))
-      learn_rate_spec <- parsnip::tune()
+      loss_reduction_spec <- parsnip::tune()
     } else {
       fixed_params <- append(
         fixed_params,
@@ -181,14 +181,14 @@ tune_dw_model <- function(
     if (engine == "xgboost") {
       if (length(sample_size) > 1) {
         grid <- append(grid, list(dials::sample_size(range = sample_size)))
-        learn_rate_spec <- parsnip::tune()
+        sample_size_spec <- parsnip::tune()
       } else {
         fixed_params <- append(fixed_params, list(sample_size = sample_size))
       }
 
       if (length(stop_iter) > 1) {
         grid <- append(grid, list(dials::stop_iter(range = stop_iter)))
-        learn_rate_spec <- parsnip::tune()
+        stop_iter_spec <- parsnip::tune()
       } else {
         fixed_params <- append(fixed_params, list(stop_iter = stop_iter))
       }
@@ -411,10 +411,6 @@ tune_dw_model <- function(
     engine_params <- append(engine_params, extra_engine_params)
     fixed_params <- append(fixed_params, extra_engine_params)
 
-    extra_engine_params <- extra_params[
-      !names(extra_params) %in% names(engine_params)
-    ]
-
     tune_spec <-
       parsnip::rand_forest(
         trees = !!trees_spec,
@@ -457,6 +453,7 @@ tune_dw_model <- function(
       "num_random_splits" ~ "num.random.splits",
       "penalty_L2" ~ "lambda",
       "penalty_L1" ~ "alpha",
+      "num_leaves" ~ "num_leaves",
       .default = names(grid)
     )
   }

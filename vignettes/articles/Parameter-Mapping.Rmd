@@ -10,13 +10,11 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, include = FALSE}
-library(tidyverse)
 library(parsnip)
 library(xgboost)
 library(ranger)
 library(lightgbm)
 library(bonsai)
-
 ```
 
 ## Purpose
@@ -31,14 +29,14 @@ This article can be considered a 'cheat sheet' so you can understand how differe
 envir <- parsnip::get_model_env()
 
 args <- ls(envir) %>%
-  tibble(name = .) %>%
-  filter(str_detect(name, "args")) %>%
-  mutate(
-    model = str_replace(name, "_args", ""),
-    args = map(name, ~ envir[[.x]])
+  dplyr::tibble(name = .) %>%
+  dplyr::filter(stringr::str_detect(name, "args")) %>%
+  dplyr::mutate(
+    model = stringr::str_replace(name, "_args", ""),
+    args = purrr::map(name, ~ envir[[.x]])
   ) %>%
-  unnest(args) %>%
-  select(model:original)
+  tidyr::unnest(args) %>%
+  dplyr::select(model:original)
 ```
 
 ## Cheat sheets
@@ -47,7 +45,7 @@ args <- ls(envir) %>%
 
 ```{r xgboost, echo=FALSE}
 args |>
-  filter(engine == "xgboost") |>
+  dplyr::filter(engine == "xgboost") |>
   knitr::kable()
 ```
 
@@ -55,7 +53,7 @@ args |>
 
 ```{r lightgbm, echo=FALSE}
 args |>
-  filter(engine == "lightgbm") |>
+  dplyr::filter(engine == "lightgbm") |>
   knitr::kable()
 ```
 
@@ -63,6 +61,6 @@ args |>
 
 ```{r ranger, echo=FALSE}
 args |>
-  filter(engine == "ranger") |>
+  dplyr::filter(engine == "ranger") |>
   knitr::kable()
 ```
