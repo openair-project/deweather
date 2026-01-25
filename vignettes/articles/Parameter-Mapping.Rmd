@@ -1,0 +1,68 @@
+---
+title: "Parameter Mapping Cheat Sheet"
+---
+
+```{r opts, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup, include = FALSE}
+library(tidyverse)
+library(parsnip)
+library(xgboost)
+library(ranger)
+library(lightgbm)
+library(bonsai)
+
+```
+
+## Purpose
+
+Under the hood, `deweather` uses the `parsnip` package. This package harmonises many different modelling engines, meaning `deweather` can make it very easy to switch between engines with a consistent API.
+
+However, for users familiar with the engine packages themselves (i.e., `xgboost`, `ligthgbm`, and `ranger`), it can make it challenging to understand which hyperparameter you're actually tweaking when setting `trees` or `mtry` or any of the other arguments in `build_dw_model()`.
+
+This article can be considered a 'cheat sheet' so you can understand how different `deweather` arguments map onto their engine equivalents.
+
+```{r prep, include = FALSE}
+envir <- parsnip::get_model_env()
+
+args <- ls(envir) %>%
+  tibble(name = .) %>%
+  filter(str_detect(name, "args")) %>%
+  mutate(
+    model = str_replace(name, "_args", ""),
+    args = map(name, ~ envir[[.x]])
+  ) %>%
+  unnest(args) %>%
+  select(model:original)
+```
+
+## Cheat sheets
+
+### `xgboost`
+
+```{r xgboost, echo=FALSE}
+args |>
+  filter(engine == "xgboost") |>
+  knitr::kable()
+```
+
+### `lightgbm`
+
+```{r lightgbm, echo=FALSE}
+args |>
+  filter(engine == "lightgbm") |>
+  knitr::kable()
+```
+
+### `ranger`
+
+```{r ranger, echo=FALSE}
+args |>
+  filter(engine == "ranger") |>
+  knitr::kable()
+```
