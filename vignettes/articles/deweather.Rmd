@@ -34,7 +34,9 @@ set.seed(321)
 ```
 
 ```{r}
-knitr::include_graphics("deweather_flowchart.svg")
+#| label: flowchart
+#| echo: false
+knitr::include_graphics("flowchart.png")
 ```
 
 ## Example data set
