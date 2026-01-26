@@ -4,6 +4,7 @@
 <url><loc>https://openair-project.github.io/deweather/CONTRIBUTING.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/LICENSE-text.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/LICENSE.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/articles/Parameter-Mapping.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/articles/deweather.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/articles/index.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/authors.html</loc></url>
@@ -13,11 +14,15 @@
 <url><loc>https://openair-project.github.io/deweather/reference/aqroadside.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/build_dw_model.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/deweather-package.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/finalise_tdw_model.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/getters-dw.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/getters-tdw.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/index.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/plot_dw_importance.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/plot_dw_partial_1d.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/plot_dw_partial_2d.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/plot_tdw_testing_scatter.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/plot_tdw_tuning_metrics.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/predict_dw.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/simulate_dw_met.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/tune_dw_model.html</loc></url>

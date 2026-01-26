@@ -45,6 +45,12 @@
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
 <li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/Parameter-Mapping.html">Hyperparameter Cheat Sheet</a></li>
+  </ul>
+</li>
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-case-studies-external-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Case Studies (External)</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-case-studies-external-">
 <li><a class="external-link dropdown-item" href="https://www.sciencedirect.com/science/article/pii/S004896971834244X">(2019) Using meteorological normalisation to detect interventions in air quality time series</a></li>
@@ -120,6 +126,7 @@ most appropriate model.</p>
 <p>Much of <strong>deweather</strong> supports parallel processing with
 the <a href="https://mirai.r-lib.org" class="external-link">mirai</a> package, so along with loading the library
 we’ll set some daemons as well as a seed.</p>
+<p><img src="flowchart.png" class="r-plt" alt="" width="2424"></p>
 </div>
 <div class="section level2">
 <h2 id="example-data-set">Example data set<a class="anchor" aria-label="anchor" href="#example-data-set"></a>
@@ -225,65 +232,105 @@ down the data to speed things up.</p>
 <span>    grid_levels <span class="op">=</span> <span class="fl">3L</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
 <p>This output has a few useful features. First, we’re informed that the
-best value for <code>trees</code> is and for <code>tree_depth</code> is
-5.</p>
+best value for <code>trees</code> is 50 and for <code>tree_depth</code>
+is 5.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tuned_results</span><span class="op">$</span><span class="va">best_params</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getters-tdw.html">get_tdw_best_params</a></span><span class="op">(</span><span class="va">tuned_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt; $min_n</span></span>
 <span><span class="co">#&gt; [1] 10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $tree_depth</span></span>
-<span><span class="co">#&gt; [1] 5</span></span></code></pre></div>
+<span><span class="co">#&gt; [1] 5</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $trees</span></span>
+<span><span class="co">#&gt; [1] 50</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $mtry</span></span>
+<span><span class="co">#&gt; NULL</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $learn_rate</span></span>
+<span><span class="co">#&gt; [1] 0.1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $loss_reduction</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $sample_size</span></span>
+<span><span class="co">#&gt; [1] 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $stop_iter</span></span>
+<span><span class="co">#&gt; [1] 45</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $alpha</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $lambda</span></span>
+<span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
 <p>If we want to interrogate this more, the <code>metrics</code> object
 shows a summary for all of the different hyperparameters that have been
 tuned. Examining the full set of metrics, rather than only the single
 best configuration, allows you to assess whether the marginal
 performance gain of the “best” model justifies its additional
-computational cost, complexity, or instability.</p>
+computational cost or complexity. For example, with air quality
+timeseries data, its likely that increasing <code>trees</code> (the
+number of trees in the model) is always going to ‘improve’ the model,
+but the actual benefits may be marginal after a certain threshold and
+only serve to increase the time taken to fit and use the finalised
+model.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tuned_results</span><span class="op">$</span><span class="va">metrics</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getters-tdw.html">get_tdw_tuning_metrics</a></span><span class="op">(</span><span class="va">tuned_results</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 18 × 6</span></span></span>
-<span><span class="co">#&gt;    min_n tree_depth .metric   mean     n std_err</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     5          1 rmse    37.5      10  0.850 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     5          1 rsq      0.443    10  0.017<span style="text-decoration: underline;">3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     5          3 rmse    31.2      10  0.720 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     5          3 rsq      0.599    10  0.020<span style="text-decoration: underline;">0</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     5          5 rmse    29.7      10  0.728 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     5          5 rsq      0.628    10  0.019<span style="text-decoration: underline;">4</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     7          1 rmse    37.5      10  0.850 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     7          1 rsq      0.443    10  0.017<span style="text-decoration: underline;">3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     7          3 rmse    31.1      10  0.693 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     7          3 rsq      0.600    10  0.020<span style="text-decoration: underline;">1</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>     7          5 rmse    29.6      10  0.645 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>     7          5 rsq      0.632    10  0.019<span style="text-decoration: underline;">9</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>    10          1 rmse    37.5      10  0.850 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>    10          1 rsq      0.443    10  0.017<span style="text-decoration: underline;">3</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>    10          3 rmse    31.1      10  0.661 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>    10          3 rsq      0.601    10  0.019<span style="text-decoration: underline;">7</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span>    10          5 rmse    29.5      10  0.651 </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span>    10          5 rsq      0.633    10  0.020<span style="text-decoration: underline;">1</span></span></span></code></pre></div>
-<p>We can also see how the tuned model behaved on some reserved testing
-data. A table of predictions is returned, as well as a table of
-statistics and a scatter plot of modelled vs measured values.</p>
+<span><span class="co">#&gt;    min_n tree_depth metric   mean     n std_err</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     5          1 rmse   37.5      10  0.850 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     5          1 rsq     0.443    10  0.017<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     5          3 rmse   31.2      10  0.720 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     5          3 rsq     0.599    10  0.020<span style="text-decoration: underline;">0</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     5          5 rmse   29.7      10  0.728 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     5          5 rsq     0.628    10  0.019<span style="text-decoration: underline;">4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     7          1 rmse   37.5      10  0.850 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     7          1 rsq     0.443    10  0.017<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     7          3 rmse   31.1      10  0.693 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     7          3 rsq     0.600    10  0.020<span style="text-decoration: underline;">1</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span>     7          5 rmse   29.6      10  0.645 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span>     7          5 rsq     0.632    10  0.019<span style="text-decoration: underline;">9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span>    10          1 rmse   37.5      10  0.850 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span>    10          1 rsq     0.443    10  0.017<span style="text-decoration: underline;">3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span>    10          3 rmse   31.1      10  0.661 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span>    10          3 rsq     0.601    10  0.019<span style="text-decoration: underline;">7</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span>    10          5 rmse   29.5      10  0.651 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span>    10          5 rsq     0.633    10  0.020<span style="text-decoration: underline;">1</span></span></span></code></pre></div>
+<p>It can be useful to see this data in a plot; the
+<code><a href="../reference/plot_tdw_tuning_metrics.html">plot_tdw_tuning_metrics()</a></code> function allows for this to be
+done fairly flexibly. Note that this function is likely of most use with
+between 1 and 3 tuned hyperparmaeters; any more and its likely to be too
+messy to be interpretable. It may be useful to look for the ‘elbow’ in
+the data, where the decrease in RMSE or increase in RSQ goes from a
+large gradient to a small one. Around this elbow is likely a good value
+to set your hyperparameter.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">tuned_results</span><span class="op">$</span><span class="va">final_fit</span><span class="op">$</span><span class="va">metrics</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Rows: 1</span></span>
-<span><span class="co">#&gt; Columns: 12</span></span>
-<span><span class="co">#&gt; $ pollutant <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> no2</span></span>
-<span><span class="co">#&gt; $ n         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> 424</span></span>
-<span><span class="co">#&gt; $ fac2      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.9646226</span></span>
-<span><span class="co">#&gt; $ mb        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> -0.7177397</span></span>
-<span><span class="co">#&gt; $ mge       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 20.14728</span></span>
-<span><span class="co">#&gt; $ nmb       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> -0.00754832</span></span>
-<span><span class="co">#&gt; $ nmge      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.2118848</span></span>
-<span><span class="co">#&gt; $ rmse      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 28.02095</span></span>
-<span><span class="co">#&gt; $ r         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.8123823</span></span>
-<span><span class="co">#&gt; $ p         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 6.764055e-101</span></span>
-<span><span class="co">#&gt; $ coe       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.4666219</span></span>
-<span><span class="co">#&gt; $ ioa       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> 0.733311</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_tdw_tuning_metrics.html">plot_tdw_tuning_metrics</a></span><span class="op">(</span><span class="va">tuned_results</span>, x <span class="op">=</span> <span class="st">"tree_depth"</span>, group <span class="op">=</span> <span class="st">"min_n"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="deweather_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
+<p>We can also see how the tuned model behaved on some reserved testing
+data, using the ‘best parameters’ it has decided on. A set of
+predictions is included (which can be usefully plotted as a scatter
+chart or binned surface), as well as a set of metrics to evaluate.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tuned_results</span><span class="op">$</span><span class="va">final_fit</span><span class="op">$</span><span class="va">plot</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getters-tdw.html">get_tdw_testing_metrics</a></span><span class="op">(</span><span class="va">tuned_results</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 11</span></span>
+<span><span class="co">#&gt;  $ n   : int 424</span></span>
+<span><span class="co">#&gt;  $ fac2: num 0.965</span></span>
+<span><span class="co">#&gt;  $ mb  : num -0.718</span></span>
+<span><span class="co">#&gt;  $ mge : num 20.1</span></span>
+<span><span class="co">#&gt;  $ nmb : num -0.00755</span></span>
+<span><span class="co">#&gt;  $ nmge: num 0.212</span></span>
+<span><span class="co">#&gt;  $ rmse: num 28</span></span>
+<span><span class="co">#&gt;  $ r   : num 0.812</span></span>
+<span><span class="co">#&gt;  $ p   : num 6.76e-101</span></span>
+<span><span class="co">#&gt;  $ coe : num 0.467</span></span>
+<span><span class="co">#&gt;  $ ioa : num 0.733</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_tdw_testing_scatter.html">plot_tdw_testing_scatter</a></span><span class="op">(</span><span class="va">tuned_results</span><span class="op">)</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/finalplot-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level3">
@@ -293,7 +340,7 @@ statistics and a scatter plot of modelled vs measured values.</p>
 in more detail. <code>deweather</code> has useful defaults for many of
 the model parameters, but these can be adjusted by the user if
 required.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">no2_model</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/build_dw_model.html">build_dw_model</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">aqroadside</span>,</span>
@@ -301,9 +348,14 @@ required.</p>
 <span>    vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"trend"</span>, <span class="st">"ws"</span>, <span class="st">"wd"</span>, <span class="st">"hour"</span>, <span class="st">"weekday"</span>, <span class="st">"air_temp"</span><span class="op">)</span>,</span>
 <span>    engine <span class="op">=</span> <span class="st">"xgboost"</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p>This function returns a “deweathering model” object. We can see a
-quick summary of it by simply printing it.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>Alternatively, if you have carried out some model tuning, you can use
+the <code><a href="../reference/finalise_tdw_model.html">finalise_tdw_model()</a></code> function to automatically lift the
+‘best’ parameters from that.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">no2_model_alt</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/finalise_tdw_model.html">finalise_tdw_model</a></span><span class="op">(</span><span class="va">tuned_results</span>, <span class="va">aqroadside</span><span class="op">)</span></span></code></pre></div>
+<p>Both of these functions return a “deweather model” object. We can see
+a quick summary of it by simply printing it.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">no2_model</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">──</span> <span style="font-weight: bold;">Deweather Model</span> <span style="color: #00BBBB;">─────────────────────────────────────────────────────────────</span></span></span>
@@ -325,7 +377,7 @@ quick summary of it by simply printing it.</p>
 such ‘getter’ functions, and they form a consistent, useful API for
 accessing relevant features of different objects created in the
 package.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getters-dw.html">get_dw_pollutant</a></span><span class="op">(</span><span class="va">no2_model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "no2"</span></span>
 <span><span class="fu"><a href="../reference/getters-dw.html">get_dw_vars</a></span><span class="op">(</span><span class="va">no2_model</span><span class="op">)</span></span>
@@ -352,7 +404,7 @@ approach to the above. This varies depending on the chosen
 fractional contribution of each feature to the model based on the total
 gain of this feature’s splits. A higher percentage means a more
 important predictive feature.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getters-dw.html">get_dw_importance</a></span><span class="op">(</span><span class="va">no2_model</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 2</span></span></span>
 <span><span class="co">#&gt;    var        importance</span></span>
@@ -373,7 +425,7 @@ important predictive feature.</p>
 <code><a href="../reference/plot_dw_importance.html">plot_dw_importance()</a></code> function. The wind direction is the
 most predictive feature, and the day of the week being any week day is
 the least predictive feature.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_importance.html">plot_dw_importance</a></span><span class="op">(</span><span class="va">no2_model</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="deweather_files/figure-html/fig-plotimport-1.png" class="r-plt" alt="The feature importance of our model." width="700"><p class="caption">
@@ -388,7 +440,7 @@ variables. This is informative - for example, we can see here that the
 day of the week being a weekend is a useful feature. Regardless, if you
 would like to see factor features as single features, the
 <code>aggregate_factors</code> argument may be of use.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_importance.html">plot_dw_importance</a></span><span class="op">(</span><span class="va">no2_model</span>, aggregate_factors <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="deweather_files/figure-html/fig-plotimportagg-1.png" class="r-plt" alt="The feature importance of our model, with factors aggregated." width="700"><p class="caption">
@@ -413,18 +465,18 @@ We’ll set <code>n</code> to <code>100</code> for speed; this will sample
 100 random samples of our original data to construct the plot. We can
 see that <code>no2</code> is highest during the day and lowest
 overnight, everything else kept equal.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"hour"</span>, n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/pd1d-1.png" class="r-plt" alt="" width="700"></p>
 <p>A categorical variable like <code>weekday</code> looks slightly
 different, but achieves a similar result. <code>no2</code> is lowest on
 weekends, all else being equal.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"weekday"</span>, n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/pd1d2-1.png" class="r-plt" alt="" width="700"></p>
 <p>If a variable isn’t given, all variables will be plotted in a
 <code>patchwork</code> assembly in order of importance.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, n <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/pd1d3-1.png" class="r-plt" alt="" width="700"></p>
 </div>
@@ -435,14 +487,14 @@ weekends, all else being equal.</p>
 consider <em>grouped</em> partial dependences. This means, before PDs
 are calculated, we split the data into groups and calculate PDs for each
 subset of the data. Let’s give this a go now.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"hour"</span>, group <span class="op">=</span> <span class="st">"weekday"</span>, n <span class="op">=</span> <span class="fl">1000</span><span class="op">)</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/calcPDWkday-1.png" class="r-plt" alt="" width="700"></p>
 <p>Note that <code>group</code> need not be categorical; you may provide
 a continuous variable which will be binned into
 <code>group_intervals</code>. Here we group by <code>"air_temp"</code>
 and split it into 3 equally sized bins.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span></span>
 <span>  <span class="va">no2_model</span>,</span>
 <span>  <span class="st">"hour"</span>,</span>
@@ -466,7 +518,7 @@ temperature is low, i.e., stable atmospheric conditions. Also
 most likely due to more O<sub>3</sub> available to convert NO to
 NO<sub>2</sub>. In fact, background O<sub>3</sub> would probably be a
 useful covariate to add to the model.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_2d.html">plot_dw_partial_2d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"ws"</span>, <span class="st">"air_temp"</span>, n <span class="op">=</span> <span class="fl">200</span><span class="op">)</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/pd2d1-1.png" class="r-plt" alt="" width="700"></p>
 <p>It can be easier to see some of these relationships using a binned
@@ -474,7 +526,7 @@ scale. <code>contour = "lines"</code> will overlay the continuous colour
 surface with contour lines. <code>contour = "fill"</code> will bin the
 entire colour scale. The number of bins is controlled using the
 <code>contour_bins</code> argument.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_2d.html">plot_dw_partial_2d</a></span><span class="op">(</span></span>
 <span>  <span class="va">no2_model</span>,</span>
 <span>  <span class="st">"ws"</span>,</span>
@@ -492,7 +544,7 @@ entire colour scale. The number of bins is controlled using the
 </h2>
 <p>These plots can be customised like any other <a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a>
 object.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"hour"</span>,group <span class="op">=</span> <span class="st">"weekday"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -538,7 +590,7 @@ A thoroughly customised partial dependence plot.
 </h2>
 <p>An <em>indication</em> of the meteorologically-averaged trend is
 given by the <code><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d()</a></code> function above.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span><span class="va">no2_model</span>, <span class="st">"trend"</span>, n <span class="op">=</span> <span class="fl">100</span>, intervals <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
 <p><img src="deweather_files/figure-html/pd-trend-1.png" class="r-plt" alt="" width="672"></p>
 <p>A much better indication is given by using the model to predict many
@@ -549,14 +601,14 @@ conditions. This sampling is carried out by the
 than what’s used in this example; it has been set to <code>50</code> for
 speed. Recall also that some <code><a href="https://mirai.r-lib.org/reference/daemons.html" class="external-link">mirai::daemons()</a></code> are set to
 allow for parallelism.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demet</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_dw_met.html">simulate_dw_met</a></span><span class="op">(</span></span>
 <span>  <span class="va">no2_model</span>,</span>
 <span>  vars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ws"</span>, <span class="st">"wd"</span>, <span class="st">"air_temp"</span><span class="op">)</span>,</span>
 <span>  n <span class="op">=</span> <span class="fl">50</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Now it is possible to plot the resulting trend.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">demet</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">no2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -578,7 +630,7 @@ NO<sub>2</sub> (NO<sub>x</sub>) rather than meteorology, i.e., road
 traffic which has strong hourly and daily variations throughout the
 year. It can be useful to simply average the results to provide a better
 indication of the overall trend. For example:</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">demet</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">openair</span><span class="fu">::</span><span class="fu"><a href="https://openair-project.github.io/openair/reference/timeAverage.html" class="external-link">timeAverage</a></span><span class="op">(</span><span class="st">"month"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">no2</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -600,7 +652,7 @@ simulated data are similar, but the simulated data are higher overall.
 This highlights that purely relying on the PD profiles (which isolates
 the trend from even temporal variables like day of the week) may
 underestimate pollutant concentrations.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># PD - set intervals to something high for a good profile</span></span>
 <span><span class="va">pd_trend</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plot_dw_partial_1d.html">plot_dw_partial_1d</a></span><span class="op">(</span></span>
 <span>  <span class="va">no2_model</span>,</span>
@@ -648,7 +700,7 @@ underestimate pollutant concentrations.</p>
 <span>    <span class="op">)</span></span>
 <span>  <span class="op">)</span></span>
 <span><span class="co">#&gt; Calculating Time Averages <span style="color: #00BB00;">■■■■■■■■■■■■■■■■                </span>  50% |  ETA:  1s</span></span></code></pre></div>
-<p><img src="deweather_files/figure-html/unnamed-chunk-2-1.png" class="r-plt" alt="" width="700"></p>
+<p><img src="deweather_files/figure-html/unnamed-chunk-3-1.png" class="r-plt" alt="" width="700"></p>
 <p>Note that the function <code><a href="../reference/predict_dw.html">predict_dw()</a></code> is also provided for
 generalised use of a deweather model for prediction.</p>
 </div>

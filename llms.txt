@@ -125,32 +125,67 @@ deweathering functions.
 - [`aqroadside`](https://openair-project.github.io/deweather/reference/aqroadside.md)
   : Example air quality monitoring data for openair
 
-## Build
+## Tune
 
-Core functions for tuning and fitting deweathering models, including
-parameter tuning, model construction and adding derived variables.
+Tune hyperparameters for a deweathering model before it is fit. A ‘best’
+parameter set is automatically determined, but other functions are
+provided to allow for closer interrogation so that these can be refined.
 
 - [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
   : Tune a deweather model
+
+- [`plot_tdw_tuning_metrics()`](https://openair-project.github.io/deweather/reference/plot_tdw_tuning_metrics.md)
+  :
+
+  Plot Tuning Metrics from
+  [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
+
+- [`plot_tdw_testing_scatter()`](https://openair-project.github.io/deweather/reference/plot_tdw_testing_scatter.md)
+  :
+
+  Plot Observed vs Modelled Scatter using the 'best parameters' from
+  [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
+
+## Build
+
+Core functions for fitting deweathering models, used throughout the rest
+of the `deweather` package for interpretation and prediction.
+
 - [`build_dw_model()`](https://openair-project.github.io/deweather/reference/build_dw_model.md)
   : Build a Deweather Model
+
+- [`finalise_tdw_model()`](https://openair-project.github.io/deweather/reference/finalise_tdw_model.md)
+  :
+
+  Use the 'best parameters' determined by
+  [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
+  to build a Deweather Model
+
 - [`append_dw_vars()`](https://openair-project.github.io/deweather/reference/append_dw_vars.md)
   : Conveniently append common 'deweathering' variables to an air
   quality time series
 
 ## Examine
 
-Methods to examine a deweathering model; currently ‘getters’ to extract
-specific features of a built model.
+‘getters’ to extract specific features of a built `deweather` model or a
+`deweather` ‘tuning’ object.
 
 - [`get_dw_pollutant()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
   [`get_dw_vars()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
+  [`get_dw_engine()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
   [`get_dw_params()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
   [`get_dw_input_data()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
   [`get_dw_model()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
-  [`get_dw_engine()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
   [`get_dw_importance()`](https://openair-project.github.io/deweather/reference/getters-dw.md)
   : Getters for various deweather model features
+- [`get_tdw_pollutant()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+  [`get_tdw_vars()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+  [`get_tdw_engine()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+  [`get_tdw_best_params()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+  [`get_tdw_tuning_metrics()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+  [`get_tdw_testing_metrics()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+  [`get_tdw_testing_data()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+  : Getters for various deweather tuning object features
 
 ## Visualise
 
@@ -182,3 +217,6 @@ Functions to apply a deweathering model for prediction.
   {deweather}](https://openair-project.github.io/deweather/articles/deweather.md):
 
   Get started with deweather
+
+- [Hyperparameter Cheat
+  Sheet](https://openair-project.github.io/deweather/articles/Parameter-Mapping.md):

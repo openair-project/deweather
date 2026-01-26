@@ -33,6 +33,10 @@ for explanatory analysis (e.g., through plot_dw_partial_1d())."><meta property="
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
 <li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Parameter-Mapping.html">Hyperparameter Cheat Sheet</a></li>
+  </ul></li>
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-case-studies-external-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Case Studies (External)</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-case-studies-external-"><li><a class="external-link dropdown-item" href="https://www.sciencedirect.com/science/article/pii/S004896971834244X">(2019) Using meteorological normalisation to detect interventions in air quality time series</a></li>
     <li><a class="external-link dropdown-item" href="https://www.sciencedirect.com/science/article/abs/pii/S1352231012001355">(2012) A short-term intervention study — Impact of airport closure due to the eruption of Eyjafjallajökull on near-field air quality</a></li>
@@ -180,7 +184,18 @@ information.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Not current used.</p></dd>
+<dd><p>Used to pass additional engine-specific parameters to the model.
+The parameters listed here can be tuned using <code><a href="tune_dw_model.html">tune_dw_model()</a></code>. All other
+parameters must be fixed.</p><ul><li><p><code>alpha</code>: <code>&lt;xgboost&gt;</code> L1 regularization term on weights.</p></li>
+<li><p><code>lambda</code>: <code>&lt;xgboost&gt;</code> L2 regularization term on weights.</p></li>
+<li><p><code>num_leaves</code>: <code>&lt;lightgbm&gt;</code> max number of leaves in one tree.</p></li>
+<li><p><code>regularization.factor</code>: <code>&lt;ranger&gt;</code> Regularization factor (gain penalization).</p></li>
+<li><p><code>regularization.usedepth</code>: <code>&lt;ranger&gt;</code> Consider the depth in regularization? (<code>TRUE</code>/<code>FALSE</code>).</p></li>
+<li><p><code>splitrule</code>: <code>&lt;ranger&gt;</code> Splitting rule. One of dials::ranger_reg_rules.</p></li>
+<li><p><code>alpha</code>: <code>&lt;ranger&gt;</code> Significance threshold to allow splitting (for <code>splitrule = "maxstat"</code>).</p></li>
+<li><p><code>minprop</code>: <code>&lt;ranger&gt;</code> Lower quantile of covariate distribution to be considered for splitting (for <code>splitrule = "maxstat"</code>).</p></li>
+<li><p><code>num.random.splits</code>: <code>&lt;ranger&gt;</code> Number of random splits to consider for each candidate splitting variable (for <code>splitrule = "extratrees"</code>).</p></li>
+</ul></dd>
 
 
 <dt id="arg--date">.date<a class="anchor" aria-label="anchor" href="#arg--date"></a></dt>
@@ -213,7 +228,7 @@ variable.</p></dd>
 
 <p>Two engines are available for boosted tree models:</p><ul><li><p><code>"xgboost"</code></p></li>
 <li><p><code>"lightgbm"</code></p></li>
-</ul><p>The following parameters apply:</p><ul><li><p><code>tree_depth</code>: Tree Depth</p></li>
+</ul><p>The following universal parameters apply and are tunable:</p><ul><li><p><code>tree_depth</code>: Tree Depth</p></li>
 <li><p><code>trees</code>: # Trees</p></li>
 <li><p><code>learn_rate</code>: Learning Rate</p></li>
 <li><p><code>mtry</code>: # Randomly Selected Predictors</p></li>
@@ -221,6 +236,9 @@ variable.</p></dd>
 <li><p><code>loss_reduction</code>: Minimum Loss Reduction</p></li>
 <li><p><code>sample_size</code>: Proportion Observations Sampled (<code>xgboost</code> only)</p></li>
 <li><p><code>stop_iter</code>: # Iterations Before Stopping (<code>xgboost</code> only)</p></li>
+</ul><p>The following <code>xgboost</code>-specific parameters are tunable:</p><ul><li><p><code>alpha</code>: L1 regularization term on weights. Increasing this value will make model more conservative</p></li>
+<li><p><code>lambda</code>: L2 regularization term on weights. Increasing this value will make model more conservative</p></li>
+</ul><p>The following <code>lightgbm</code>-specific parameters are tunable:</p><ul><li><p><code>num_leaves</code>: max number of leaves in one tree</p></li>
 </ul></div>
 
 <div class="section">
@@ -228,11 +246,21 @@ variable.</p></dd>
 
 
 <p>One engine is available for random forest models:</p><ul><li><p><code>"ranger"</code></p></li>
-</ul><p>The following parameters apply:</p><ul><li><p><code>mtry</code>: # Randomly Selected Predictors</p></li>
+</ul><p>The following universal parameters apply and are tunable:</p><ul><li><p><code>mtry</code>: # Randomly Selected Predictors</p></li>
 <li><p><code>trees</code>: # Trees</p></li>
 <li><p><code>min_n</code>: Minimal Node Size</p></li>
+</ul><p>The following <code>ranger</code>-specific parameters are tunable:</p><ul><li><p><code>regularization.factor</code>: Regularization factor (gain penalization)</p></li>
+<li><p><code>regularization.usedepth</code>: Consider the depth in regularization? (<code>TRUE</code>/<code>FALSE</code>)</p></li>
+<li><p><code>splitrule</code>: Splitting rule. One of dials::ranger_reg_rules</p></li>
+<li><p><code>alpha</code>: Significance threshold to allow splitting (for <code>splitrule = "maxstat"</code>)</p></li>
+<li><p><code>minprop</code>: Lower quantile of covariate distribution to be considered for splitting (for <code>splitrule = "maxstat"</code>)</p></li>
+<li><p><code>num.random.splits</code>: Number of random splits to consider for each candidate splitting variable (for <code>splitrule = "extratrees"</code>)</p></li>
 </ul></div>
 
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="finalise_tdw_model.html">finalise_tdw_model()</a></code></p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

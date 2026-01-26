@@ -1,8 +1,8 @@
 # Getters for various deweather model features
 
 `deweather` provides multiple 'getter' functions for extracting relevant
-model features from a deweather model. These are a useful convenience,
-particularly in conjunction with R's
+model features from a deweather model and/or tuning objects. These are a
+useful convenience, particularly in conjunction with R's
 [pipe](https://rdrr.io/r/base/pipeOp.html) operator (`|>`).
 
 ## Usage
@@ -12,13 +12,13 @@ get_dw_pollutant(dw)
 
 get_dw_vars(dw)
 
+get_dw_engine(dw)
+
 get_dw_params(dw, param = NULL)
 
 get_dw_input_data(dw)
 
 get_dw_model(dw)
-
-get_dw_engine(dw)
 
 get_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE)
 ```
@@ -27,14 +27,15 @@ get_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE)
 
 - dw:
 
-  A deweather model created with
+  A `deweather` model created with
   [`build_dw_model()`](https://openair-project.github.io/deweather/reference/build_dw_model.md).
 
 - param:
 
-  For `get_dw_params()`. The default (`NULL`) returns a list of model
-  parameters. `param` will return one specific parameter as a character
-  vector.
+  For `get_dw_params()` and
+  [`get_tdw_best_params()`](https://openair-project.github.io/deweather/reference/getters-tdw.md).
+  The default (`NULL`) returns a list of model parameters. `param` will
+  return one specific parameter as a character vector.
 
 - aggregate_factors:
 
@@ -63,3 +64,8 @@ Typically a character vector, except:
 - `get_dw_model()`: A
   [parsnip::model_fit](https://parsnip.tidymodels.org/reference/model_fit.html)
   object
+
+## See also
+
+Other Object 'Getter' Functions:
+[`get_tdw_pollutant()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)

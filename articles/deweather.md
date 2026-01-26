@@ -20,6 +20,8 @@ Much of **deweather** supports parallel processing with the
 [mirai](https://mirai.r-lib.org) package, so along with loading the
 library we’ll set some daemons as well as a seed.
 
+![](flowchart.png)
+
 ## Example data set
 
 The **deweather** package comes with a comprehensive data set of air
@@ -136,73 +138,117 @@ tuned_results <-
 ```
 
 This output has a few useful features. First, we’re informed that the
-best value for `trees` is and for `tree_depth` is 5.
+best value for `trees` is 50 and for `tree_depth` is 5.
 
 ``` r
-tuned_results$best_params
+get_tdw_best_params(tuned_results)
 #> $min_n
 #> [1] 10
 #> 
 #> $tree_depth
 #> [1] 5
+#> 
+#> $trees
+#> [1] 50
+#> 
+#> $mtry
+#> NULL
+#> 
+#> $learn_rate
+#> [1] 0.1
+#> 
+#> $loss_reduction
+#> [1] 0
+#> 
+#> $sample_size
+#> [1] 1
+#> 
+#> $stop_iter
+#> [1] 45
+#> 
+#> $alpha
+#> [1] 0
+#> 
+#> $lambda
+#> [1] 1
 ```
 
 If we want to interrogate this more, the `metrics` object shows a
 summary for all of the different hyperparameters that have been tuned.
 Examining the full set of metrics, rather than only the single best
 configuration, allows you to assess whether the marginal performance
-gain of the “best” model justifies its additional computational cost,
-complexity, or instability.
+gain of the “best” model justifies its additional computational cost or
+complexity. For example, with air quality timeseries data, its likely
+that increasing `trees` (the number of trees in the model) is always
+going to ‘improve’ the model, but the actual benefits may be marginal
+after a certain threshold and only serve to increase the time taken to
+fit and use the finalised model.
 
 ``` r
-tuned_results$metrics
+get_tdw_tuning_metrics(tuned_results)
 #> # A tibble: 18 × 6
-#>    min_n tree_depth .metric   mean     n std_err
-#>    <int>      <int> <chr>    <dbl> <int>   <dbl>
-#>  1     5          1 rmse    37.5      10  0.850 
-#>  2     5          1 rsq      0.443    10  0.0173
-#>  3     5          3 rmse    31.2      10  0.720 
-#>  4     5          3 rsq      0.599    10  0.0200
-#>  5     5          5 rmse    29.7      10  0.728 
-#>  6     5          5 rsq      0.628    10  0.0194
-#>  7     7          1 rmse    37.5      10  0.850 
-#>  8     7          1 rsq      0.443    10  0.0173
-#>  9     7          3 rmse    31.1      10  0.693 
-#> 10     7          3 rsq      0.600    10  0.0201
-#> 11     7          5 rmse    29.6      10  0.645 
-#> 12     7          5 rsq      0.632    10  0.0199
-#> 13    10          1 rmse    37.5      10  0.850 
-#> 14    10          1 rsq      0.443    10  0.0173
-#> 15    10          3 rmse    31.1      10  0.661 
-#> 16    10          3 rsq      0.601    10  0.0197
-#> 17    10          5 rmse    29.5      10  0.651 
-#> 18    10          5 rsq      0.633    10  0.0201
+#>    min_n tree_depth metric   mean     n std_err
+#>    <int>      <int> <chr>   <dbl> <int>   <dbl>
+#>  1     5          1 rmse   37.5      10  0.850 
+#>  2     5          1 rsq     0.443    10  0.0173
+#>  3     5          3 rmse   31.2      10  0.720 
+#>  4     5          3 rsq     0.599    10  0.0200
+#>  5     5          5 rmse   29.7      10  0.728 
+#>  6     5          5 rsq     0.628    10  0.0194
+#>  7     7          1 rmse   37.5      10  0.850 
+#>  8     7          1 rsq     0.443    10  0.0173
+#>  9     7          3 rmse   31.1      10  0.693 
+#> 10     7          3 rsq     0.600    10  0.0201
+#> 11     7          5 rmse   29.6      10  0.645 
+#> 12     7          5 rsq     0.632    10  0.0199
+#> 13    10          1 rmse   37.5      10  0.850 
+#> 14    10          1 rsq     0.443    10  0.0173
+#> 15    10          3 rmse   31.1      10  0.661 
+#> 16    10          3 rsq     0.601    10  0.0197
+#> 17    10          5 rmse   29.5      10  0.651 
+#> 18    10          5 rsq     0.633    10  0.0201
 ```
+
+It can be useful to see this data in a plot; the
+[`plot_tdw_tuning_metrics()`](https://openair-project.github.io/deweather/reference/plot_tdw_tuning_metrics.md)
+function allows for this to be done fairly flexibly. Note that this
+function is likely of most use with between 1 and 3 tuned
+hyperparmaeters; any more and its likely to be too messy to be
+interpretable. It may be useful to look for the ‘elbow’ in the data,
+where the decrease in RMSE or increase in RSQ goes from a large gradient
+to a small one. Around this elbow is likely a good value to set your
+hyperparameter.
+
+``` r
+plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "min_n")
+```
+
+![](deweather_files/figure-html/unnamed-chunk-2-1.png)
 
 We can also see how the tuned model behaved on some reserved testing
-data. A table of predictions is returned, as well as a table of
-statistics and a scatter plot of modelled vs measured values.
+data, using the ‘best parameters’ it has decided on. A set of
+predictions is included (which can be usefully plotted as a scatter
+chart or binned surface), as well as a set of metrics to evaluate.
 
 ``` r
-dplyr::glimpse(tuned_results$final_fit$metrics)
-#> Rows: 1
-#> Columns: 12
-#> $ pollutant <fct> no2
-#> $ n         <int> 424
-#> $ fac2      <dbl> 0.9646226
-#> $ mb        <dbl> -0.7177397
-#> $ mge       <dbl> 20.14728
-#> $ nmb       <dbl> -0.00754832
-#> $ nmge      <dbl> 0.2118848
-#> $ rmse      <dbl> 28.02095
-#> $ r         <dbl> 0.8123823
-#> $ p         <dbl> 6.764055e-101
-#> $ coe       <dbl> 0.4666219
-#> $ ioa       <dbl> 0.733311
+get_tdw_testing_metrics(tuned_results) |>
+  dplyr::glimpse()
+#> List of 11
+#>  $ n   : int 424
+#>  $ fac2: num 0.965
+#>  $ mb  : num -0.718
+#>  $ mge : num 20.1
+#>  $ nmb : num -0.00755
+#>  $ nmge: num 0.212
+#>  $ rmse: num 28
+#>  $ r   : num 0.812
+#>  $ p   : num 6.76e-101
+#>  $ coe : num 0.467
+#>  $ ioa : num 0.733
 ```
 
 ``` r
-tuned_results$final_fit$plot
+plot_tdw_testing_scatter(tuned_results)
 ```
 
 ![](deweather_files/figure-html/finalplot-1.png)
@@ -223,8 +269,17 @@ no2_model <-
   )
 ```
 
-This function returns a “deweathering model” object. We can see a quick
-summary of it by simply printing it.
+Alternatively, if you have carried out some model tuning, you can use
+the
+[`finalise_tdw_model()`](https://openair-project.github.io/deweather/reference/finalise_tdw_model.md)
+function to automatically lift the ‘best’ parameters from that.
+
+``` r
+no2_model_alt <- finalise_tdw_model(tuned_results, aqroadside)
+```
+
+Both of these functions return a “deweather model” object. We can see a
+quick summary of it by simply printing it.
 
 ``` r
 no2_model
@@ -620,7 +675,7 @@ dplyr::bind_rows(
 #> Calculating Time Averages ■■■■■■■■■■■■■■■■                  50% |  ETA:  1s
 ```
 
-![](deweather_files/figure-html/unnamed-chunk-2-1.png)
+![](deweather_files/figure-html/unnamed-chunk-3-1.png)
 
 Note that the function
 [`predict_dw()`](https://openair-project.github.io/deweather/reference/predict_dw.md)

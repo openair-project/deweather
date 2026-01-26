@@ -14,7 +14,7 @@ plot_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE, cols = "tol")
 
 - dw:
 
-  A deweather model created with
+  A `deweather` model created with
   [`build_dw_model()`](https://openair-project.github.io/deweather/reference/build_dw_model.md).
 
 - aggregate_factors:

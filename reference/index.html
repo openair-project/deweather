@@ -19,6 +19,10 @@
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Functions</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">News</a></li>
 <li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Parameter-Mapping.html">Hyperparameter Cheat Sheet</a></li>
+  </ul></li>
+<li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-case-studies-external-" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Case Studies (External)</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-case-studies-external-"><li><a class="external-link dropdown-item" href="https://www.sciencedirect.com/science/article/pii/S004896971834244X">(2019) Using meteorological normalisation to detect interventions in air quality time series</a></li>
     <li><a class="external-link dropdown-item" href="https://www.sciencedirect.com/science/article/abs/pii/S1352231012001355">(2012) A short-term intervention study — Impact of airport closure due to the eruption of Eyjafjallajökull on near-field air quality</a></li>
@@ -73,9 +77,9 @@
         </dt>
         <dd>Example air quality monitoring data for openair</dd>
       </dl></div><div class="section level2">
-      <h2 id="build">Build<a class="anchor" aria-label="anchor" href="#build"></a></h2>
+      <h2 id="tune">Tune<a class="anchor" aria-label="anchor" href="#tune"></a></h2>
 
-      <div class="section-desc"><p>Core functions for tuning and fitting deweathering models, including parameter tuning, model construction and adding derived variables.</p></div>
+      <div class="section-desc"><p>Tune hyperparameters for a deweathering model before it is fit. A ‘best’ parameter set is automatically determined, but other functions are provided to allow for closer interrogation so that these can be refined.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -91,10 +95,40 @@
 
         <dt>
 
+          <code><a href="plot_tdw_tuning_metrics.html">plot_tdw_tuning_metrics()</a></code>
+
+        </dt>
+        <dd>Plot Tuning Metrics from <code><a href="../reference/tune_dw_model.html">tune_dw_model()</a></code></dd>
+
+        <dt>
+
+          <code><a href="plot_tdw_testing_scatter.html">plot_tdw_testing_scatter()</a></code>
+
+        </dt>
+        <dd>Plot Observed vs Modelled Scatter using the 'best parameters' from <code><a href="../reference/tune_dw_model.html">tune_dw_model()</a></code></dd>
+      </dl></div><div class="section level2">
+      <h2 id="build">Build<a class="anchor" aria-label="anchor" href="#build"></a></h2>
+
+      <div class="section-desc"><p>Core functions for fitting deweathering models, used throughout the rest of the <code>deweather</code> package for interpretation and prediction.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
           <code><a href="build_dw_model.html">build_dw_model()</a></code>
 
         </dt>
         <dd>Build a Deweather Model</dd>
+
+        <dt>
+
+          <code><a href="finalise_tdw_model.html">finalise_tdw_model()</a></code>
+
+        </dt>
+        <dd>Use the 'best parameters' determined by <code><a href="../reference/tune_dw_model.html">tune_dw_model()</a></code> to build a Deweather Model</dd>
 
         <dt>
 
@@ -105,7 +139,7 @@
       </dl></div><div class="section level2">
       <h2 id="examine">Examine<a class="anchor" aria-label="anchor" href="#examine"></a></h2>
 
-      <div class="section-desc"><p>Methods to examine a deweathering model; currently ‘getters’ to extract specific features of a built model.</p></div>
+      <div class="section-desc"><p>‘getters’ to extract specific features of a built <code>deweather</code> model or a <code>deweather</code> ‘tuning’ object.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -114,10 +148,17 @@
 
       <dl><dt>
 
-          <code><a href="getters-dw.html">get_dw_pollutant()</a></code> <code><a href="getters-dw.html">get_dw_vars()</a></code> <code><a href="getters-dw.html">get_dw_params()</a></code> <code><a href="getters-dw.html">get_dw_input_data()</a></code> <code><a href="getters-dw.html">get_dw_model()</a></code> <code><a href="getters-dw.html">get_dw_engine()</a></code> <code><a href="getters-dw.html">get_dw_importance()</a></code>
+          <code><a href="getters-dw.html">get_dw_pollutant()</a></code> <code><a href="getters-dw.html">get_dw_vars()</a></code> <code><a href="getters-dw.html">get_dw_engine()</a></code> <code><a href="getters-dw.html">get_dw_params()</a></code> <code><a href="getters-dw.html">get_dw_input_data()</a></code> <code><a href="getters-dw.html">get_dw_model()</a></code> <code><a href="getters-dw.html">get_dw_importance()</a></code>
 
         </dt>
         <dd>Getters for various deweather model features</dd>
+
+        <dt>
+
+          <code><a href="getters-tdw.html">get_tdw_pollutant()</a></code> <code><a href="getters-tdw.html">get_tdw_vars()</a></code> <code><a href="getters-tdw.html">get_tdw_engine()</a></code> <code><a href="getters-tdw.html">get_tdw_best_params()</a></code> <code><a href="getters-tdw.html">get_tdw_tuning_metrics()</a></code> <code><a href="getters-tdw.html">get_tdw_testing_metrics()</a></code> <code><a href="getters-tdw.html">get_tdw_testing_data()</a></code>
+
+        </dt>
+        <dd>Getters for various deweather tuning object features</dd>
       </dl></div><div class="section level2">
       <h2 id="visualise">Visualise<a class="anchor" aria-label="anchor" href="#visualise"></a></h2>
 

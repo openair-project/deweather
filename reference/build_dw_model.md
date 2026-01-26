@@ -119,7 +119,35 @@ build_dw_model(
 
 - ...:
 
-  Not current used.
+  Used to pass additional engine-specific parameters to the model. The
+  parameters listed here can be tuned using
+  [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md).
+  All other parameters must be fixed.
+
+  - `alpha`: `<xgboost>` L1 regularization term on weights.
+
+  - `lambda`: `<xgboost>` L2 regularization term on weights.
+
+  - `num_leaves`: `<lightgbm>` max number of leaves in one tree.
+
+  - `regularization.factor`: `<ranger>` Regularization factor (gain
+    penalization).
+
+  - `regularization.usedepth`: `<ranger>` Consider the depth in
+    regularization? (`TRUE`/`FALSE`).
+
+  - `splitrule`: `<ranger>` Splitting rule. One of
+    dials::ranger_reg_rules.
+
+  - `alpha`: `<ranger>` Significance threshold to allow splitting (for
+    `splitrule = "maxstat"`).
+
+  - `minprop`: `<ranger>` Lower quantile of covariate distribution to be
+    considered for splitting (for `splitrule = "maxstat"`).
+
+  - `num.random.splits`: `<ranger>` Number of random splits to consider
+    for each candidate splitting variable (for
+    `splitrule = "extratrees"`).
 
 - .date:
 
@@ -153,7 +181,7 @@ Two engines are available for boosted tree models:
 
 - `"lightgbm"`
 
-The following parameters apply:
+The following universal parameters apply and are tunable:
 
 - `tree_depth`: Tree Depth
 
@@ -171,16 +199,50 @@ The following parameters apply:
 
 - `stop_iter`: \# Iterations Before Stopping (`xgboost` only)
 
+The following `xgboost`-specific parameters are tunable:
+
+- `alpha`: L1 regularization term on weights. Increasing this value will
+  make model more conservative
+
+- `lambda`: L2 regularization term on weights. Increasing this value
+  will make model more conservative
+
+The following `lightgbm`-specific parameters are tunable:
+
+- `num_leaves`: max number of leaves in one tree
+
 ### Random Forest
 
 One engine is available for random forest models:
 
 - `"ranger"`
 
-The following parameters apply:
+The following universal parameters apply and are tunable:
 
 - `mtry`: \# Randomly Selected Predictors
 
 - `trees`: \# Trees
 
 - `min_n`: Minimal Node Size
+
+The following `ranger`-specific parameters are tunable:
+
+- `regularization.factor`: Regularization factor (gain penalization)
+
+- `regularization.usedepth`: Consider the depth in regularization?
+  (`TRUE`/`FALSE`)
+
+- `splitrule`: Splitting rule. One of dials::ranger_reg_rules
+
+- `alpha`: Significance threshold to allow splitting (for
+  `splitrule = "maxstat"`)
+
+- `minprop`: Lower quantile of covariate distribution to be considered
+  for splitting (for `splitrule = "maxstat"`)
+
+- `num.random.splits`: Number of random splits to consider for each
+  candidate splitting variable (for `splitrule = "extratrees"`)
+
+## See also
+
+[`finalise_tdw_model()`](https://openair-project.github.io/deweather/reference/finalise_tdw_model.md)
