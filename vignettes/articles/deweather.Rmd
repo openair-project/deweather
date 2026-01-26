@@ -33,6 +33,12 @@ mirai::daemons(5)
 set.seed(321)
 ```
 
+```{r}
+#| label: flowchart
+#| echo: false
+knitr::include_graphics("flowchart.png")
+```
+
 ## Example data set
 
 The **deweather** package comes with a comprehensive data set of air quality and meteorological data. The air quality data is from Marylebone Road in central London (obtained from the `{openair}` package) and the meteorological data from Heathrow Airport (obtained from the `{worldmet}` package). The `aqroadside` data frame contains various pollutants such a NO~x~, NO~2~, ethane and isoprene as well as meteorological data including wind speed, wind direction, relative humidity, ambient temperature and cloud cover.
@@ -83,26 +89,34 @@ This output has a few useful features. First, we're informed that the best value
 
 ```{r}
 #| label: bestParams
-tuned_results$best_params
+get_tdw_best_params(tuned_results)
 ```
 
-If we want to interrogate this more, the `metrics` object shows a summary for all of the different hyperparameters that have been tuned. Examining the full set of metrics, rather than only the single best configuration, allows you to assess whether the marginal performance gain of the "best" model justifies its additional computational cost, complexity, or instability.
+If we want to interrogate this more, the `metrics` object shows a summary for all of the different hyperparameters that have been tuned. Examining the full set of metrics, rather than only the single best configuration, allows you to assess whether the marginal performance gain of the "best" model justifies its additional computational cost or complexity. For example, with air quality timeseries data, its likely that increasing `trees` (the number of trees in the model) is always going to 'improve' the model, but the actual benefits may be marginal after a certain threshold and only serve to increase the time taken to fit and use the finalised model.
 
 ```{r}
 #| label: allMetrics
-tuned_results$metrics
+get_tdw_tuning_metrics(tuned_results)
 ```
 
-We can also see how the tuned model behaved on some reserved testing data. A table of predictions is returned, as well as a table of statistics and a scatter plot of modelled vs measured values.
+It can be useful to see this data in a plot; the `plot_tdw_tuning_metrics()` function allows for this to be done fairly flexibly. Note that this function is likely of most use with between 1 and 3 tuned hyperparmaeters; any more and its likely to be too messy to be interpretable. It may be useful to look for the 'elbow' in the data, where the decrease in RMSE or increase in RSQ goes from a large gradient to a small one. Around this elbow is likely a good value to set your hyperparameter.
+
+```{r}
+plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "min_n")
+```
+
+We can also see how the tuned model behaved on some reserved testing data, using the 'best parameters' it has decided on. A set of predictions is included (which can be usefully plotted as a scatter chart or binned surface), as well as a set of metrics to evaluate.
 
 ```{r}
 #| label: metrics
-dplyr::glimpse(tuned_results$final_fit$metrics)
+get_tdw_testing_metrics(tuned_results) |>
+  dplyr::glimpse()
 ```
 
 ```{r}
 #| label: finalplot
-tuned_results$final_fit$plot
+#| fig-height: 6
+plot_tdw_testing_scatter(tuned_results)
 ```
 
 ### Finalising a Model
@@ -120,7 +134,15 @@ no2_model <-
   )
 ```
 
-This function returns a "deweathering model" object. We can see a quick summary of it by simply printing it.
+Alternatively, if you have carried out some model tuning, you can use the `finalise_tdw_model()` function to automatically lift the 'best' parameters from that.
+
+```{r}
+#| label: finalMod
+#| eval: false
+no2_model_alt <- finalise_tdw_model(tuned_results, aqroadside)
+```
+
+Both of these functions return a "deweather model" object. We can see a quick summary of it by simply printing it.
 
 ```{r}
 #| label: printnox

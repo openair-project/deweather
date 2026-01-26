@@ -65,7 +65,27 @@
 #'   `"ranger"` (random forest). See the documentation below for more
 #'   information.
 #'
-#' @param ... Not current used.
+#' @param ... Used to pass additional engine-specific parameters to the model.
+#'   The parameters listed here can be tuned using [tune_dw_model()]. All other
+#'   parameters must be fixed.
+#'
+#'   - `alpha`: `<xgboost>` L1 regularization term on weights.
+#'
+#'   - `lambda`: `<xgboost>` L2 regularization term on weights.
+#'
+#'   - `num_leaves`: `<lightgbm>` max number of leaves in one tree.
+#'
+#'   - `regularization.factor`: `<ranger>` Regularization factor (gain penalization).
+#'
+#'   - `regularization.usedepth`: `<ranger>` Consider the depth in regularization? (`TRUE`/`FALSE`).
+#'
+#'   - `splitrule`: `<ranger>` Splitting rule. One of [dials::ranger_reg_rules].
+#'
+#'   - `alpha`: `<ranger>` Significance threshold to allow splitting (for `splitrule = "maxstat"`).
+#'
+#'   - `minprop`: `<ranger>` Lower quantile of covariate distribution to be considered for splitting (for `splitrule = "maxstat"`).
+#'
+#'   - `num.random.splits`: `<ranger>` Number of random splits to consider for each candidate splitting variable (for `splitrule = "extratrees"`).
 #'
 #' @param .date The name of the 'date' column which defines the air quality
 #'   timeseries. Passed to [append_dw_vars()] if needed. Also used to extract
@@ -92,7 +112,7 @@
 #'
 #'   - `"lightgbm"`
 #'
-#'   The following parameters apply:
+#'   The following universal parameters apply and are tunable:
 #'
 #'   - `tree_depth`: Tree Depth
 #'
@@ -110,13 +130,23 @@
 #'
 #'   - `stop_iter`: # Iterations Before Stopping (`xgboost` only)
 #'
+#'   The following `xgboost`-specific parameters are tunable:
+#'
+#'   - `alpha`: L1 regularization term on weights. Increasing this value will make model more conservative
+#'
+#'   - `lambda`: L2 regularization term on weights. Increasing this value will make model more conservative
+#'
+#'   The following `lightgbm`-specific parameters are tunable:
+#'
+#'   - `num_leaves`: max number of leaves in one tree
+#'
 #'   ## Random Forest
 #'
 #'   One engine is available for random forest models:
 #'
 #'   - `"ranger"`
 #'
-#'   The following parameters apply:
+#'   The following universal parameters apply and are tunable:
 #'
 #'   - `mtry`: # Randomly Selected Predictors
 #'
@@ -124,8 +154,23 @@
 #'
 #'   - `min_n`: Minimal Node Size
 #'
+#'   The following `ranger`-specific parameters are tunable:
+#'
+#'   - `regularization.factor`: Regularization factor (gain penalization)
+#'
+#'   - `regularization.usedepth`: Consider the depth in regularization? (`TRUE`/`FALSE`)
+#'
+#'   - `splitrule`: Splitting rule. One of [dials::ranger_reg_rules]
+#'
+#'   - `alpha`: Significance threshold to allow splitting (for `splitrule = "maxstat"`)
+#'
+#'   - `minprop`: Lower quantile of covariate distribution to be considered for splitting (for `splitrule = "maxstat"`)
+#'
+#'   - `num.random.splits`: Number of random splits to consider for each candidate splitting variable (for `splitrule = "extratrees"`)
+#'
 #' @return a 'Deweather' object for further analysis
 #'
+#' @seealso [finalise_tdw_model()]
 #' @export
 build_dw_model <- function(
   data,
@@ -144,7 +189,6 @@ build_dw_model <- function(
   .date = "date"
 ) {
   # check inputs
-  rlang::check_dots_empty()
   engine <- rlang::arg_match(engine, multiple = FALSE)
   engine_method <- define_engine_method(engine)
   vars <- rlang::arg_match(
@@ -185,8 +229,6 @@ build_dw_model <- function(
   if (engine_method == "boost_tree") {
     model_spec <-
       parsnip::boost_tree(
-        mode = "regression",
-        engine = engine,
         tree_depth = !!tree_depth,
         trees = !!trees,
         learn_rate = !!learn_rate,
@@ -195,7 +237,12 @@ build_dw_model <- function(
         loss_reduction = !!loss_reduction,
         sample_size = !!sample_size,
         stop_iter = !!stop_iter
-      )
+      ) |>
+      parsnip::set_engine(
+        engine = engine,
+        ...
+      ) |>
+      parsnip::set_mode("regression")
 
     # list parameters
     params <- list(
@@ -222,25 +269,29 @@ build_dw_model <- function(
   if (engine_method == "rand_forest") {
     model_spec <-
       parsnip::rand_forest(
-        mode = "regression",
-        engine = engine,
-        trees = !!trees,
-        mtry = !!mtry,
-        min_n = !!min_n
-      )
-
-    # need a second spec for importance calcs
-    model_spec_importance <-
-      parsnip::rand_forest(
-        mode = "regression",
         trees = !!trees,
         mtry = !!mtry,
         min_n = !!min_n
       ) |>
       parsnip::set_engine(
         engine = engine,
-        importance = "impurity_corrected"
-      )
+        ...
+      ) |>
+      parsnip::set_mode("regression")
+
+    # need a second spec for importance calcs
+    model_spec_importance <-
+      parsnip::rand_forest(
+        trees = !!trees,
+        mtry = !!mtry,
+        min_n = !!min_n
+      ) |>
+      parsnip::set_engine(
+        engine = engine,
+        importance = "impurity_corrected",
+        ...
+      ) |>
+      parsnip::set_mode("regression")
 
     # list parameters - only three
     params <- list(
@@ -249,6 +300,9 @@ build_dw_model <- function(
       min_n = min_n
     )
   }
+
+  # add ... to params, if used
+  params <- append(params, rlang::list2(...))
 
   # build a formula object from poll & vars
   formula <- stats::reformulate(vars, pollutant)

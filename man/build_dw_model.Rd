@@ -78,7 +78,20 @@ to use for fitting. Can be \code{"xgboost"}, \code{"lightgbm"} (boosted trees) o
 \code{"ranger"} (random forest). See the documentation below for more
 information.}
 
-\item{...}{Not current used.}
+\item{...}{Used to pass additional engine-specific parameters to the model.
+The parameters listed here can be tuned using \code{\link[=tune_dw_model]{tune_dw_model()}}. All other
+parameters must be fixed.
+\itemize{
+\item \code{alpha}: \verb{<xgboost>} L1 regularization term on weights.
+\item \code{lambda}: \verb{<xgboost>} L2 regularization term on weights.
+\item \code{num_leaves}: \verb{<lightgbm>} max number of leaves in one tree.
+\item \code{regularization.factor}: \verb{<ranger>} Regularization factor (gain penalization).
+\item \code{regularization.usedepth}: \verb{<ranger>} Consider the depth in regularization? (\code{TRUE}/\code{FALSE}).
+\item \code{splitrule}: \verb{<ranger>} Splitting rule. One of \link[dials:ranger_parameters]{dials::ranger_reg_rules}.
+\item \code{alpha}: \verb{<ranger>} Significance threshold to allow splitting (for \code{splitrule = "maxstat"}).
+\item \code{minprop}: \verb{<ranger>} Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"}).
+\item \code{num.random.splits}: \verb{<ranger>} Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"}).
+}}
 
 \item{.date}{The name of the 'date' column which defines the air quality
 timeseries. Passed to \code{\link[=append_dw_vars]{append_dw_vars()}} if needed. Also used to extract
@@ -119,7 +132,7 @@ Two engines are available for boosted tree models:
 \item \code{"lightgbm"}
 }
 
-The following parameters apply:
+The following universal parameters apply and are tunable:
 \itemize{
 \item \code{tree_depth}: Tree Depth
 \item \code{trees}: # Trees
@@ -130,6 +143,17 @@ The following parameters apply:
 \item \code{sample_size}: Proportion Observations Sampled (\code{xgboost} only)
 \item \code{stop_iter}: # Iterations Before Stopping (\code{xgboost} only)
 }
+
+The following \code{xgboost}-specific parameters are tunable:
+\itemize{
+\item \code{alpha}: L1 regularization term on weights. Increasing this value will make model more conservative
+\item \code{lambda}: L2 regularization term on weights. Increasing this value will make model more conservative
+}
+
+The following \code{lightgbm}-specific parameters are tunable:
+\itemize{
+\item \code{num_leaves}: max number of leaves in one tree
+}
 }
 
 \subsection{Random Forest}{
@@ -139,12 +163,25 @@ One engine is available for random forest models:
 \item \code{"ranger"}
 }
 
-The following parameters apply:
+The following universal parameters apply and are tunable:
 \itemize{
 \item \code{mtry}: # Randomly Selected Predictors
 \item \code{trees}: # Trees
 \item \code{min_n}: Minimal Node Size
 }
+
+The following \code{ranger}-specific parameters are tunable:
+\itemize{
+\item \code{regularization.factor}: Regularization factor (gain penalization)
+\item \code{regularization.usedepth}: Consider the depth in regularization? (\code{TRUE}/\code{FALSE})
+\item \code{splitrule}: Splitting rule. One of \link[dials:ranger_parameters]{dials::ranger_reg_rules}
+\item \code{alpha}: Significance threshold to allow splitting (for \code{splitrule = "maxstat"})
+\item \code{minprop}: Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"})
+\item \code{num.random.splits}: Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"})
+}
 }
 }
 
+\seealso{
+\code{\link[=finalise_tdw_model]{finalise_tdw_model()}}
+}

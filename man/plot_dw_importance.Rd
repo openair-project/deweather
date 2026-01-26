@@ -7,7 +7,7 @@
 plot_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE, cols = "tol")
 }
 \arguments{
-\item{dw}{A deweather model created with \code{\link[=build_dw_model]{build_dw_model()}}.}
+\item{dw}{A \code{deweather} model created with \code{\link[=build_dw_model]{build_dw_model()}}.}
 
 \item{aggregate_factors}{Defaults to \code{FALSE}. If \code{TRUE}, the importance of
 factor inputs (e.g., Weekday) will be summed into a single variable. This

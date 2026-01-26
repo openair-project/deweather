@@ -20,6 +20,7 @@ tune_dw_model(
   split_prop = 3/4,
   grid_levels = 5,
   v_partitions = 10,
+  progress = TRUE,
   ...,
   .date = "date"
 )
@@ -39,10 +40,10 @@ columns will be coerced to factors. \code{"hour"}, \code{"weekday"}, \code{"tren
 \code{\link[=append_dw_vars]{append_dw_vars()}} if not present in \code{names(data)}.}
 
 \item{tree_depth, trees, learn_rate, mtry, min_n, loss_reduction, sample_size, stop_iter}{If length 1, these parameters will be fixed. If length \code{2}, the parameter
-will be tuned within the range defined between the first and last value.
-For example, if \code{tree_depth = c(1, 5)} and \code{grid_levels = 3}, tree depths
-of \code{1}, \code{3}, and \code{5} will be tested. See \code{\link[=build_dw_model]{build_dw_model()}} for specific
-parameter definitions.}
+will be tuned within the range defined between the first and last value. For
+example, if \code{tree_depth = c(1, 5)} and \code{grid_levels = 3}, tree depths of \code{1},
+\code{3}, and \code{5} will be tested. See \code{\link[=build_dw_model]{build_dw_model()}} for specific parameter
+definitions.}
 
 \item{engine}{A single character string specifying what computational engine
 to use for fitting. Can be \code{"xgboost"}, \code{"lightgbm"} (boosted trees) or
@@ -61,7 +62,24 @@ use to make the regular grid. Passed to the \code{levels} argument of
 v-fold cross-validation. Passed to the \code{v} argument of
 \code{\link[rsample:vfold_cv]{rsample::vfold_cv()}}.}
 
-\item{...}{Not current used.}
+\item{progress}{Log progress in the console? Passed to the \code{verbose} argument
+of \code{\link[tune:control_grid]{tune::control_grid()}}. Note that logging does not occur when parallel
+processing is used.}
+
+\item{...}{Used to pass additional engine-specific parameters to the model.
+The parameters listed here can be tuned using \code{\link[=tune_dw_model]{tune_dw_model()}}. All other
+parameters must be fixed.
+\itemize{
+\item \code{alpha}: \verb{<xgboost>} L1 regularization term on weights.
+\item \code{lambda}: \verb{<xgboost>} L2 regularization term on weights.
+\item \code{num_leaves}: \verb{<lightgbm>} max number of leaves in one tree.
+\item \code{regularization.factor}: \verb{<ranger>} Regularization factor (gain penalization).
+\item \code{regularization.usedepth}: \verb{<ranger>} Consider the depth in regularization? (\code{TRUE}/\code{FALSE}).
+\item \code{splitrule}: \verb{<ranger>} Splitting rule. One of \link[dials:ranger_parameters]{dials::ranger_reg_rules}.
+\item \code{alpha}: \verb{<ranger>} Significance threshold to allow splitting (for \code{splitrule = "maxstat"}).
+\item \code{minprop}: \verb{<ranger>} Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"}).
+\item \code{num.random.splits}: \verb{<ranger>} Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"}).
+}}
 
 \item{.date}{The name of the 'date' column which defines the air quality
 timeseries. Passed to \code{\link[=append_dw_vars]{append_dw_vars()}} if needed. Also used to extract
@@ -111,7 +129,7 @@ Two engines are available for boosted tree models:
 \item \code{"lightgbm"}
 }
 
-The following parameters apply:
+The following universal parameters apply and are tunable:
 \itemize{
 \item \code{tree_depth}: Tree Depth
 \item \code{trees}: # Trees
@@ -122,6 +140,17 @@ The following parameters apply:
 \item \code{sample_size}: Proportion Observations Sampled (\code{xgboost} only)
 \item \code{stop_iter}: # Iterations Before Stopping (\code{xgboost} only)
 }
+
+The following \code{xgboost}-specific parameters are tunable:
+\itemize{
+\item \code{alpha}: L1 regularization term on weights. Increasing this value will make model more conservative
+\item \code{lambda}: L2 regularization term on weights. Increasing this value will make model more conservative
+}
+
+The following \code{lightgbm}-specific parameters are tunable:
+\itemize{
+\item \code{num_leaves}: max number of leaves in one tree
+}
 }
 
 \subsection{Random Forest}{
@@ -131,15 +160,31 @@ One engine is available for random forest models:
 \item \code{"ranger"}
 }
 
-The following parameters apply:
+The following universal parameters apply and are tunable:
 \itemize{
 \item \code{mtry}: # Randomly Selected Predictors
 \item \code{trees}: # Trees
 \item \code{min_n}: Minimal Node Size
 }
+
+The following \code{ranger}-specific parameters are tunable:
+\itemize{
+\item \code{regularization.factor}: Regularization factor (gain penalization)
+\item \code{regularization.usedepth}: Consider the depth in regularization? (\code{TRUE}/\code{FALSE})
+\item \code{splitrule}: Splitting rule. One of \link[dials:ranger_parameters]{dials::ranger_reg_rules}
+\item \code{alpha}: Significance threshold to allow splitting (for \code{splitrule = "maxstat"})
+\item \code{minprop}: Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"})
+\item \code{num.random.splits}: Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"})
+}
 }
 }
 
+\seealso{
+Other Model Tuning Functions: 
+\code{\link{plot_tdw_testing_scatter}()},
+\code{\link{plot_tdw_tuning_metrics}()}
+}
 \author{
 Jack Davison
 }
+\concept{Model Tuning Functions}

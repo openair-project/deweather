@@ -62,6 +62,37 @@ tail.Deweather <- function(x, ...) {
   dw_map(x$data, utils::tail, ...)
 }
 
+# Tuned -------------------------------------------------------------------
+
+#' @method print TuneDeweather
+#' @export
+#' @author Jack Davison
+print.TuneDeweather <- function(x, ...) {
+  cli::cli_h1("Deweather Tuning")
+  cli::cli_text(
+    "A tuning object for finding appropriate hyperparameters for predicting {.strong {get_tdw_pollutant(x)}} using {.field {get_tdw_vars(x)}}."
+  )
+  cli::cli_ul(
+    c(
+      "Use {.fun deweather::get_tdw_best_params} to see the 'best' parameters.",
+      "Use {.fun deweather::get_tdw_tuning_metrics} to see the a summary of tuning results.",
+      "Use {.fun deweather::plot_tdw_tuning_metrics} and {.fun deweather::plot_tdw_testing_scatter} to visualise this object."
+    )
+  )
+}
+
+#' @method plot TuneDeweather
+#' @export
+plot.TuneDeweather <- function(x, ...) {
+  plot_tdw_tuning_metrics(x, ...)
+}
+
+#' @method summary TuneDeweather
+#' @export
+summary.TuneDeweather <- function(object, ...) {
+  get_tdw_tuning_metrics(object, ...)
+}
+
 # Utilities ---------------------------------------------------------------
 
 #' mapping helper to perform functions on each dataframe element of a DW model
@@ -87,10 +118,25 @@ dw_map <- function(x, FUN, ...) {
 
 #' Check an input is a deweather model
 #' @noRd
-check_deweather <- function(dw) {
-  if (!inherits(dw, "Deweather")) {
-    cli::cli_abort(
-      "{.arg dw} must be a 'Deweather' object created using {.fun deweather::build_dw_model}."
-    )
+check_deweather <- function(
+  dw,
+  what = c("Deweather", "TuneDeweather")
+) {
+  what <- rlang::arg_match(what)
+
+  if (what == "Deweather") {
+    if (!inherits(dw, what)) {
+      cli::cli_abort(
+        "{.arg dw} must be a '{what}' object created using {.fun deweather::build_dw_model}."
+      )
+    }
+  }
+
+  if (what == "TuneDeweather") {
+    if (!inherits(dw, what)) {
+      cli::cli_abort(
+        "{.arg tdw} must be a '{what}' object created using {.fun deweather::tune_dw_model}."
+      )
+    }
   }
 }
