@@ -69,29 +69,23 @@
 #'   The parameters listed here can be tuned using [tune_dw_model()]. All other
 #'   parameters must be fixed.
 #'
-#'   For `xgboost`:
+#'   - `alpha`: `<xgboost>` L1 regularization term on weights.
 #'
-#'   - `alpha`: L1 regularization term on weights.
+#'   - `lambda`: `<xgboost>` L2 regularization term on weights.
 #'
-#'   - `lambda`: L2 regularization term on weights.
+#'   - `num_leaves`: `<lightgbm>` max number of leaves in one tree.
 #'
-#'   For `lightgbm`:
+#'   - `regularization.factor`: `<ranger>` Regularization factor (gain penalization).
 #'
-#'   - `num_leaves`: max number of leaves in one tree.
+#'   - `regularization.usedepth`: `<ranger>` Consider the depth in regularization? (`TRUE`/`FALSE`).
 #'
-#'   For `ranger`:
+#'   - `splitrule`: `<ranger>` Splitting rule. One of [dials::ranger_reg_rules].
 #'
-#'   - `regularization.factor`: Regularization factor (gain penalization).
+#'   - `alpha`: `<ranger>` Significance threshold to allow splitting (for `splitrule = "maxstat"`).
 #'
-#'   - `regularization.usedepth`: Consider the depth in regularization? (`TRUE`/`FALSE`).
+#'   - `minprop`: `<ranger>` Lower quantile of covariate distribution to be considered for splitting (for `splitrule = "maxstat"`).
 #'
-#'   - `splitrule`: Splitting rule. One of [dials::ranger_reg_rules].
-#'
-#'   - `alpha`: Significance threshold to allow splitting (for `splitrule = "maxstat"`).
-#'
-#'   - `minprop`: Lower quantile of covariate distribution to be considered for splitting (for `splitrule = "maxstat"`).
-#'
-#'   - `num.random.splits`: Number of random splits to consider for each candidate splitting variable (for `splitrule = "extratrees"`).
+#'   - `num.random.splits`: `<ranger>` Number of random splits to consider for each candidate splitting variable (for `splitrule = "extratrees"`).
 #'
 #' @param .date The name of the 'date' column which defines the air quality
 #'   timeseries. Passed to [append_dw_vars()] if needed. Also used to extract

@@ -1,5 +1,5 @@
 ---
-title: "Parameter Mapping Cheat Sheet"
+title: "Hyperparameter Cheat Sheet"
 ---
 
 ```{r opts, include = FALSE}
@@ -17,13 +17,11 @@ library(lightgbm)
 library(bonsai)
 ```
 
-## Purpose
-
 Under the hood, `deweather` uses the `parsnip` package. This package harmonises many different modelling engines, meaning `deweather` can make it very easy to switch between engines with a consistent API.
 
 However, for users familiar with the engine packages themselves (i.e., `xgboost`, `ligthgbm`, and `ranger`), it can make it challenging to understand which hyperparameter you're actually tweaking when setting `trees` or `mtry` or any of the other arguments in `build_dw_model()`.
 
-This article can be considered a 'cheat sheet' so you can understand how different `deweather` arguments map onto their engine equivalents.
+The table in this article can be considered a 'cheat sheet' so you can understand how different `deweather` arguments map onto their engine equivalents.
 
 ```{r prep, include = FALSE}
 envir <- parsnip::get_model_env()
@@ -39,28 +37,21 @@ args <- ls(envir) %>%
   dplyr::select(model:original)
 ```
 
-## Cheat sheets
-
-### `xgboost`
-
-```{r xgboost, echo=FALSE}
+```{r}
 args |>
-  dplyr::filter(engine == "xgboost") |>
-  knitr::kable()
-```
-
-### `lightgbm`
-
-```{r lightgbm, echo=FALSE}
-args |>
-  dplyr::filter(engine == "lightgbm") |>
-  knitr::kable()
-```
-
-### `ranger`
-
-```{r ranger, echo=FALSE}
-args |>
-  dplyr::filter(engine == "ranger") |>
+  dplyr::filter(engine %in% c("xgboost", "lightgbm", "ranger")) |>
+  # some lightgbm params don't apply
+  dplyr::filter(ifelse(
+    engine == "lightgbm" & parsnip %in% c("stop_iter", "sample_size"),
+    F,
+    T
+  )) |>
+  dplyr::select(-model) |>
+  tidyr::pivot_wider(
+    names_from = engine,
+    values_from = original,
+    values_fill = "-"
+  ) |>
+  dplyr::rename(`deweather/parsnip` = parsnip) |>
   knitr::kable()
 ```

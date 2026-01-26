@@ -69,26 +69,16 @@ processing is used.}
 \item{...}{Used to pass additional engine-specific parameters to the model.
 The parameters listed here can be tuned using \code{\link[=tune_dw_model]{tune_dw_model()}}. All other
 parameters must be fixed.
-
-For \code{xgboost}:
 \itemize{
-\item \code{alpha}: L1 regularization term on weights.
-\item \code{lambda}: L2 regularization term on weights.
-}
-
-For \code{lightgbm}:
-\itemize{
-\item \code{num_leaves}: max number of leaves in one tree.
-}
-
-For \code{ranger}:
-\itemize{
-\item \code{regularization.factor}: Regularization factor (gain penalization).
-\item \code{regularization.usedepth}: Consider the depth in regularization? (\code{TRUE}/\code{FALSE}).
-\item \code{splitrule}: Splitting rule. One of \link[dials:ranger_parameters]{dials::ranger_reg_rules}.
-\item \code{alpha}: Significance threshold to allow splitting (for \code{splitrule = "maxstat"}).
-\item \code{minprop}: Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"}).
-\item \code{num.random.splits}: Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"}).
+\item \code{alpha}: \verb{<xgboost>} L1 regularization term on weights.
+\item \code{lambda}: \verb{<xgboost>} L2 regularization term on weights.
+\item \code{num_leaves}: \verb{<lightgbm>} max number of leaves in one tree.
+\item \code{regularization.factor}: \verb{<ranger>} Regularization factor (gain penalization).
+\item \code{regularization.usedepth}: \verb{<ranger>} Consider the depth in regularization? (\code{TRUE}/\code{FALSE}).
+\item \code{splitrule}: \verb{<ranger>} Splitting rule. One of \link[dials:ranger_parameters]{dials::ranger_reg_rules}.
+\item \code{alpha}: \verb{<ranger>} Significance threshold to allow splitting (for \code{splitrule = "maxstat"}).
+\item \code{minprop}: \verb{<ranger>} Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"}).
+\item \code{num.random.splits}: \verb{<ranger>} Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"}).
 }}
 
 \item{.date}{The name of the 'date' column which defines the air quality
