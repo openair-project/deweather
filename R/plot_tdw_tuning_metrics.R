@@ -52,9 +52,10 @@ plot_tdw_tuning_metrics <- function(
       cli::cli_abort("{.arg group} cannot be the same as {.arg x}.")
     }
     group <- rlang::arg_match(group, varied_params)
+    rounded <- round_unique(metrics[[group]])
     metrics[group] <- factor(
-      metrics[[group]],
-      levels = as.character(sort(unique(metrics[[group]])))
+      rounded,
+      levels = as.character(sort(unique(rounded)))
     )
   }
 
@@ -66,9 +67,10 @@ plot_tdw_tuning_metrics <- function(
       cli::cli_abort("{.arg facet} cannot be the same as {.arg x}.")
     }
     facet <- rlang::arg_match(facet, varied_params)
+    rounded <- round_unique(metrics[[facet]])
     metrics[facet] <- factor(
-      metrics[[facet]],
-      levels = as.character(sort(unique(metrics[[facet]])))
+      rounded,
+      levels = as.character(sort(unique(rounded)))
     )
   }
 
@@ -160,4 +162,11 @@ plot_tdw_tuning_metrics <- function(
 
   # return
   return(plt)
+}
+
+# Helper function to round numbers ensuring unique values remain unique
+round_unique <- function(x, min_digits = 2) {
+  x_unique <- unique(x)
+  digits <- max(min_digits, ceiling(-log10(diff(range(x_unique))) + 1))
+  round(x, digits)
 }
