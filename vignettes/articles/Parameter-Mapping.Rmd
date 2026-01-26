@@ -37,7 +37,7 @@ args <- ls(envir) %>%
   dplyr::select(model:original)
 ```
 
-```{r}
+```{r table, echo = FALSE}
 args |>
   dplyr::filter(engine %in% c("xgboost", "lightgbm", "ranger")) |>
   # some lightgbm params don't apply
