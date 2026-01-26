@@ -247,9 +247,9 @@ plot_dw_partial_1d <- function(
     # add themes
     plot <-
       plot +
-      ggplot2::theme_bw() +
-      ggplot2::theme(
-        plot.title = ggplot2::element_text(face = "bold")
+      theme_deweather() +
+      ggplot2::scale_y_continuous(
+        breaks = scales::breaks_pretty(6)
       ) +
       ggplot2::scale_color_manual(
         values = colours,
@@ -278,10 +278,11 @@ plot_dw_partial_1d <- function(
             limits = c(0, 360),
             expand = ggplot2::expansion()
           ) +
-          ggplot2::coord_radial(r.axis.inside = 315, rlim = ylim) +
+          ggplot2::coord_radial(rlim = ylim) +
           ggplot2::theme(
             panel.border = ggplot2::element_blank(),
-            axis.line.theta = ggplot2::element_line(linewidth = 0.25)
+            axis.line.theta = ggplot2::element_line(linewidth = 0.25),
+            panel.grid.major.x = ggplot2::element_line()
           )
 
         # set to 'free' else other panels will be forced to square

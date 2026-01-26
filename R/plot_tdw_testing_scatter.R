@@ -67,7 +67,11 @@ plot_tdw_testing_scatter <- function(
     c(
       paste0("engine: ", get_tdw_engine(tdw)),
       purrr::imap_vec(get_tdw_best_params(tdw), \(x, i) {
-        paste0(i, ": ", x %||% "NULL")
+        lab <- x %||% "NULL"
+        if (is.numeric(x)) {
+          lab <- signif(x, 4)
+        }
+        paste0(i, ": ", lab)
       })
     ) |>
     paste(collapse = "\n")
@@ -79,13 +83,15 @@ plot_tdw_testing_scatter <- function(
     ) +
     ggplot2::scale_x_continuous(
       limits = axisrange,
-      expand = ggplot2::expansion(c(0, .1))
+      expand = ggplot2::expansion(c(0, .1)),
+      breaks = scales::pretty_breaks(6)
     ) +
     ggplot2::scale_y_continuous(
       limits = axisrange,
-      expand = ggplot2::expansion(c(0, .1))
+      expand = ggplot2::expansion(c(0, .1)),
+      breaks = scales::pretty_breaks(6)
     ) +
-    ggplot2::theme_bw() +
+    theme_deweather() +
     ggplot2::coord_cartesian(ratio = 1L) +
     ggplot2::labs(
       x = openair::quickText(paste("Observed", pollutant)),

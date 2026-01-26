@@ -202,10 +202,9 @@ plot_dw_partial_2d <- function(
       y = openair::quickText(var_y),
       fill = openair::quickText(pollutant)
     ) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(
-      strip.background = ggplot2::element_blank(),
-      strip.text.x.top = ggplot2::element_text(hjust = 0)
+    theme_deweather(
+      axis.line.x.bottom = ggplot2::element_line(),
+      axis.line.y.left = ggplot2::element_line()
     ) +
     facet +
     scale_x +

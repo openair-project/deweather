@@ -30,14 +30,14 @@ plot_dw_importance <-
       ggplot2::geom_col(fill = openair::openColours(cols, n = 1L)) +
       ggplot2::scale_x_continuous(
         expand = ggplot2::expansion(c(0, .1)),
-        breaks = scales::pretty_breaks(),
+        breaks = scales::pretty_breaks(6),
         labels = scale_fun
       ) +
       ggplot2::scale_y_discrete(
         labels = \(x) sapply(x, openair::quickText)
       ) +
       ggplot2::labs(y = NULL, x = "Importance") +
-      ggplot2::theme_bw()
+      theme_deweather("x")
   }
 
 #' Take an importance dataframe and combine factor variables into a single

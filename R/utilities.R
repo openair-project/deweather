@@ -128,3 +128,46 @@ define_engine_method <- function(engine) {
   }
   return(x)
 }
+
+#' A nice modern ggplot2 theme
+#' @noRd
+theme_deweather <- function(dir = c("y", "x"), ...) {
+  dir <- rlang::arg_match(dir)
+
+  # Only apply custom theme if the user hasn't set a custom theme
+  if (is_default_theme()) {
+    theme <-
+      ggplot2::theme_minimal() +
+      ggplot2::theme(
+        panel.grid.minor = ggplot2::element_blank(),
+        strip.background = ggplot2::element_blank(),
+        strip.text.x.top = ggplot2::element_text(hjust = 0)
+      )
+
+    if (dir == "x") {
+      theme <- theme +
+        ggplot2::theme(
+          panel.grid.major.y = ggplot2::element_blank(),
+          axis.line.y.left = ggplot2::element_line()
+        )
+    } else {
+      theme <- theme +
+        ggplot2::theme(
+          panel.grid.major.x = ggplot2::element_blank(),
+          axis.line.x.bottom = ggplot2::element_line()
+        )
+    }
+  } else {
+    theme <- ggplot2::theme()
+  }
+
+  theme <- theme + ggplot2::theme(...)
+
+  return(theme)
+}
+
+#' Check if the user has set a theme
+#' @noRd
+is_default_theme <- function() {
+  identical(ggplot2::theme_get(), ggplot2::theme_gray())
+}

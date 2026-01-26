@@ -109,8 +109,10 @@ plot_tdw_tuning_metrics <- function(
       group = .data$metric_group
     )
   ) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(strip.background = ggplot2::element_blank()) +
+    theme_deweather() +
+    ggplot2::scale_y_continuous(
+      breaks = scales::pretty_breaks(6)
+    ) +
     ggplot2::scale_color_manual(
       values = openair::openColours(
         cols,
@@ -166,6 +168,9 @@ plot_tdw_tuning_metrics <- function(
 
 # Helper function to round numbers ensuring unique values remain unique
 round_unique <- function(x, min_digits = 2) {
+  if (is.null(x)) {
+    return(x)
+  }
   x_unique <- unique(x)
   digits <- max(min_digits, ceiling(-log10(diff(range(x_unique))) + 1))
   round(x, digits)
