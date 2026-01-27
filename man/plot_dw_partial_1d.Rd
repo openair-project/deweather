@@ -14,7 +14,7 @@ plot_dw_partial_1d(
   show_rug = TRUE,
   n = NULL,
   prop = 0.01,
-  cols = "Set1",
+  cols = "tol",
   ylim = NULL,
   radial_wd = TRUE,
   ncol = NULL,

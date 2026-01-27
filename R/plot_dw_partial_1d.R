@@ -76,7 +76,7 @@ plot_dw_partial_1d <- function(
   show_rug = TRUE,
   n = NULL,
   prop = 0.01,
-  cols = "Set1",
+  cols = "tol",
   ylim = NULL,
   radial_wd = TRUE,
   ncol = NULL,
@@ -164,6 +164,10 @@ plot_dw_partial_1d <- function(
       )
       cp <- dplyr::filter(cp, .data$group_var == .data[["__dummy__"]])
       cp$`__dummy__` <- NULL
+    }
+
+    if (i == group && is.factor(cp[[i]])) {
+      cp <- dplyr::filter(cp, .data$group_var == .data[[i]])
     }
 
     # calculate mean
@@ -345,7 +349,7 @@ plot_single_pd.ggplot2 <- function(
           ggplot2::aes(fill = .data$group_var),
           alpha = 0.3,
           color = NA,
-          key_glyph = ggplot2::draw_key_polygon
+          show.legend = FALSE
         )
     }
     plot <-
@@ -366,6 +370,7 @@ plot_single_pd.ggplot2 <- function(
           ggplot2::aes(
             fill = factor(.data$group_var)
           ),
+          show.legend = FALSE,
           alpha = 0.3
         )
     }
@@ -418,9 +423,6 @@ plot_single_pd.ggplot2 <- function(
           axis.line.theta = ggplot2::element_line(linewidth = 0.25),
           panel.grid.major.x = ggplot2::element_line()
         )
-
-      # set to 'free' else other panels will be forced to square
-      plot <- patchwork::free(plot)
     } else {
       # treat as cartesian
       plot <-
@@ -627,6 +629,7 @@ plot_single_pd.plotly <- function(
       ymin = df$min,
       ymax = df$max,
       color = df$group_var,
+      colors = openair::openColours(cols, dplyr::n_distinct(df$group_var)),
       showlegend = dplyr::n_distinct(df$group_var) > 1L,
       legendgroup = df$group_var
     )
@@ -653,6 +656,7 @@ plot_single_pd.plotly <- function(
         y = df$mean,
         error_y = error_y,
         color = df$group_var,
+        colors = openair::openColours(cols, dplyr::n_distinct(df$group_var)),
         showlegend = showlegend && dplyr::n_distinct(df$group_var) > 1L,
         legendgroup = df$group_var
       ) |>

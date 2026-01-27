@@ -10,7 +10,7 @@ plot_tdw_tuning_metrics(
   group = NULL,
   facet = NULL,
   show_std_err = TRUE,
-  cols = "Set1",
+  cols = "tol",
   ...,
   .plot_engine = c("ggplot2", "plotly")
 )
