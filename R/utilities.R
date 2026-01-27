@@ -96,6 +96,22 @@ cp_profiles <- function(
     dplyr::bind_rows()
 }
 
+#' Check if plotting engines are available
+#' @noRd
+check_plot_engine <- function(.plot_engine, opts = c("ggplot2", "plotly")) {
+  x <- rlang::arg_match(.plot_engine, opts, multiple = FALSE)
+  if (x == "ggplot2") {
+    rlang::check_installed(
+      c("ggplot2", "scales", "patchwork"),
+      version = c("4.0.0", NA, NA)
+    )
+  }
+  if (x == "plotly") {
+    rlang::check_installed(c("plotly", "scales"))
+  }
+  return(x)
+}
+
 #' Check if the deps are installed for a specific engine
 #' @noRd
 check_engine_installed <- function(engine) {

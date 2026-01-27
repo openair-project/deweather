@@ -33,6 +33,11 @@
 #'   with other variables which are plotted on cartesian coordinates. Defaults
 #'   to `FALSE`.
 #'
+#' @param ... Not currently used.
+#'
+#' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
+#'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
+#'
 #' @return A `ggplot2` object showing the partial dependence plot. If `plot =
 #'   FALSE`, a named list of plot data will be returned instead.
 #'
@@ -51,9 +56,13 @@ plot_dw_partial_2d <- function(
   cols = "viridis",
   radial_wd = FALSE,
   plot = TRUE,
-  progress = rlang::is_interactive()
+  ...,
+  .progress = rlang::is_interactive(),
+  .plot_engine = c("ggplot2", "plotly")
 ) {
   check_deweather(dw)
+  rlang::check_dots_empty()
+  .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
 
   if (exclude_distance < 0 || exclude_distance > 1) {
     cli::cli_abort("{.arg exclude_distance} must be between {0} and {1}.")
@@ -123,7 +132,7 @@ plot_dw_partial_2d <- function(
       var_x = var_x,
       var_y = var_y,
       intervals = intervals,
-      progress = progress
+      progress = .progress
     )
 
   # calculate mean
@@ -151,6 +160,49 @@ plot_dw_partial_2d <- function(
     return(plotdata)
   }
 
+  if (.plot_engine == "ggplot2") {
+    plt <- plot_dw_partial_2d.ggplot2(
+      plotdata,
+      var_x,
+      var_y,
+      pollutant,
+      contour,
+      contour_bins,
+      cols,
+      show_conf_int,
+      radial_wd
+    )
+  }
+
+  if (.plot_engine == "plotly") {
+    plt <- plot_dw_partial_2d.plotly(
+      plotdata,
+      var_x,
+      var_y,
+      pollutant,
+      contour,
+      contour_bins,
+      cols,
+      show_conf_int,
+      radial_wd
+    )
+  }
+
+  return(plt)
+}
+
+# helper for static plot
+plot_dw_partial_2d.ggplot2 <- function(
+  plotdata,
+  var_x,
+  var_y,
+  pollutant,
+  contour,
+  contour_bins,
+  cols,
+  show_conf_int,
+  radial_wd
+) {
   # if plotting confidence interval, need to reshape data and define a faceting
   # strategy
   if (show_conf_int) {
@@ -235,9 +287,14 @@ plot_dw_partial_2d <- function(
         mapping = ggplot2::aes(z = .data$mean),
         colour = "black",
         bins = contour_bins
-      ) +
+      )
+
+    plot <- plot +
       ggplot2::scale_fill_manual(
-        values = openair::openColours(cols, n = contour_bins),
+        values = openair::openColours(
+          cols,
+          n = dplyr::n_distinct(ggplot2::ggplot_build(plot)$data[[1]]$fill)
+        ),
         aesthetics = "fill"
       )
   }
@@ -265,6 +322,7 @@ plot_dw_partial_2d <- function(
 
   return(plot)
 }
+
 
 hour_scale <- function(which = c("x", "y")) {
   fun <- if (which == "x") {
@@ -302,4 +360,86 @@ wd_scale <- function(which = c("x", "y")) {
     limits = c(0, 360),
     oob = scales::oob_keep
   )
+}
+
+# helper for interactive plot
+plot_dw_partial_2d.plotly <- function(
+  plotdata,
+  var_x,
+  var_y,
+  pollutant,
+  contour,
+  contour_bins,
+  cols,
+  show_conf_int,
+  radial_wd
+) {
+  if (show_conf_int || radial_wd) {
+    cli::cli_warn(
+      "Neither {.arg show_conf_int} nor {.arg radial_wd} are not currently supported by the 'plotly' plotting engine."
+    )
+  }
+
+  if (contour != "none") {
+    # need a square matrix for contour plot
+    plotdata <-
+      tidyr::complete(
+        plotdata,
+        .data[[var_x]],
+        .data[[var_y]]
+      )
+
+    # creating a matrix
+    x_vals <- sort(unique(plotdata[[var_x]]))
+    y_vals <- sort(unique(plotdata[[var_y]]))
+    z_matrix <-
+      matrix(
+        plotdata$mean,
+        nrow = length(y_vals),
+        ncol = length(x_vals),
+        byrow = FALSE
+      )
+
+    plot <-
+      plotly::plot_ly(
+        x = x_vals,
+        y = y_vals,
+        z = z_matrix,
+        colors = openair::openColours(cols, n = 100),
+        colorbar = list(
+          title = toupper(pollutant)
+        )
+      ) |>
+      plotly::add_contour(ncontours = contour_bins) |>
+      plotly::layout(
+        xaxis = list(
+          title = var_x
+        ),
+        yaxis = list(
+          title = var_y
+        )
+      )
+  } else {
+    plot <- plotly::plot_ly(
+      plotdata,
+      x = plotdata[[var_x]],
+      y = plotdata[[var_y]],
+      z = plotdata[["mean"]],
+      colors = openair::openColours(cols, n = 100),
+      colorbar = list(
+        title = toupper(pollutant)
+      )
+    ) |>
+      plotly::add_heatmap() |>
+      plotly::layout(
+        xaxis = list(
+          title = var_x
+        ),
+        yaxis = list(
+          title = var_y
+        )
+      )
+  }
+
+  return(plot)
 }

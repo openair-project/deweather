@@ -21,6 +21,11 @@
 #'
 #' @param cols Colours to use for plotting. See [openair::openColours()].
 #'
+#' @param ... Not currently used.
+#'
+#' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
+#'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
+#'
 #' @author Jack Davison
 #' @family Model Tuning Functions
 #' @export
@@ -30,9 +35,13 @@ plot_tdw_tuning_metrics <- function(
   group = NULL,
   facet = NULL,
   show_std_err = TRUE,
-  cols = "Set1"
+  cols = "Set1",
+  ...,
+  .plot_engine = c("ggplot2", "plotly")
 ) {
   check_deweather(tdw, "TuneDeweather")
+  rlang::check_dots_empty()
+  .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
 
   metrics <- get_tdw_tuning_metrics(tdw)
   metrics$metric <- toupper(metrics$metric)
@@ -87,9 +96,40 @@ plot_tdw_tuning_metrics <- function(
     metrics$metric_group <- "(all)"
   }
 
-  # nice spacing for dodging
-  if (is.numeric(metrics[[x]])) {}
+  if (.plot_engine == "ggplot2") {
+    plt <- plot_tdw_tuning_metrics.ggplot2(
+      metrics,
+      x,
+      group,
+      facet,
+      cols,
+      show_std_err
+    )
+  }
 
+  if (.plot_engine == "plotly") {
+    plt <- plot_tdw_tuning_metrics.plotly(
+      metrics,
+      x,
+      group,
+      facet,
+      cols,
+      show_std_err
+    )
+  }
+
+  return(plt)
+}
+
+# helper for static plotting
+plot_tdw_tuning_metrics.ggplot2 <- function(
+  metrics,
+  x,
+  group,
+  facet,
+  cols,
+  show_std_err
+) {
   # geom for points
   if (show_std_err) {
     pointgeom <- ggplot2::geom_pointrange
@@ -109,6 +149,9 @@ plot_tdw_tuning_metrics <- function(
       group = .data$metric_group
     )
   ) +
+    ggplot2::labs(
+      y = NULL
+    ) +
     theme_deweather() +
     ggplot2::scale_y_continuous(
       breaks = scales::pretty_breaks(6)
@@ -164,6 +207,75 @@ plot_tdw_tuning_metrics <- function(
 
   # return
   return(plt)
+}
+
+# helper for dynamic plotting
+plot_tdw_tuning_metrics.plotly <- function(
+  metrics,
+  x,
+  group,
+  facet,
+  cols,
+  show_std_err
+) {
+  create_metric_panel <- function(m) {
+    df <- metrics[metrics$metric == m, ]
+    plot <- plotly::plot_ly(
+      showlegend = dplyr::n_distinct(df[[group]]) > 1L,
+      colors = openair::openColours(
+        scheme = cols,
+        n = dplyr::n_distinct(df[[group]])
+      )
+    ) |>
+      plotly::layout(
+        yaxis = list(
+          title = m
+        ),
+        xaxis = list(
+          title = x
+        ),
+        hovermode = "x unified"
+      )
+
+    for (i in unique(df$metric_group)) {
+      df_i <- df[df$metric_group == i, ]
+
+      error_y <- list()
+      if (show_std_err) {
+        error_y <- list(array = df_i$std_err)
+      }
+
+      plot <- plot |>
+        plotly::add_lines(
+          x = df_i[[x]],
+          y = df_i$mean,
+          color = df_i[[group]],
+          hoverinfo = "none",
+          showlegend = FALSE,
+          legendgroup = df_i[[group]]
+        ) |>
+        plotly::add_markers(
+          x = df_i[[x]],
+          y = df_i$mean,
+          color = df_i[[group]],
+          error_y = error_y,
+          legendgroup = df_i[[group]],
+          showlegend = m == "RSQ"
+        )
+    }
+
+    return(plot)
+  }
+
+  plotly::subplot(
+    create_metric_panel("RMSE"),
+    create_metric_panel("RSQ"),
+    nrows = 1,
+    shareX = TRUE,
+    titleX = TRUE,
+    titleY = TRUE,
+    margin = 0.05
+  )
 }
 
 # Helper function to round numbers ensuring unique values remain unique

@@ -20,7 +20,9 @@ plot_dw_partial_1d(
   ncol = NULL,
   nrow = NULL,
   plot = TRUE,
-  progress = rlang::is_interactive()
+  ...,
+  .progress = rlang::is_interactive(),
+  .plot_engine = c("ggplot2", "plotly")
 )
 }
 \arguments{
@@ -72,8 +74,13 @@ creates a roughly square grid.}
 
 \item{plot}{When \code{FALSE}, return a list of plot data instead of a plot.}
 
-\item{progress}{Show a progress bar? Defaults to \code{TRUE} in interactive
+\item{...}{Not currently used.}
+
+\item{.progress}{Show a progress bar? Defaults to \code{TRUE} in interactive
 sessions.}
+
+\item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
+returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}
 }
 \value{
 A \code{ggplot2} object showing the partial dependence plot. If multiple

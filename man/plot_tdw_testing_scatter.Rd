@@ -13,7 +13,9 @@ plot_tdw_testing_scatter(
   show_ablines = TRUE,
   show_params = TRUE,
   cols = "viridis",
-  cols_ablines = c("black", "grey50")
+  cols_ablines = c("black", "grey50"),
+  ...,
+  .plot_engine = c("ggplot2", "plotly")
 )
 }
 \arguments{
@@ -39,6 +41,11 @@ corner of the scatter plot?}
 
 \item{cols_ablines}{Colours to use for the diagonal lines, if \code{show_ablines = TRUE}. The the first colour is used for the 1:1 line, and the second for
 the 2:1 and 1:2 lines. Passed to \code{\link[openair:openColours]{openair::openColours()}}.}
+
+\item{...}{Not currently used.}
+
+\item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
+returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}
 }
 \description{
 \code{\link[=tune_dw_model]{tune_dw_model()}} determines a 'best' set of parameters automatically and

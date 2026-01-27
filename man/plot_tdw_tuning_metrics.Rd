@@ -10,7 +10,9 @@ plot_tdw_tuning_metrics(
   group = NULL,
   facet = NULL,
   show_std_err = TRUE,
-  cols = "Set1"
+  cols = "Set1",
+  ...,
+  .plot_engine = c("ggplot2", "plotly")
 )
 }
 \arguments{
@@ -27,6 +29,11 @@ and \code{facet} splits the diagram into additional panels. Neither \code{group}
 \item{show_std_err}{Show the standard error using error bars?}
 
 \item{cols}{Colours to use for plotting. See \code{\link[openair:openColours]{openair::openColours()}}.}
+
+\item{...}{Not currently used.}
+
+\item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
+returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}
 }
 \description{
 This function creates a plot of the tuning metrics from a \code{TuneDeweather}
