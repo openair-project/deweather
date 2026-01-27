@@ -29,7 +29,7 @@
 #'   v-fold cross-validation. Passed to the `v` argument of
 #'   [rsample::vfold_cv()].
 #'
-#' @param progress Log progress in the console? Passed to the `verbose` argument
+#' @param .progress Log progress in the console? Passed to the `verbose` argument
 #'   of [tune::control_grid()]. Note that logging does not occur when parallel
 #'   processing is used.
 #'
@@ -71,8 +71,8 @@ tune_dw_model <- function(
   split_prop = 3 / 4,
   grid_levels = 5,
   v_partitions = 10,
-  progress = TRUE,
   ...,
+  .progress = TRUE,
   .date = "date"
 ) {
   # check inputs
@@ -464,7 +464,7 @@ tune_dw_model <- function(
     resamples = folds,
     grid = grid,
     control = tune::control_grid(
-      verbose = progress,
+      verbose = .progress,
       allow_par = TRUE,
       parallel_over = "everything"
     )

@@ -13,7 +13,8 @@ simulate_dw_met(
   window_hour = 2,
   n = 200,
   aggregate = TRUE,
-  progress = rlang::is_interactive()
+  ...,
+  .progress = rlang::is_interactive()
 )
 }
 \arguments{
@@ -52,7 +53,9 @@ single time series. When \code{aggregate = FALSE}, all simulations will be
 returned in a single data frame with an \code{.id} column distinguishing between
 them.}
 
-\item{progress}{Show a progress bar? Defaults to \code{TRUE} in interactive
+\item{...}{Not currently used.}
+
+\item{.progress}{Show a progress bar? Defaults to \code{TRUE} in interactive
 sessions.}
 }
 \value{

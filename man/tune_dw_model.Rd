@@ -20,8 +20,8 @@ tune_dw_model(
   split_prop = 3/4,
   grid_levels = 5,
   v_partitions = 10,
-  progress = TRUE,
   ...,
+  .progress = TRUE,
   .date = "date"
 )
 }
@@ -62,10 +62,6 @@ use to make the regular grid. Passed to the \code{levels} argument of
 v-fold cross-validation. Passed to the \code{v} argument of
 \code{\link[rsample:vfold_cv]{rsample::vfold_cv()}}.}
 
-\item{progress}{Log progress in the console? Passed to the \code{verbose} argument
-of \code{\link[tune:control_grid]{tune::control_grid()}}. Note that logging does not occur when parallel
-processing is used.}
-
 \item{...}{Used to pass additional engine-specific parameters to the model.
 The parameters listed here can be tuned using \code{\link[=tune_dw_model]{tune_dw_model()}}. All other
 parameters must be fixed.
@@ -80,6 +76,10 @@ parameters must be fixed.
 \item \code{minprop}: \verb{<ranger>} Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"}).
 \item \code{num.random.splits}: \verb{<ranger>} Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"}).
 }}
+
+\item{.progress}{Log progress in the console? Passed to the \code{verbose} argument
+of \code{\link[tune:control_grid]{tune::control_grid()}}. Note that logging does not occur when parallel
+processing is used.}
 
 \item{.date}{The name of the 'date' column which defines the air quality
 timeseries. Passed to \code{\link[=append_dw_vars]{append_dw_vars()}} if needed. Also used to extract

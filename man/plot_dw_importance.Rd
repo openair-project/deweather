@@ -4,7 +4,14 @@
 \alias{plot_dw_importance}
 \title{Visualise deweather model feature importance}
 \usage{
-plot_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE, cols = "tol")
+plot_dw_importance(
+  dw,
+  aggregate_factors = FALSE,
+  sort = TRUE,
+  cols = "tol",
+  ...,
+  .plot_engine = c("ggplot2", "plotly")
+)
 }
 \arguments{
 \item{dw}{A \code{deweather} model created with \code{\link[=build_dw_model]{build_dw_model()}}.}
@@ -21,6 +28,11 @@ in \code{\link[=get_dw_importance]{get_dw_importance()}} it will change whether 
 factor or character data type.}
 
 \item{cols}{Colours to use for plotting. See \code{\link[openair:openColours]{openair::openColours()}}.}
+
+\item{...}{Not currently used.}
+
+\item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
+returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}
 }
 \value{
 a \link[ggplot2:ggplot2-package]{ggplot2} figure
