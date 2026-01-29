@@ -265,7 +265,7 @@ These plots can be customised like any other `{ggplot2}` object.
 #| fig-cap: A thoroughly customised partial dependence plot.
 library(ggplot2)
 
-plot_dw_partial_1d(no2_model, "hour",group = "weekday") +
+plot_dw_partial_1d(no2_model, "hour", group = "weekday") +
   theme_light(14) +
   theme(
     title = element_text(face = "bold"),
@@ -354,7 +354,12 @@ It can be useful to compare this simulated trend to the original input data. `pl
 #| label: "plotly"
 #| eval: TRUE
 #| out.width: "100%"
-plot_sim_trend(demet, dw = no2_model, avg.time = "month", .plot_engine = "plotly")
+plot_sim_trend(
+  demet,
+  dw = no2_model,
+  avg.time = "week",
+  .plot_engine = "plotly"
+)
 ```
 
 Note that the function `predict_dw()` is also provided for generalised use of a deweather model for prediction.
