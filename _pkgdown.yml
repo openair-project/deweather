@@ -63,3 +63,4 @@ reference:
   contents:
   - predict_dw
   - simulate_dw_met
+  - plot_sim_trend

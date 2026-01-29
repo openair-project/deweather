@@ -636,7 +636,11 @@ plot_single_pd.plotly <- function(
 
     if (show_conf_int) {
       plot <- plot |>
-        plotly::add_ribbons(line = list(width = 0), showlegend = FALSE)
+        plotly::add_ribbons(
+          line = list(width = 0),
+          hovermode = "none",
+          showlegend = FALSE
+        )
     }
 
     plot <- plot |> plotly::add_lines(showlegend = showlegend)
