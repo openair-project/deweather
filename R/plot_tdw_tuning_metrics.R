@@ -7,7 +7,8 @@
 #' is likely most effective with between 1 and 3 simultaneously tuned
 #' parameters; any more will impede plot interpretation.
 #'
-#' @param tdw A deweather tuning object created with [tune_dw_model()].
+#' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param x The tuned parameter to plot on the x-axis. If not selected, the
 #'   first parameter in the `metrics` dataset will be chosen.
@@ -18,16 +19,6 @@
 #'   `facet` can be the same parameter as `x`.
 #'
 #' @param show_std_err Show the standard error using error bars?
-#'
-#' @param cols Colours to use for plotting. See [openair::openColours()].
-#'
-#' @param ... Not currently used.
-#'
-#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
-#'   plot.
-#'
-#' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
-#'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
 #' @author Jack Davison
 #' @family Model Tuning Functions
@@ -41,11 +32,11 @@ plot_tdw_tuning_metrics <- function(
   cols = "tol",
   ...,
   .plot = TRUE,
-  .plot_engine = c("ggplot2", "plotly")
+  .plot_engine = NULL
 ) {
   check_deweather(tdw, "TuneDeweather")
   rlang::check_dots_empty()
-  .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
+  .plot_engine <- check_plot_engine(.plot_engine)
 
   metrics <- get_tdw_tuning_metrics(tdw)
 

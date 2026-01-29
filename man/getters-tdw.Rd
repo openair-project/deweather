@@ -25,7 +25,7 @@ get_tdw_testing_metrics(tdw, metric = NULL)
 get_tdw_testing_data(tdw)
 }
 \arguments{
-\item{tdw}{A \code{deweather} tuning object created with \code{\link[=tune_dw_model]{tune_dw_model()}}.}
+\item{tdw}{A deweather tuning object created with \code{\link[=tune_dw_model]{tune_dw_model()}}.}
 
 \item{param}{For \code{\link[=get_dw_params]{get_dw_params()}} and \code{\link[=get_tdw_best_params]{get_tdw_best_params()}}. The default
 (\code{NULL}) returns a list of model parameters. \code{param} will return one

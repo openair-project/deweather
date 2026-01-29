@@ -5,16 +5,8 @@
 #' as a bar chart, with some customisation.
 #'
 #' @inheritParams get_dw_importance
-#'
-#' @param cols Colours to use for plotting. See [openair::openColours()].
-#'
-#' @param ... Not currently used.
-#'
-#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
-#'   plot.
-#'
-#' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
-#'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
+#' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @return a [ggplot2][ggplot2::ggplot2-package] figure
 #'
@@ -27,10 +19,10 @@ plot_dw_importance <-
     cols = "tol",
     ...,
     .plot = TRUE,
-    .plot_engine = c("ggplot2", "plotly")
+    .plot_engine = NULL
   ) {
     check_deweather(dw)
-    .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
+    .plot_engine <- check_plot_engine(.plot_engine)
 
     importance <-
       get_dw_importance(dw, aggregate_factors = aggregate_factors, sort = sort)

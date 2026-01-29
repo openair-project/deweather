@@ -5,6 +5,9 @@
 #' The data can also be averaged over specified time intervals for clearer
 #' visualisation.
 #'
+#' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Plotting Engines
+#'
 #' @param sim The output of [simulate_dw_met()]; a `data.frame` with first
 #'   column `date` and second column a numeric pollutant.
 #'
@@ -12,20 +15,12 @@
 #'   the original timeseries will be plotted alongside the simulated trend for
 #'   easy comparison.
 #'
+#' @param ylim The limits of the y-axis.
+#'
 #' @param avg.time Passed to [openair::timeAverage()].
 #'
 #' @param names A character vector of length two, used to label the simulated
 #'   dataset and the original dataset.
-#'
-#' @param cols Colours to use for plotting. See [openair::openColours()].
-#'
-#' @param ... Not currently used.
-#'
-#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
-#'   plot.
-#'
-#' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
-#'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
 #' @author Jack Davison
 #' @export
@@ -38,10 +33,10 @@ plot_sim_trend <- function(
   cols = "tol",
   ...,
   .plot = TRUE,
-  .plot_engine = c("ggplot2", "plotly")
+  .plot_engine = NULL
 ) {
   rlang::check_dots_empty()
-  .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
+  .plot_engine <- check_plot_engine(.plot_engine)
   if (!is.null(dw)) {
     check_deweather(dw)
   }
@@ -118,6 +113,9 @@ plot_sim_trend.ggplot2 <- function(sim, pollutant, ylim, cols) {
       y = openair::quickText(pollutant),
       color = NULL
     ) +
+    ggplot2::coord_cartesian(
+      ylim = ylim
+    ) +
     ggplot2::scale_color_manual(
       values = openair::openColours(cols, n = dplyr::n_distinct(sim$.id))
     ) +
@@ -126,7 +124,6 @@ plot_sim_trend.ggplot2 <- function(sim, pollutant, ylim, cols) {
       expand = ggplot2::expansion()
     ) +
     ggplot2::scale_y_continuous(
-      limits = ylim,
       breaks = scales::pretty_breaks(6),
       expand = ggplot2::expansion(c(0, .1))
     ) +

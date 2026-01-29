@@ -6,6 +6,8 @@
 #' deweather models. Used internally by [build_dw_model()] and
 #' [tune_dw_model()], but can be used directly by users if desired.
 #'
+#' @inheritParams shared_deweather_params
+#'
 #' @param data An input `data.frame` with at least one date(time) column.
 #'
 #' @param vars A character vector of variables of interest. Possible options
@@ -20,8 +22,6 @@
 #'
 #' @param abbr Abbreviate weekday and month strings? Defaults to `TRUE`, which
 #'   tends to look better in plots.
-#'
-#' @param ... Not used
 #'
 #' @param .date The name of the 'date' column to use for manipulation.
 #'

@@ -99,6 +99,9 @@ cp_profiles <- function(
 #' Check if plotting engines are available
 #' @noRd
 check_plot_engine <- function(.plot_engine, opts = c("ggplot2", "plotly")) {
+  .plot_engine <- .plot_engine %||%
+    getOption("deweather.plot_engine") %||%
+    "ggplot2"
   x <- rlang::arg_match(.plot_engine, opts, multiple = FALSE)
   if (x == "ggplot2") {
     rlang::check_installed(

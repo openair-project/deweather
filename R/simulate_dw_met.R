@@ -6,7 +6,7 @@
 #' temperature) while keeping temporal patterns intact, then predicting
 #' pollutant concentrations using a trained deweather model.
 #'
-#' @param dw A deweather model created with [build_dw_model()].
+#' @inheritParams shared_deweather_params
 #'
 #' @param newdata Data set to which to apply the model. If missing the data used
 #'   to build the model in the first place will be used.
@@ -40,11 +40,6 @@
 #'   single time series. When `aggregate = FALSE`, all simulations will be
 #'   returned in a single data frame with an `.id` column distinguishing between
 #'   them.
-#'
-#' @param ... Not currently used.
-#'
-#' @param .progress Show a progress bar? Defaults to `TRUE` in interactive
-#'   sessions.
 #'
 #' @export
 #'

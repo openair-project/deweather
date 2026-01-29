@@ -5,7 +5,8 @@
 #' pollutant concentration changes as a function of one variable while averaging
 #' over the effects of all other variables.
 #'
-#' @param dw A deweather model created with [build_dw_model()].
+#' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param vars Character. The name of the variable(s) to plot. Must be one of
 #'   the variables used in the model. If `NULL`, all variables will be plotted
@@ -35,12 +36,8 @@
 #'   dependence profile, between 0 and 1. Default is `0.01` (1% of input data).
 #'   Ignored if `n` is specified.
 #'
-#' @param ylim The limits of the y-axis. Passed to the `ylim` argument of
-#'   [ggplot2::coord_cartesian()] (or `rlim` of [ggplot2::coord_radial()] if
-#'   `radial_wd` is `TRUE`). The default, `NULL`, allows each partial dependence
-#'   panel to have its own y-axis scale.
-#'
-#' @param cols Colours to use for plotting. See [openair::openColours()].
+#' @param ylim The limits of the y-axis. The default, `NULL`, allows each
+#'   partial dependence panel to have its own y-axis scale.
 #'
 #' @param radial_wd Should the `"wd"` (wind direction) variable be plotted on a
 #'   radial axis? This can enhance interpretability, but makes it inconsistent
@@ -51,19 +48,9 @@
 #'   define the dimensions of the grid to create. Setting both to be `NULL`
 #'   creates a roughly square grid.
 #'
-#' @param .plot When `FALSE`, return a list of plot data instead of a plot.
-#'
-#' @param .progress Show a progress bar? Defaults to `TRUE` in interactive
-#'   sessions.
-#'
 #' @return A `ggplot2` object showing the partial dependence plot. If multiple
 #'   `vars` are specified, a `patchwork` assembly of plots will be returned. If
 #'   `plot = FALSE`, a named list of plot data will be returned instead.
-#'
-#' @param ... Not currently used.
-#'
-#' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
-#'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
 #' @export
 plot_dw_partial_1d <- function(
@@ -83,12 +70,12 @@ plot_dw_partial_1d <- function(
   nrow = NULL,
   ...,
   .plot = TRUE,
-  .plot_engine = c("ggplot2", "plotly"),
+  .plot_engine = NULL,
   .progress = rlang::is_interactive()
 ) {
   check_deweather(dw)
   rlang::check_dots_empty()
-  .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
+  .plot_engine <- check_plot_engine(.plot_engine)
 
   model <- get_dw_model(dw)
   input_data <- get_dw_input_data(dw)

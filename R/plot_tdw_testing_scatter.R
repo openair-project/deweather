@@ -3,9 +3,10 @@
 #'
 #' [tune_dw_model()] determines a 'best' set of parameters automatically and
 #' models some 'final' predictions using a reserved testing dataset to evaluate
-#' the model. This function produces a scatter (or varient)
+#' the model. This function produces a scatter plot (or binned variant thereof).
 #'
-#' @param tdw A deweather tuning object created with [tune_dw_model()].
+#' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param method One of `"scatter"`, `"bin"` or `"hexbin"`.
 #'
@@ -24,19 +25,9 @@
 #' @param show_params Show an annotation of model parameters in the top-left
 #'   corner of the scatter plot?
 #'
-#' @param cols Colours to use for plotting. See [openair::openColours()].
-#'
 #' @param cols_ablines Colours to use for the diagonal lines, if `show_ablines =
 #'   TRUE`. The the first colour is used for the 1:1 line, and the second for
 #'   the 2:1 and 1:2 lines. Passed to [openair::openColours()].
-#'
-#' @param ... Not currently used.
-#'
-#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
-#'   plot.
-#'
-#' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
-#'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
 #' @family Model Tuning Functions
 #' @export
@@ -51,12 +42,12 @@ plot_tdw_testing_scatter <- function(
   cols_ablines = c("black", "grey50"),
   ...,
   .plot = TRUE,
-  .plot_engine = c("ggplot2", "plotly")
+  .plot_engine = NULL
 ) {
   check_deweather(tdw, "TuneDeweather")
   method <- rlang::arg_match(method)
   rlang::check_dots_empty()
-  .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
+  .plot_engine <- check_plot_engine(.plot_engine)
 
   # extract objects for plotting
   final_predictions <- get_tdw_testing_data(tdw)

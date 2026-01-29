@@ -6,6 +6,8 @@
 #' while averaging over the effects of all other variables.
 #'
 #' @inheritParams plot_dw_partial_1d
+#' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param var_x,var_y The name of the two variables to plot. Must be one of the
 #'   variables used in the model. If both are missing, the top two most
@@ -33,14 +35,6 @@
 #'   with other variables which are plotted on cartesian coordinates. Defaults
 #'   to `FALSE`.
 #'
-#' @param ... Not currently used.
-#'
-#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
-#'   plot.
-#'
-#' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
-#'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
-#'
 #' @return A `ggplot2` object showing the partial dependence plot. If `plot =
 #'   FALSE`, a named list of plot data will be returned instead.
 #'
@@ -60,12 +54,12 @@ plot_dw_partial_2d <- function(
   radial_wd = FALSE,
   ...,
   .plot = TRUE,
-  .plot_engine = c("ggplot2", "plotly"),
+  .plot_engine = NULL,
   .progress = rlang::is_interactive()
 ) {
   check_deweather(dw)
   rlang::check_dots_empty()
-  .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
+  .plot_engine <- check_plot_engine(.plot_engine)
 
   if (exclude_distance < 0 || exclude_distance > 1) {
     cli::cli_abort("{.arg exclude_distance} must be between {0} and {1}.")
