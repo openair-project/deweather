@@ -23,6 +23,9 @@
 #'
 #' @param ... Not currently used.
 #'
+#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
+#'   plot.
+#'
 #' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
 #'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
@@ -37,6 +40,7 @@ plot_tdw_tuning_metrics <- function(
   show_std_err = TRUE,
   cols = "tol",
   ...,
+  .plot = TRUE,
   .plot_engine = c("ggplot2", "plotly")
 ) {
   check_deweather(tdw, "TuneDeweather")
@@ -44,6 +48,11 @@ plot_tdw_tuning_metrics <- function(
   .plot_engine <- check_plot_engine(.plot_engine, .plot_engine)
 
   metrics <- get_tdw_tuning_metrics(tdw)
+
+  if (!.plot) {
+    return(metrics)
+  }
+
   metrics$metric <- toupper(metrics$metric)
 
   best_params_names <- names(get_tdw_best_params(tdw))

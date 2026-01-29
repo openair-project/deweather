@@ -32,6 +32,9 @@
 #'
 #' @param ... Not currently used.
 #'
+#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
+#'   plot.
+#'
 #' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
 #'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
@@ -47,6 +50,7 @@ plot_tdw_testing_scatter <- function(
   cols = "viridis",
   cols_ablines = c("black", "grey50"),
   ...,
+  .plot = TRUE,
   .plot_engine = c("ggplot2", "plotly")
 ) {
   check_deweather(tdw, "TuneDeweather")
@@ -57,6 +61,11 @@ plot_tdw_testing_scatter <- function(
   # extract objects for plotting
   final_predictions <- get_tdw_testing_data(tdw)
   pollutant <- get_tdw_pollutant(tdw)
+
+  # return data if not plot
+  if (!.plot) {
+    return(final_predictions)
+  }
 
   # deal with group
   if (!is.null(group)) {

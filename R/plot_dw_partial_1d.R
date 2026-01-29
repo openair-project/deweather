@@ -51,7 +51,7 @@
 #'   define the dimensions of the grid to create. Setting both to be `NULL`
 #'   creates a roughly square grid.
 #'
-#' @param plot When `FALSE`, return a list of plot data instead of a plot.
+#' @param .plot When `FALSE`, return a list of plot data instead of a plot.
 #'
 #' @param .progress Show a progress bar? Defaults to `TRUE` in interactive
 #'   sessions.
@@ -81,10 +81,10 @@ plot_dw_partial_1d <- function(
   radial_wd = TRUE,
   ncol = NULL,
   nrow = NULL,
-  plot = TRUE,
   ...,
-  .progress = rlang::is_interactive(),
-  .plot_engine = c("ggplot2", "plotly")
+  .plot = TRUE,
+  .plot_engine = c("ggplot2", "plotly"),
+  .progress = rlang::is_interactive()
 ) {
   check_deweather(dw)
   rlang::check_dots_empty()
@@ -185,7 +185,7 @@ plot_dw_partial_1d <- function(
   pd_data <- pd_data[vars]
 
   # if not plotting, just return list of data
-  if (!plot) {
+  if (!.plot) {
     return(pd_data)
   }
 

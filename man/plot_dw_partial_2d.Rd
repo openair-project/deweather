@@ -17,10 +17,10 @@ plot_dw_partial_2d(
   prop = 0.01,
   cols = "viridis",
   radial_wd = FALSE,
-  plot = TRUE,
   ...,
-  .progress = rlang::is_interactive(),
-  .plot_engine = c("ggplot2", "plotly")
+  .plot = TRUE,
+  .plot_engine = c("ggplot2", "plotly"),
+  .progress = rlang::is_interactive()
 )
 }
 \arguments{
@@ -64,15 +64,16 @@ radial axis? This can enhance interpretability, but makes it inconsistent
 with other variables which are plotted on cartesian coordinates. Defaults
 to \code{FALSE}.}
 
-\item{plot}{When \code{FALSE}, return a list of plot data instead of a plot.}
-
 \item{...}{Not currently used.}
 
-\item{.progress}{Show a progress bar? Defaults to \code{TRUE} in interactive
-sessions.}
+\item{.plot}{When \code{FALSE}, return a \code{data.frame} of plot data instead of a
+plot.}
 
 \item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
 returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}
+
+\item{.progress}{Show a progress bar? Defaults to \code{TRUE} in interactive
+sessions.}
 }
 \value{
 A \code{ggplot2} object showing the partial dependence plot. If \code{plot = FALSE}, a named list of plot data will be returned instead.

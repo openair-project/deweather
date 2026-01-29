@@ -21,6 +21,9 @@
 #'
 #' @param ... Not currently used.
 #'
+#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
+#'   plot.
+#'
 #' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
 #'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
@@ -34,6 +37,7 @@ plot_sim_trend <- function(
   names = c("Met Simulation", "Original Data"),
   cols = "tol",
   ...,
+  .plot = TRUE,
   .plot_engine = c("ggplot2", "plotly")
 ) {
   rlang::check_dots_empty()
@@ -86,6 +90,10 @@ plot_sim_trend <- function(
       type = ".id",
       progress = FALSE
     )
+  }
+
+  if (!.plot) {
+    return(sim)
   }
 
   if (.plot_engine == "ggplot2") {

@@ -10,6 +10,7 @@ plot_dw_importance(
   sort = TRUE,
   cols = "tol",
   ...,
+  .plot = TRUE,
   .plot_engine = c("ggplot2", "plotly")
 )
 }
@@ -30,6 +31,9 @@ factor or character data type.}
 \item{cols}{Colours to use for plotting. See \code{\link[openair:openColours]{openair::openColours()}}.}
 
 \item{...}{Not currently used.}
+
+\item{.plot}{When \code{FALSE}, return a \code{data.frame} of plot data instead of a
+plot.}
 
 \item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
 returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}

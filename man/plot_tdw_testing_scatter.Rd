@@ -15,6 +15,7 @@ plot_tdw_testing_scatter(
   cols = "viridis",
   cols_ablines = c("black", "grey50"),
   ...,
+  .plot = TRUE,
   .plot_engine = c("ggplot2", "plotly")
 )
 }
@@ -43,6 +44,9 @@ corner of the scatter plot?}
 the 2:1 and 1:2 lines. Passed to \code{\link[openair:openColours]{openair::openColours()}}.}
 
 \item{...}{Not currently used.}
+
+\item{.plot}{When \code{FALSE}, return a \code{data.frame} of plot data instead of a
+plot.}
 
 \item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
 returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}

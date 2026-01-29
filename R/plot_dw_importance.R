@@ -10,6 +10,9 @@
 #'
 #' @param ... Not currently used.
 #'
+#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
+#'   plot.
+#'
 #' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
 #'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
@@ -23,6 +26,7 @@ plot_dw_importance <-
     sort = TRUE,
     cols = "tol",
     ...,
+    .plot = TRUE,
     .plot_engine = c("ggplot2", "plotly")
   ) {
     check_deweather(dw)
@@ -30,6 +34,10 @@ plot_dw_importance <-
 
     importance <-
       get_dw_importance(dw, aggregate_factors = aggregate_factors, sort = sort)
+
+    if (!.plot) {
+      return(importance)
+    }
 
     if (.plot_engine == "ggplot2") {
       plt <- plot_dw_importance.ggplot2(dw, importance, cols)

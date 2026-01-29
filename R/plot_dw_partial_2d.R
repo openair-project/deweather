@@ -35,6 +35,9 @@
 #'
 #' @param ... Not currently used.
 #'
+#' @param .plot When `FALSE`, return a `data.frame` of plot data instead of a
+#'   plot.
+#'
 #' @param .plot_engine The plotting engine to use. One of `"ggplot2"`, which
 #'   returns a static plot, or `"plotly"`, which returns a dynamic HTML plot.
 #'
@@ -55,10 +58,10 @@ plot_dw_partial_2d <- function(
   prop = 0.01,
   cols = "viridis",
   radial_wd = FALSE,
-  plot = TRUE,
   ...,
-  .progress = rlang::is_interactive(),
-  .plot_engine = c("ggplot2", "plotly")
+  .plot = TRUE,
+  .plot_engine = c("ggplot2", "plotly"),
+  .progress = rlang::is_interactive()
 ) {
   check_deweather(dw)
   rlang::check_dots_empty()
@@ -156,7 +159,7 @@ plot_dw_partial_2d <- function(
   }
 
   # if not plotting, just return the data
-  if (!plot) {
+  if (!.plot) {
     return(plotdata)
   }
 
