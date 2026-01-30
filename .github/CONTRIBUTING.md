@@ -30,12 +30,14 @@ If you’ve found a bug, please file an issue that illustrates the bug with a mi
 
 ### Code style
 
-*   Care should be taken such that new code follows a style similar to the rest of the `{openair}` family. The most user-facing example of this is that exported functions should be written in "lowerCamelCase" (i.e., `polarPlot()` rather than `polar_plot()`).
+*  `{deweather}` uses "snake_case" for function and object names, and `<-` for assignment.
+
+*  Code should be styled using the [air](https://posit-dev.github.io/air/) code formatter.
 
 *  We use [roxygen2](https://cran.r-project.org/package=roxygen2), with [Markdown syntax](https://cran.r-project.org/web/packages/roxygen2/vignettes/rd-formatting.html), for documentation.
 
 ## Code of Conduct
 
-Please note that the `{openair}` project is released with a
+Please note that the `openair` project is released with a
 [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By contributing to this
 project you agree to abide by its terms.
