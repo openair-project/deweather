@@ -44,11 +44,11 @@ minimal [reprex](https://www.tidyverse.org/help/#reprex).
 
 ### Code style
 
-- Care should be taken such that new code follows a style similar to the
-  rest of the [openair](https://openair-project.github.io/openair/)
-  family. The most user-facing example of this is that exported
-  functions should be written in “lowerCamelCase” (i.e., `polarPlot()`
-  rather than `polar_plot()`).
+- [deweather](https://openair-project.github.io/deweather/) uses
+  “snake_case” for function and object names, and `<-` for assignment.
+
+- Code should be styled using the
+  [air](https://posit-dev.github.io/air/) code formatter.
 
 - We use [roxygen2](https://cran.r-project.org/package=roxygen2), with
   [Markdown
@@ -57,8 +57,7 @@ minimal [reprex](https://www.tidyverse.org/help/#reprex).
 
 ## Code of Conduct
 
-Please note that the
-[openair](https://openair-project.github.io/openair/) project is
-released with a [Contributor Code of
+Please note that the `openair` project is released with a [Contributor
+Code of
 Conduct](https://openair-project.github.io/deweather/CODE_OF_CONDUCT.md).
 By contributing to this project you agree to abide by its terms.
