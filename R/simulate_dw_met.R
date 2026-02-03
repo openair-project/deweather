@@ -6,7 +6,7 @@
 #' temperature) while keeping temporal patterns intact, then predicting
 #' pollutant concentrations using a trained deweather model.
 #'
-#' @param dw A deweather model created with [build_dw_model()].
+#' @inheritParams shared_deweather_params
 #'
 #' @param newdata Data set to which to apply the model. If missing the data used
 #'   to build the model in the first place will be used.
@@ -41,9 +41,6 @@
 #'   returned in a single data frame with an `.id` column distinguishing between
 #'   them.
 #'
-#' @param progress Show a progress bar? Defaults to `TRUE` in interactive
-#'   sessions.
-#'
 #' @export
 #'
 #' @return a [tibble][tibble::tibble-package]
@@ -59,7 +56,8 @@ simulate_dw_met <-
     window_hour = 2,
     n = 200,
     aggregate = TRUE,
-    progress = rlang::is_interactive()
+    ...,
+    .progress = rlang::is_interactive()
   ) {
     check_deweather(dw)
     resampling <- rlang::arg_match(resampling, c("constrained", "all"))
@@ -106,7 +104,7 @@ simulate_dw_met <-
             tz = tz,
             get_constrained_indices_cpp = get_constrained_indices_cpp
           ),
-          .progress = progress
+          .progress = .progress
         ) |>
         purrr::list_rbind()
     } else {
@@ -136,7 +134,7 @@ simulate_dw_met <-
             tz = tz,
             get_constrained_indices_cpp = get_constrained_indices_cpp
           ),
-          .progress = progress
+          .progress = .progress
         ) |>
         purrr::list_rbind()
     }

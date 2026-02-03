@@ -5,7 +5,7 @@
 #' parts of the deweather object and creates variables within `newdata` using
 #' [append_dw_vars()] if required.
 #'
-#' @param dw A deweather model created with [build_dw_model()].
+#' @inheritParams shared_deweather_params
 #'
 #' @param newdata Data set to which to apply the model. If missing the data used
 #'   to build the model in the first place will be used.

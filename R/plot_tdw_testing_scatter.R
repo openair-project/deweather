@@ -3,9 +3,10 @@
 #'
 #' [tune_dw_model()] determines a 'best' set of parameters automatically and
 #' models some 'final' predictions using a reserved testing dataset to evaluate
-#' the model. This function produces a scatter (or varient)
+#' the model. This function produces a scatter plot (or binned variant thereof).
 #'
-#' @param tdw A deweather tuning object created with [tune_dw_model()].
+#' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param method One of `"scatter"`, `"bin"` or `"hexbin"`.
 #'
@@ -24,8 +25,6 @@
 #' @param show_params Show an annotation of model parameters in the top-left
 #'   corner of the scatter plot?
 #'
-#' @param cols Colours to use for plotting. See [openair::openColours()].
-#'
 #' @param cols_ablines Colours to use for the diagonal lines, if `show_ablines =
 #'   TRUE`. The the first colour is used for the 1:1 line, and the second for
 #'   the 2:1 and 1:2 lines. Passed to [openair::openColours()].
@@ -40,17 +39,24 @@ plot_tdw_testing_scatter <- function(
   show_ablines = TRUE,
   show_params = TRUE,
   cols = "viridis",
-  cols_ablines = c("black", "grey50")
+  cols_ablines = c("black", "grey50"),
+  ...,
+  .plot = TRUE,
+  .plot_engine = NULL
 ) {
   check_deweather(tdw, "TuneDeweather")
   method <- rlang::arg_match(method)
+  rlang::check_dots_empty()
+  .plot_engine <- check_plot_engine(.plot_engine)
 
   # extract objects for plotting
   final_predictions <- get_tdw_testing_data(tdw)
   pollutant <- get_tdw_pollutant(tdw)
 
-  # need max axis range
-  axisrange <- range(pretty(c(0, final_predictions$obs, final_predictions$mod)))
+  # return data if not plot
+  if (!.plot) {
+    return(final_predictions)
+  }
 
   # deal with group
   if (!is.null(group)) {
@@ -67,10 +73,67 @@ plot_tdw_testing_scatter <- function(
     c(
       paste0("engine: ", get_tdw_engine(tdw)),
       purrr::imap_vec(get_tdw_best_params(tdw), \(x, i) {
-        paste0(i, ": ", x %||% "NULL")
+        lab <- x %||% "NULL"
+        if (is.numeric(x)) {
+          lab <- signif(x, 4)
+        }
+        paste0(i, ": ", lab)
       })
     ) |>
-    paste(collapse = "\n")
+    paste(collapse = ifelse(.plot_engine == "plotly", "<br>", "\n"))
+
+  # plot
+  if (.plot_engine == "ggplot2") {
+    plt <- plot_tdw_testing_scatter.ggplot2(
+      tdw,
+      final_predictions,
+      pollutant,
+      method,
+      group,
+      bins,
+      best_params_str,
+      show_params,
+      show_ablines,
+      cols,
+      cols_ablines
+    )
+  }
+  if (.plot_engine == "plotly") {
+    plt <- plot_tdw_testing_scatter.plotly(
+      tdw,
+      final_predictions,
+      pollutant,
+      method,
+      group,
+      bins,
+      best_params_str,
+      show_params,
+      show_ablines,
+      cols,
+      cols_ablines
+    )
+  }
+
+  return(plt)
+}
+
+#' Helper for static plotting
+#' @noRd
+plot_tdw_testing_scatter.ggplot2 <- function(
+  tdw,
+  final_predictions,
+  pollutant,
+  method,
+  group,
+  bins,
+  best_params_str,
+  show_params,
+  show_ablines,
+  cols,
+  cols_ablines
+) {
+  # need max axis range
+  axisrange <- range(pretty(c(0, final_predictions$obs, final_predictions$mod)))
 
   # plot
   plot <- final_predictions |>
@@ -79,13 +142,15 @@ plot_tdw_testing_scatter <- function(
     ) +
     ggplot2::scale_x_continuous(
       limits = axisrange,
-      expand = ggplot2::expansion(c(0, .1))
+      expand = ggplot2::expansion(c(0, .1)),
+      breaks = scales::pretty_breaks(6)
     ) +
     ggplot2::scale_y_continuous(
       limits = axisrange,
-      expand = ggplot2::expansion(c(0, .1))
+      expand = ggplot2::expansion(c(0, .1)),
+      breaks = scales::pretty_breaks(6)
     ) +
-    ggplot2::theme_bw() +
+    theme_deweather() +
     ggplot2::coord_cartesian(ratio = 1L) +
     ggplot2::labs(
       x = openair::quickText(paste("Observed", pollutant)),
@@ -115,7 +180,7 @@ plot_tdw_testing_scatter <- function(
 
   if (method == "scatter") {
     if (show_ablines) {
-      plot <- plot + annotate_ablines(cols_ablines)
+      plot <- plot + annotate_ablines.ggplot2(cols_ablines)
     }
 
     plot <-
@@ -156,7 +221,7 @@ plot_tdw_testing_scatter <- function(
       )
 
     if (show_ablines) {
-      plot <- plot + annotate_ablines(cols_ablines)
+      plot <- plot + annotate_ablines.ggplot2(cols_ablines)
     }
   }
 
@@ -164,7 +229,7 @@ plot_tdw_testing_scatter <- function(
 }
 
 #' @noRd
-annotate_ablines <- function(colour = "black") {
+annotate_ablines.ggplot2 <- function(colour = "black") {
   cols <- openair::openColours(colour, n = 2)
   list(
     ggplot2::geom_abline(
@@ -189,4 +254,168 @@ annotate_ablines <- function(colour = "black") {
       lwd = 1
     )
   )
+}
+
+#' Helper for static plotting
+#' @noRd
+plot_tdw_testing_scatter.plotly <- function(
+  tdw,
+  final_predictions,
+  pollutant,
+  method,
+  group,
+  bins,
+  best_params_str,
+  show_params,
+  show_ablines,
+  cols,
+  cols_ablines
+) {
+  # need max axis range
+  axisrange <- range(pretty(c(0, final_predictions$obs, final_predictions$mod)))
+
+  if (method == "scatter") {
+    if (is.numeric(final_predictions[[group]])) {
+      colors <- openair::openColours(cols)
+    } else {
+      colors <- openair::openColours(
+        cols,
+        n = dplyr::n_distinct(final_predictions[[group]])
+      )
+    }
+
+    plot <-
+      plotly::plot_ly(
+        final_predictions,
+        x = final_predictions$obs,
+        y = final_predictions$mod,
+        color = final_predictions[[group]],
+        colors = colors
+      ) |>
+      annotate_ablines.plotly(axisrange, cols_ablines) |>
+      plotly::add_markers(name = " ") |>
+      plotly::layout(
+        legend = list(
+          title = list(
+            text = group
+          )
+        )
+      )
+  } else {
+    if (method == "hexbin") {
+      cli::cli_warn(c(
+        "!" = "{.arg method} 'hexbin' is not currently supported by the 'plotly' plotting engine.",
+        "i" = "Using 'bin' method instead."
+      ))
+    }
+
+    bin_to_midpoint <- function(x, nbins) {
+      x_range <- range(x, na.rm = TRUE)
+      breaks <- seq(x_range[1], x_range[2], length.out = nbins + 1)
+      bins <- cut(x, breaks = breaks, include.lowest = TRUE, labels = FALSE)
+      midpoints <- (breaks[-length(breaks)] + breaks[-1]) / 2
+      midpoints[bins]
+    }
+
+    counts <-
+      final_predictions |>
+      dplyr::mutate(
+        obs = bin_to_midpoint(.data$obs, bins),
+        mod = bin_to_midpoint(.data$mod, bins)
+      ) |>
+      dplyr::count(.data$obs, .data$mod)
+
+    plot <- plotly::plot_ly(
+      counts,
+      x = counts$obs,
+      y = counts$mod,
+      z = counts$n,
+      colors = openair::openColours(cols),
+      colorbar = list(
+        title = "Count"
+      )
+    ) |>
+      plotly::add_heatmap(name = " ") |>
+      annotate_ablines.plotly(axisrange, cols_ablines)
+  }
+
+  plot <- plot |>
+    plotly::layout(
+      xaxis = list(
+        range = axisrange,
+        title = paste("Observed", toupper(pollutant)),
+        constrain = "domain"
+      ),
+      yaxis = list(
+        range = axisrange,
+        title = paste("Modelled", toupper(pollutant)),
+        constrain = "domain",
+        scaleanchor = "x",
+        scaleratio = 1
+      ),
+      title = paste0(
+        "R<sup>2</sup> = ",
+        round(get_tdw_testing_metrics(tdw, "r"), 2),
+        ", RMSE = ",
+        signif(get_tdw_testing_metrics(tdw, "rmse"), 4)
+      )
+    )
+
+  if (show_params) {
+    plot <- plot |>
+      plotly::add_annotations(
+        text = best_params_str,
+        y = 0.775,
+        x = 0.15,
+        yref = "y domain",
+        xref = "x domain",
+        align = "left",
+        valign = "top",
+        bgcolor = "#FFFFFFE6",
+        bordercolor = "black",
+        borderpad = 5
+      )
+  }
+
+  return(plot)
+}
+
+#' @noRd
+annotate_ablines.plotly <- function(plot, axisrange, cols_ablines) {
+  abline_cols <- openair::openColours(cols_ablines, n = 2)
+
+  plot |>
+    # 1:1 line (solid)
+    plotly::add_segments(
+      x = axisrange[1],
+      xend = axisrange[2],
+      y = axisrange[1],
+      yend = axisrange[2],
+      line = list(color = abline_cols[1], width = 2),
+      showlegend = FALSE,
+      inherit = FALSE,
+      hoverinfo = "none"
+    ) |>
+    # 2:1 line (dotted) - y = 2x
+    plotly::add_segments(
+      x = axisrange[1],
+      xend = axisrange[2],
+      y = axisrange[1] * 2,
+      yend = axisrange[2] * 2,
+      line = list(color = abline_cols[2], width = 1, dash = "dot"),
+      showlegend = FALSE,
+      inherit = FALSE,
+      hoverinfo = "none"
+    ) |>
+    # 1:2 line (dotted) - y = x/2
+    plotly::add_segments(
+      x = axisrange[1],
+      xend = axisrange[2],
+      y = axisrange[1] / 2,
+      yend = axisrange[2] / 2,
+      line = list(color = abline_cols[2], width = 1, dash = "dot"),
+      showlegend = FALSE,
+      inherit = FALSE,
+      hoverinfo = "none"
+    )
 }

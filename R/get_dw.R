@@ -7,7 +7,7 @@
 #' useful convenience, particularly in conjunction with R's [pipe][pipeOp]
 #' operator (`|>`).
 #'
-#' @param dw A `deweather` model created with [build_dw_model()].
+#' @inheritParams shared_deweather_params
 #'
 #' @param param For [get_dw_params()] and [get_tdw_best_params()]. The default
 #'   (`NULL`) returns a list of model parameters. `param` will return one
@@ -114,8 +114,7 @@ get_dw_importance <-
 #' operator (`|>`).
 #'
 #' @inheritParams get_dw_params
-#'
-#' @param tdw A `deweather` tuning object created with [tune_dw_model()].
+#' @inheritParams shared_deweather_params
 #'
 #' @param metric For [get_tdw_tuning_metrics()] and [get_tdw_testing_metrics()].
 #'   The default (`NULL`) returns a complete set of model parameters. `metric`

@@ -25,7 +25,7 @@ get_dw_model(dw)
 get_dw_importance(dw, aggregate_factors = FALSE, sort = TRUE)
 }
 \arguments{
-\item{dw}{A \code{deweather} model created with \code{\link[=build_dw_model]{build_dw_model()}}.}
+\item{dw}{A deweather model created with \code{\link[=build_dw_model]{build_dw_model()}}.}
 
 \item{param}{For \code{\link[=get_dw_params]{get_dw_params()}} and \code{\link[=get_tdw_best_params]{get_tdw_best_params()}}. The default
 (\code{NULL}) returns a list of model parameters. \code{param} will return one

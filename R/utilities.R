@@ -96,6 +96,25 @@ cp_profiles <- function(
     dplyr::bind_rows()
 }
 
+#' Check if plotting engines are available
+#' @noRd
+check_plot_engine <- function(.plot_engine, opts = c("ggplot2", "plotly")) {
+  .plot_engine <- .plot_engine %||%
+    getOption("deweather.plot_engine") %||%
+    "ggplot2"
+  x <- rlang::arg_match(.plot_engine, opts, multiple = FALSE)
+  if (x == "ggplot2") {
+    rlang::check_installed(
+      c("ggplot2", "scales", "patchwork"),
+      version = c("4.0.0", NA, NA)
+    )
+  }
+  if (x == "plotly") {
+    rlang::check_installed(c("plotly", "scales"))
+  }
+  return(x)
+}
+
 #' Check if the deps are installed for a specific engine
 #' @noRd
 check_engine_installed <- function(engine) {
@@ -127,4 +146,47 @@ define_engine_method <- function(engine) {
     )
   }
   return(x)
+}
+
+#' A nice modern ggplot2 theme
+#' @noRd
+theme_deweather <- function(dir = c("y", "x"), ...) {
+  dir <- rlang::arg_match(dir)
+
+  # Only apply custom theme if the user hasn't set a custom theme
+  if (is_default_theme()) {
+    theme <-
+      ggplot2::theme_minimal() +
+      ggplot2::theme(
+        panel.grid.minor = ggplot2::element_blank(),
+        strip.background = ggplot2::element_blank(),
+        strip.text.x.top = ggplot2::element_text(hjust = 0)
+      )
+
+    if (dir == "x") {
+      theme <- theme +
+        ggplot2::theme(
+          panel.grid.major.y = ggplot2::element_blank(),
+          axis.line.y.left = ggplot2::element_line()
+        )
+    } else {
+      theme <- theme +
+        ggplot2::theme(
+          panel.grid.major.x = ggplot2::element_blank(),
+          axis.line.x.bottom = ggplot2::element_line()
+        )
+    }
+  } else {
+    theme <- ggplot2::theme()
+  }
+
+  theme <- theme + ggplot2::theme(...)
+
+  return(theme)
+}
+
+#' Check if the user has set a theme
+#' @noRd
+is_default_theme <- function() {
+  identical(ggplot2::theme_get(), ggplot2::theme_gray())
 }

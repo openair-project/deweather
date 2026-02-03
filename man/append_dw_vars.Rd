@@ -29,7 +29,7 @@ include:
 \item{abbr}{Abbreviate weekday and month strings? Defaults to \code{TRUE}, which
 tends to look better in plots.}
 
-\item{...}{Not used}
+\item{...}{Not currently used.}
 
 \item{.date}{The name of the 'date' column to use for manipulation.}
 }

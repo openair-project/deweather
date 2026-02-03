@@ -7,7 +7,8 @@
 #' is likely most effective with between 1 and 3 simultaneously tuned
 #' parameters; any more will impede plot interpretation.
 #'
-#' @param tdw A deweather tuning object created with [tune_dw_model()].
+#' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param x The tuned parameter to plot on the x-axis. If not selected, the
 #'   first parameter in the `metrics` dataset will be chosen.
@@ -19,8 +20,6 @@
 #'
 #' @param show_std_err Show the standard error using error bars?
 #'
-#' @param cols Colours to use for plotting. See [openair::openColours()].
-#'
 #' @author Jack Davison
 #' @family Model Tuning Functions
 #' @export
@@ -30,11 +29,21 @@ plot_tdw_tuning_metrics <- function(
   group = NULL,
   facet = NULL,
   show_std_err = TRUE,
-  cols = "Set1"
+  cols = "tol",
+  ...,
+  .plot = TRUE,
+  .plot_engine = NULL
 ) {
   check_deweather(tdw, "TuneDeweather")
+  rlang::check_dots_empty()
+  .plot_engine <- check_plot_engine(.plot_engine)
 
   metrics <- get_tdw_tuning_metrics(tdw)
+
+  if (!.plot) {
+    return(metrics)
+  }
+
   metrics$metric <- toupper(metrics$metric)
 
   best_params_names <- names(get_tdw_best_params(tdw))
@@ -52,9 +61,10 @@ plot_tdw_tuning_metrics <- function(
       cli::cli_abort("{.arg group} cannot be the same as {.arg x}.")
     }
     group <- rlang::arg_match(group, varied_params)
+    rounded <- round_unique(metrics[[group]])
     metrics[group] <- factor(
-      metrics[[group]],
-      levels = as.character(sort(unique(metrics[[group]])))
+      rounded,
+      levels = as.character(sort(unique(rounded)))
     )
   }
 
@@ -66,9 +76,10 @@ plot_tdw_tuning_metrics <- function(
       cli::cli_abort("{.arg facet} cannot be the same as {.arg x}.")
     }
     facet <- rlang::arg_match(facet, varied_params)
+    rounded <- round_unique(metrics[[facet]])
     metrics[facet] <- factor(
-      metrics[[facet]],
-      levels = as.character(sort(unique(metrics[[facet]])))
+      rounded,
+      levels = as.character(sort(unique(rounded)))
     )
   }
 
@@ -85,9 +96,40 @@ plot_tdw_tuning_metrics <- function(
     metrics$metric_group <- "(all)"
   }
 
-  # nice spacing for dodging
-  if (is.numeric(metrics[[x]])) {}
+  if (.plot_engine == "ggplot2") {
+    plt <- plot_tdw_tuning_metrics.ggplot2(
+      metrics,
+      x,
+      group,
+      facet,
+      cols,
+      show_std_err
+    )
+  }
 
+  if (.plot_engine == "plotly") {
+    plt <- plot_tdw_tuning_metrics.plotly(
+      metrics,
+      x,
+      group,
+      facet,
+      cols,
+      show_std_err
+    )
+  }
+
+  return(plt)
+}
+
+# helper for static plotting
+plot_tdw_tuning_metrics.ggplot2 <- function(
+  metrics,
+  x,
+  group,
+  facet,
+  cols,
+  show_std_err
+) {
   # geom for points
   if (show_std_err) {
     pointgeom <- ggplot2::geom_pointrange
@@ -107,8 +149,13 @@ plot_tdw_tuning_metrics <- function(
       group = .data$metric_group
     )
   ) +
-    ggplot2::theme_bw() +
-    ggplot2::theme(strip.background = ggplot2::element_blank()) +
+    ggplot2::labs(
+      y = NULL
+    ) +
+    theme_deweather() +
+    ggplot2::scale_y_continuous(
+      breaks = scales::pretty_breaks(6)
+    ) +
     ggplot2::scale_color_manual(
       values = openair::openColours(
         cols,
@@ -160,4 +207,83 @@ plot_tdw_tuning_metrics <- function(
 
   # return
   return(plt)
+}
+
+# helper for dynamic plotting
+plot_tdw_tuning_metrics.plotly <- function(
+  metrics,
+  x,
+  group,
+  facet,
+  cols,
+  show_std_err
+) {
+  create_metric_panel <- function(m) {
+    df <- metrics[metrics$metric == m, ]
+    plot <- plotly::plot_ly(
+      showlegend = dplyr::n_distinct(df[[group]]) > 1L,
+      colors = openair::openColours(
+        scheme = cols,
+        n = dplyr::n_distinct(df[[group]])
+      )
+    ) |>
+      plotly::layout(
+        yaxis = list(
+          title = m
+        ),
+        xaxis = list(
+          title = x
+        ),
+        hovermode = "x unified"
+      )
+
+    for (i in unique(df$metric_group)) {
+      df_i <- df[df$metric_group == i, ]
+
+      error_y <- list()
+      if (show_std_err) {
+        error_y <- list(array = df_i$std_err)
+      }
+
+      plot <- plot |>
+        plotly::add_lines(
+          x = df_i[[x]],
+          y = df_i$mean,
+          color = df_i[[group]],
+          hoverinfo = "none",
+          showlegend = FALSE,
+          legendgroup = df_i[[group]]
+        ) |>
+        plotly::add_markers(
+          x = df_i[[x]],
+          y = df_i$mean,
+          color = df_i[[group]],
+          error_y = error_y,
+          legendgroup = df_i[[group]],
+          showlegend = m == "RSQ"
+        )
+    }
+
+    return(plot)
+  }
+
+  plotly::subplot(
+    create_metric_panel("RMSE"),
+    create_metric_panel("RSQ"),
+    nrows = 1,
+    shareX = TRUE,
+    titleX = TRUE,
+    titleY = TRUE,
+    margin = 0.05
+  )
+}
+
+# Helper function to round numbers ensuring unique values remain unique
+round_unique <- function(x, min_digits = 2) {
+  if (is.null(x)) {
+    return(x)
+  }
+  x_unique <- unique(x)
+  digits <- max(min_digits, ceiling(-log10(diff(range(x_unique))) + 1))
+  round(x, digits)
 }

@@ -14,13 +14,15 @@ plot_dw_partial_1d(
   show_rug = TRUE,
   n = NULL,
   prop = 0.01,
-  cols = "Set1",
+  cols = "tol",
   ylim = NULL,
   radial_wd = TRUE,
   ncol = NULL,
   nrow = NULL,
-  plot = TRUE,
-  progress = rlang::is_interactive()
+  ...,
+  .plot = TRUE,
+  .plot_engine = NULL,
+  .progress = rlang::is_interactive()
 )
 }
 \arguments{
@@ -56,10 +58,8 @@ Ignored if \code{n} is specified.}
 
 \item{cols}{Colours to use for plotting. See \code{\link[openair:openColours]{openair::openColours()}}.}
 
-\item{ylim}{The limits of the y-axis. Passed to the \code{ylim} argument of
-\code{\link[ggplot2:coord_cartesian]{ggplot2::coord_cartesian()}} (or \code{rlim} of \code{\link[ggplot2:coord_radial]{ggplot2::coord_radial()}} if
-\code{radial_wd} is \code{TRUE}). The default, \code{NULL}, allows each partial dependence
-panel to have its own y-axis scale.}
+\item{ylim}{The limits of the y-axis. The default, \code{NULL}, allows each
+partial dependence panel to have its own y-axis scale.}
 
 \item{radial_wd}{Should the \code{"wd"} (wind direction) variable be plotted on a
 radial axis? This can enhance interpretability, but makes it inconsistent
@@ -70,9 +70,15 @@ to \code{TRUE}.}
 define the dimensions of the grid to create. Setting both to be \code{NULL}
 creates a roughly square grid.}
 
-\item{plot}{When \code{FALSE}, return a list of plot data instead of a plot.}
+\item{...}{Not currently used.}
 
-\item{progress}{Show a progress bar? Defaults to \code{TRUE} in interactive
+\item{.plot}{When \code{FALSE}, return a \code{data.frame} of plot data instead of a
+plot.}
+
+\item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
+returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}
+
+\item{.progress}{Show a progress bar? Defaults to \code{TRUE} in interactive
 sessions.}
 }
 \value{
@@ -86,3 +92,48 @@ predictor variables and model predictions. These plots show how the predicted
 pollutant concentration changes as a function of one variable while averaging
 over the effects of all other variables.
 }
+\section{Plotting Engines}{
+
+
+\code{deweather} offers different plotting engines for different purposes. At
+the moment, two plotting engines are supported:
+\itemize{
+\item \code{"ggplot2"}, for static plotting. This engine produces plots which can
+be easily saved to a \code{.png}, \code{.svg}, or other 'static' file format. To save
+a \code{ggplot2} plot, it is recommended to use the \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}
+function.
+\item \code{"plotly"}, for dynamic plotting. This engine produces HTML plots which
+are suitable for embedding into \code{quarto} or \code{rmarkdown} documents, or for
+use in \code{shiny} applications. These can be saved using functions like
+\code{\link[htmlwidgets:saveWidget]{htmlwidgets::saveWidget()}}.
+}
+
+The plotting engine is defined using the \code{.plot_engine} argument in any
+\verb{plot_*} function in \code{deweather}.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# use default
+plot_dw_importance(dw)
+
+# set to ggplot2 (static)
+plot_dw_importance(dw, .plot_engine = "ggplot2")
+
+# set to plotly (HTML)
+plot_dw_importance(dw, .plot_engine = "plotly")
+}\if{html}{\out{</div>}}
+
+When \code{.plot_engine} is not set, the engine defaults to \code{"ggplot2"}.
+However, this option can be overridden by using the \code{deweather.plot_engine}
+global option.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# set once per session
+options("deweather.plot_engine" = "plotly")
+
+# now defaults to "plotly" over "ggplot2"
+plot_dw_importance(dw)
+}\if{html}{\out{</div>}}
+
+Note that not all arguments in a function may apply to all plotting
+engines. For example, hexagonal binning in \code{\link[=plot_tdw_testing_scatter]{plot_tdw_testing_scatter()}} is
+supported in \code{ggplot2} but not in \code{plotly} at time of writing.
+}
+

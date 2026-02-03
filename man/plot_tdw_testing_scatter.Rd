@@ -13,7 +13,10 @@ plot_tdw_testing_scatter(
   show_ablines = TRUE,
   show_params = TRUE,
   cols = "viridis",
-  cols_ablines = c("black", "grey50")
+  cols_ablines = c("black", "grey50"),
+  ...,
+  .plot = TRUE,
+  .plot_engine = NULL
 )
 }
 \arguments{
@@ -39,12 +42,65 @@ corner of the scatter plot?}
 
 \item{cols_ablines}{Colours to use for the diagonal lines, if \code{show_ablines = TRUE}. The the first colour is used for the 1:1 line, and the second for
 the 2:1 and 1:2 lines. Passed to \code{\link[openair:openColours]{openair::openColours()}}.}
+
+\item{...}{Not currently used.}
+
+\item{.plot}{When \code{FALSE}, return a \code{data.frame} of plot data instead of a
+plot.}
+
+\item{.plot_engine}{The plotting engine to use. One of \code{"ggplot2"}, which
+returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}
 }
 \description{
 \code{\link[=tune_dw_model]{tune_dw_model()}} determines a 'best' set of parameters automatically and
 models some 'final' predictions using a reserved testing dataset to evaluate
-the model. This function produces a scatter (or varient)
+the model. This function produces a scatter plot (or binned variant thereof).
 }
+\section{Plotting Engines}{
+
+
+\code{deweather} offers different plotting engines for different purposes. At
+the moment, two plotting engines are supported:
+\itemize{
+\item \code{"ggplot2"}, for static plotting. This engine produces plots which can
+be easily saved to a \code{.png}, \code{.svg}, or other 'static' file format. To save
+a \code{ggplot2} plot, it is recommended to use the \code{\link[ggplot2:ggsave]{ggplot2::ggsave()}}
+function.
+\item \code{"plotly"}, for dynamic plotting. This engine produces HTML plots which
+are suitable for embedding into \code{quarto} or \code{rmarkdown} documents, or for
+use in \code{shiny} applications. These can be saved using functions like
+\code{\link[htmlwidgets:saveWidget]{htmlwidgets::saveWidget()}}.
+}
+
+The plotting engine is defined using the \code{.plot_engine} argument in any
+\verb{plot_*} function in \code{deweather}.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# use default
+plot_dw_importance(dw)
+
+# set to ggplot2 (static)
+plot_dw_importance(dw, .plot_engine = "ggplot2")
+
+# set to plotly (HTML)
+plot_dw_importance(dw, .plot_engine = "plotly")
+}\if{html}{\out{</div>}}
+
+When \code{.plot_engine} is not set, the engine defaults to \code{"ggplot2"}.
+However, this option can be overridden by using the \code{deweather.plot_engine}
+global option.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# set once per session
+options("deweather.plot_engine" = "plotly")
+
+# now defaults to "plotly" over "ggplot2"
+plot_dw_importance(dw)
+}\if{html}{\out{</div>}}
+
+Note that not all arguments in a function may apply to all plotting
+engines. For example, hexagonal binning in \code{\link[=plot_tdw_testing_scatter]{plot_tdw_testing_scatter()}} is
+supported in \code{ggplot2} but not in \code{plotly} at time of writing.
+}
+
 \seealso{
 Other Model Tuning Functions: 
 \code{\link{plot_tdw_tuning_metrics}()},

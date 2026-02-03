@@ -7,7 +7,7 @@
 #' happy with the parameters it has chosen. That being said, the `params`
 #' argument can be used to override specific hyperparameters.
 #'
-#' @param tdw A deweather tuning object created with [tune_dw_model()].
+#' @inheritParams shared_deweather_params
 #'
 #' @param data An input `data.frame` containing one pollutant column (defined
 #'   using `pollutant`) and a collection of feature columns (defined using
