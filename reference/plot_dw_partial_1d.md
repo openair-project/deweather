@@ -18,13 +18,15 @@ plot_dw_partial_1d(
   show_rug = TRUE,
   n = NULL,
   prop = 0.01,
-  cols = "Set1",
+  cols = "tol",
   ylim = NULL,
   radial_wd = TRUE,
   ncol = NULL,
   nrow = NULL,
-  plot = TRUE,
-  progress = rlang::is_interactive()
+  ...,
+  .plot = TRUE,
+  .plot_engine = NULL,
+  .progress = rlang::is_interactive()
 )
 ```
 
@@ -85,11 +87,7 @@ plot_dw_partial_1d(
 
 - ylim:
 
-  The limits of the y-axis. Passed to the `ylim` argument of
-  [`ggplot2::coord_cartesian()`](https://ggplot2.tidyverse.org/reference/coord_cartesian.html)
-  (or `rlim` of
-  [`ggplot2::coord_radial()`](https://ggplot2.tidyverse.org/reference/coord_radial.html)
-  if `radial_wd` is `TRUE`). The default, `NULL`, allows each partial
+  The limits of the y-axis. The default, `NULL`, allows each partial
   dependence panel to have its own y-axis scale.
 
 - radial_wd:
@@ -105,11 +103,20 @@ plot_dw_partial_1d(
   dimensions of the grid to create. Setting both to be `NULL` creates a
   roughly square grid.
 
-- plot:
+- ...:
 
-  When `FALSE`, return a list of plot data instead of a plot.
+  Not currently used.
 
-- progress:
+- .plot:
+
+  When `FALSE`, return a `data.frame` of plot data instead of a plot.
+
+- .plot_engine:
+
+  The plotting engine to use. One of `"ggplot2"`, which returns a static
+  plot, or `"plotly"`, which returns a dynamic HTML plot.
+
+- .progress:
 
   Show a progress bar? Defaults to `TRUE` in interactive sessions.
 
@@ -118,3 +125,47 @@ plot_dw_partial_1d(
 A `ggplot2` object showing the partial dependence plot. If multiple
 `vars` are specified, a `patchwork` assembly of plots will be returned.
 If `plot = FALSE`, a named list of plot data will be returned instead.
+
+## Plotting Engines
+
+`deweather` offers different plotting engines for different purposes. At
+the moment, two plotting engines are supported:
+
+- `"ggplot2"`, for static plotting. This engine produces plots which can
+  be easily saved to a `.png`, `.svg`, or other 'static' file format. To
+  save a `ggplot2` plot, it is recommended to use the
+  [`ggplot2::ggsave()`](https://ggplot2.tidyverse.org/reference/ggsave.html)
+  function.
+
+- `"plotly"`, for dynamic plotting. This engine produces HTML plots
+  which are suitable for embedding into `quarto` or `rmarkdown`
+  documents, or for use in `shiny` applications. These can be saved
+  using functions like
+  [`htmlwidgets::saveWidget()`](https://rdrr.io/pkg/htmlwidgets/man/saveWidget.html).
+
+The plotting engine is defined using the `.plot_engine` argument in any
+`plot_*` function in `deweather`.
+
+    # use default
+    plot_dw_importance(dw)
+
+    # set to ggplot2 (static)
+    plot_dw_importance(dw, .plot_engine = "ggplot2")
+
+    # set to plotly (HTML)
+    plot_dw_importance(dw, .plot_engine = "plotly")
+
+When `.plot_engine` is not set, the engine defaults to `"ggplot2"`.
+However, this option can be overridden by using the
+`deweather.plot_engine` global option.
+
+    # set once per session
+    options("deweather.plot_engine" = "plotly")
+
+    # now defaults to "plotly" over "ggplot2"
+    plot_dw_importance(dw)
+
+Note that not all arguments in a function may apply to all plotting
+engines. For example, hexagonal binning in
+[`plot_tdw_testing_scatter()`](https://openair-project.github.io/deweather/reference/plot_tdw_testing_scatter.md)
+is supported in `ggplot2` but not in `plotly` at time of writing.

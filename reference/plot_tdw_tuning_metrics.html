@@ -89,7 +89,10 @@ parameters; any more will impede plot interpretation.</p>
 <span>  group <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  facet <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  show_std_err <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  cols <span class="op">=</span> <span class="st">"Set1"</span></span>
+<span>  cols <span class="op">=</span> <span class="st">"tol"</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  .plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  .plot_engine <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -120,7 +123,57 @@ and <code>facet</code> splits the diagram into additional panels. Neither <code>
 <dt id="arg-cols">cols<a class="anchor" aria-label="anchor" href="#arg-cols"></a></dt>
 <dd><p>Colours to use for plotting. See <code><a href="https://openair-project.github.io/openair/reference/openColours.html" class="external-link">openair::openColours()</a></code>.</p></dd>
 
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Not currently used.</p></dd>
+
+
+<dt id="arg--plot">.plot<a class="anchor" aria-label="anchor" href="#arg--plot"></a></dt>
+<dd><p>When <code>FALSE</code>, return a <code>data.frame</code> of plot data instead of a
+plot.</p></dd>
+
+
+<dt id="arg--plot-engine">.plot_engine<a class="anchor" aria-label="anchor" href="#arg--plot-engine"></a></dt>
+<dd><p>The plotting engine to use. One of <code>"ggplot2"</code>, which
+returns a static plot, or <code>"plotly"</code>, which returns a dynamic HTML plot.</p></dd>
+
 </dl></div>
+    <div class="section level2">
+    <h2 id="plotting-engines">Plotting Engines<a class="anchor" aria-label="anchor" href="#plotting-engines"></a></h2>
+
+
+
+<p><code>deweather</code> offers different plotting engines for different purposes. At
+the moment, two plotting engines are supported:</p><ul><li><p><code>"ggplot2"</code>, for static plotting. This engine produces plots which can
+be easily saved to a <code>.png</code>, <code>.svg</code>, or other 'static' file format. To save
+a <code>ggplot2</code> plot, it is recommended to use the <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggplot2::ggsave()</a></code>
+function.</p></li>
+<li><p><code>"plotly"</code>, for dynamic plotting. This engine produces HTML plots which
+are suitable for embedding into <code>quarto</code> or <code>rmarkdown</code> documents, or for
+use in <code>shiny</code> applications. These can be saved using functions like
+<code><a href="https://rdrr.io/pkg/htmlwidgets/man/saveWidget.html" class="external-link">htmlwidgets::saveWidget()</a></code>.</p></li>
+</ul><p>The plotting engine is defined using the <code>.plot_engine</code> argument in any
+<code>plot_*</code> function in <code>deweather</code>.</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># use default</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">plot_dw_importance</span>(dw)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># set to ggplot2 (static)</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">plot_dw_importance</span>(dw, <span class="at">.plot_engine =</span> <span class="st">"ggplot2"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co"># set to plotly (HTML)</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="fu">plot_dw_importance</span>(dw, <span class="at">.plot_engine =</span> <span class="st">"plotly"</span>)</span></code></pre><p></p></div>
+<p>When <code>.plot_engine</code> is not set, the engine defaults to <code>"ggplot2"</code>.
+However, this option can be overridden by using the <code>deweather.plot_engine</code>
+global option.</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># set once per session</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">options</span>(<span class="st">"deweather.plot_engine"</span> <span class="ot">=</span> <span class="st">"plotly"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># now defaults to "plotly" over "ggplot2"</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">plot_dw_importance</span>(dw)</span></code></pre><p></p></div>
+<p>Note that not all arguments in a function may apply to all plotting
+engines. For example, hexagonal binning in <code><a href="plot_tdw_testing_scatter.html">plot_tdw_testing_scatter()</a></code> is
+supported in <code>ggplot2</code> but not in <code>plotly</code> at time of writing.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Other Model Tuning Functions:

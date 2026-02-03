@@ -501,7 +501,7 @@ These plots can be customised like any other
 ``` r
 library(ggplot2)
 
-plot_dw_partial_1d(no2_model, "hour",group = "weekday") +
+plot_dw_partial_1d(no2_model, "hour", group = "weekday") +
   theme_light(14) +
   theme(
     title = element_text(face = "bold"),
@@ -531,6 +531,8 @@ plot_dw_partial_1d(no2_model, "hour",group = "weekday") +
   scale_x_continuous(breaks = seq(0, 24, 4), expand = expansion())
 #> Scale for fill is already present.
 #> Adding another scale for fill, which will replace the existing scale.
+#> Scale for y is already present.
+#> Adding another scale for y, which will replace the existing scale.
 #> Scale for x is already present.
 #> Adding another scale for x, which will replace the existing scale.
 ```
@@ -570,18 +572,12 @@ demet <- simulate_dw_met(
 )
 ```
 
-Now it is possible to plot the resulting trend.
+Now it is possible to plot the resulting trend. The
+[`plot_sim_trend()`](https://openair-project.github.io/deweather/reference/plot_sim_trend.md)
+function is a convenient way to do so.
 
 ``` r
-library(ggplot2)
-
-ggplot(demet, aes(x = date, y = no2)) +
-  geom_line(linewidth = 0.01) +
-  theme_bw() +
-  labs(
-    y = openair::quickText("NO2"),
-    x = NULL
-  )
+plot_sim_trend(demet)
 ```
 
 ![A line chart with date on the x-axis and deweathered NO2 on the
@@ -599,15 +595,7 @@ results to provide a better indication of the overall trend. For
 example:
 
 ``` r
-demet |>
-  openair::timeAverage("month") |>
-  ggplot(aes(x = date, y = no2)) +
-  geom_line() +
-  theme_bw() +
-  labs(
-    y = openair::quickText("NO2"),
-    x = NULL
-  )
+plot_sim_trend(demet, avg.time = "month")
 ```
 
 ![A line chart with date on the x-axis and deweathered NO2 on the
@@ -617,65 +605,25 @@ concentrations, clearly illustrating a sharp increase in
 
 A time-averaged deweathered nitrogen dioxide trend.
 
-With some simple data manipulation, we can compare the meteorological
-simulation, the partial dependence profile, and the input data. It is
-clear that the input data has much more noise. The PD profile are
-simulated data are similar, but the simulated data are higher overall.
-This highlights that purely relying on the PD profiles (which isolates
-the trend from even temporal variables like day of the week) may
-underestimate pollutant concentrations.
+It can be useful to compare this simulated trend to the original input
+data.
+[`plot_sim_trend()`](https://openair-project.github.io/deweather/reference/plot_sim_trend.md)
+can be provided the model used to construct `demet` to overlay both on
+the same plot. Also useful to highlight is the `.plot_engine` argument,
+which supports `"ggplot2"` for static plots and `"plotly"` for
+interactive plots;
+[`plot_sim_trend()`](https://openair-project.github.io/deweather/reference/plot_sim_trend.md)
+using the `plotly` engine provides useful tooltips, zooming, and the
+ability to toggle the different traces on and off.
 
 ``` r
-# PD - set intervals to something high for a good profile
-pd_trend <- plot_dw_partial_1d(
-  no2_model,
-  "trend",
-  plot = FALSE,
-  n = 50,
-  intervals = 200
-) |>
-  purrr::pluck("trend") |>
-  dplyr::transmute(
-    date = as.POSIXct(trend),
-    no2 = mean
-  )
-
-# input data
-input_data <- get_dw_input_data(no2_model) |>
-  dplyr::transmute(
-    date = as.POSIXct(trend),
-    no2 = no2
-  )
-
-# combine with demet and plot
-dplyr::bind_rows(
-  "Simulated" = demet,
-  "Input" = input_data,
-  .id = "source"
-) |>
-  openair::timeAverage("month", type = "source") |>
-  dplyr::bind_rows(
-    pd_trend |> dplyr::mutate(source = "Partial Dep")
-  ) |>
-  ggplot(aes(x = date, y = no2, color = source)) +
-  geom_line() +
-  theme_bw() +
-  labs(
-    y = openair::quickText("NO2"),
-    x = NULL,
-    color = NULL
-  ) +
-  scale_color_manual(
-    values = c(
-      "Input" = "grey70",
-      "Partial Dep" = "orange",
-      "Simulated" = "royalblue"
-    )
-  )
-#> Calculating Time Averages ■■■■■■■■■■■■■■■■                  50% |  ETA:  1s
+plot_sim_trend(
+  demet,
+  dw = no2_model,
+  avg.time = "week",
+  .plot_engine = "plotly"
+)
 ```
-
-![](deweather_files/figure-html/unnamed-chunk-3-1.png)
 
 Note that the function
 [`predict_dw()`](https://openair-project.github.io/deweather/reference/predict_dw.md)

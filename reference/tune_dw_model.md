@@ -27,8 +27,8 @@ tune_dw_model(
   split_prop = 3/4,
   grid_levels = 5,
   v_partitions = 10,
-  progress = TRUE,
   ...,
+  .progress = TRUE,
   .date = "date"
 )
 ```
@@ -91,12 +91,6 @@ tune_dw_model(
   cross-validation. Passed to the `v` argument of
   [`rsample::vfold_cv()`](https://rsample.tidymodels.org/reference/vfold_cv.html).
 
-- progress:
-
-  Log progress in the console? Passed to the `verbose` argument of
-  [`tune::control_grid()`](https://tune.tidymodels.org/reference/control_grid.html).
-  Note that logging does not occur when parallel processing is used.
-
 - ...:
 
   Used to pass additional engine-specific parameters to the model. The
@@ -127,6 +121,12 @@ tune_dw_model(
   - `num.random.splits`: `<ranger>` Number of random splits to consider
     for each candidate splitting variable (for
     `splitrule = "extratrees"`).
+
+- .progress:
+
+  Log progress in the console? Passed to the `verbose` argument of
+  [`tune::control_grid()`](https://tune.tidymodels.org/reference/control_grid.html).
+  Note that logging does not occur when parallel processing is used.
 
 - .date:
 

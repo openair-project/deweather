@@ -18,7 +18,8 @@ simulate_dw_met(
   window_hour = 2,
   n = 200,
   aggregate = TRUE,
-  progress = rlang::is_interactive()
+  ...,
+  .progress = rlang::is_interactive()
 )
 ```
 
@@ -74,7 +75,11 @@ simulate_dw_met(
   returned in a single data frame with an `.id` column distinguishing
   between them.
 
-- progress:
+- ...:
+
+  Not currently used.
+
+- .progress:
 
   Show a progress bar? Defaults to `TRUE` in interactive sessions.
 

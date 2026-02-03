@@ -99,8 +99,8 @@ the <code>mirai</code> package) is recommended to speed up tuning - see
 <span>  split_prop <span class="op">=</span> <span class="fl">3</span><span class="op">/</span><span class="fl">4</span>,</span>
 <span>  grid_levels <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>  v_partitions <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  progress <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span>,</span>
+<span>  .progress <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  .date <span class="op">=</span> <span class="st">"date"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -161,12 +161,6 @@ v-fold cross-validation. Passed to the <code>v</code> argument of
 <code><a href="https://rsample.tidymodels.org/reference/vfold_cv.html" class="external-link">rsample::vfold_cv()</a></code>.</p></dd>
 
 
-<dt id="arg-progress">progress<a class="anchor" aria-label="anchor" href="#arg-progress"></a></dt>
-<dd><p>Log progress in the console? Passed to the <code>verbose</code> argument
-of <code><a href="https://tune.tidymodels.org/reference/control_grid.html" class="external-link">tune::control_grid()</a></code>. Note that logging does not occur when parallel
-processing is used.</p></dd>
-
-
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Used to pass additional engine-specific parameters to the model.
 The parameters listed here can be tuned using <code>tune_dw_model()</code>. All other
@@ -180,6 +174,12 @@ parameters must be fixed.</p><ul><li><p><code>alpha</code>: <code>&lt;xgboost&gt
 <li><p><code>minprop</code>: <code>&lt;ranger&gt;</code> Lower quantile of covariate distribution to be considered for splitting (for <code>splitrule = "maxstat"</code>).</p></li>
 <li><p><code>num.random.splits</code>: <code>&lt;ranger&gt;</code> Number of random splits to consider for each candidate splitting variable (for <code>splitrule = "extratrees"</code>).</p></li>
 </ul></dd>
+
+
+<dt id="arg--progress">.progress<a class="anchor" aria-label="anchor" href="#arg--progress"></a></dt>
+<dd><p>Log progress in the console? Passed to the <code>verbose</code> argument
+of <code><a href="https://tune.tidymodels.org/reference/control_grid.html" class="external-link">tune::control_grid()</a></code>. Note that logging does not occur when parallel
+processing is used.</p></dd>
 
 
 <dt id="arg--date">.date<a class="anchor" aria-label="anchor" href="#arg--date"></a></dt>

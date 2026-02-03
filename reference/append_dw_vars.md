@@ -43,7 +43,7 @@ append_dw_vars(
 
 - ...:
 
-  Not used
+  Not currently used.
 
 - .date:
 

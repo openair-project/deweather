@@ -27,7 +27,7 @@ get_tdw_testing_data(tdw)
 
 - tdw:
 
-  A `deweather` tuning object created with
+  A deweather tuning object created with
   [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md).
 
 - param:

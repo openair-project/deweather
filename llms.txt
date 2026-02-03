@@ -208,6 +208,8 @@ Functions to apply a deweathering model for prediction.
 - [`simulate_dw_met()`](https://openair-project.github.io/deweather/reference/simulate_dw_met.md)
   : Function to run random meteorological simulations on a deweather
   model
+- [`plot_sim_trend()`](https://openair-project.github.io/deweather/reference/plot_sim_trend.md)
+  : Plot a simulated 'deweathered' trend, optionally with its input data
 
 # Articles
 

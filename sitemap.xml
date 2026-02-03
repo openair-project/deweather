@@ -21,9 +21,11 @@
 <url><loc>https://openair-project.github.io/deweather/reference/plot_dw_importance.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/plot_dw_partial_1d.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/plot_dw_partial_2d.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/plot_sim_trend.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/plot_tdw_testing_scatter.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/plot_tdw_tuning_metrics.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/predict_dw.html</loc></url>
+<url><loc>https://openair-project.github.io/deweather/reference/shared_deweather_params.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/simulate_dw_met.html</loc></url>
 <url><loc>https://openair-project.github.io/deweather/reference/tune_dw_model.html</loc></url>
 </urlset>
