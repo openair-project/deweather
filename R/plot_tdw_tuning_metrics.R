@@ -135,6 +135,7 @@ plot_tdw_tuning_metrics.ggplot2 <- function(
     pointgeom <- ggplot2::geom_pointrange
   } else {
     pointgeom <- ggplot2::geom_point
+    metrics$std_err <- 0
   }
 
   # make plot
