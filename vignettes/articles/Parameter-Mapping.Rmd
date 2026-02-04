@@ -26,14 +26,14 @@ The table in this article can be considered a 'cheat sheet' so you can understan
 ```{r prep, include = FALSE}
 envir <- parsnip::get_model_env()
 
-args <- ls(envir) %>%
-  dplyr::tibble(name = .) %>%
-  dplyr::filter(grepl("args", name)) %>%
+args <- ls(envir) |>
+  tibble::enframe(name = NULL) |>
+  dplyr::filter(grepl("args", value)) |>
   dplyr::mutate(
-    model = sub("_args", "", name),
-    args = purrr::map(name, ~ envir[[.x]])
-  ) %>%
-  tidyr::unnest(args) %>%
+    model = sub("_args", "", value),
+    args = purrr::map(value, ~ envir[[.x]])
+  ) |>
+  tidyr::unnest(args) |>
   dplyr::select(model:original)
 ```
 
@@ -43,8 +43,8 @@ args |>
   # some lightgbm params don't apply
   dplyr::filter(ifelse(
     engine == "lightgbm" & parsnip %in% c("stop_iter", "sample_size"),
-    F,
-    T
+    FALSE,
+    TRUE
   )) |>
   dplyr::select(-model) |>
   tidyr::pivot_wider(
