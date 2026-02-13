@@ -87,6 +87,20 @@ simulate_dw_met(
 
 a [tibble](https://tibble.tidyverse.org/reference/tibble-package.html)
 
+## Parallel Processing
+
+This function supports parallel processing using the `{mirai}` package.
+You will likely find that the performance of this function increases if
+"daemons" are set. The greatest benefits will be seen if you spawn as
+many daemons as you have cores on your machine, although one fewer than
+the available cores is often a good rule of thumb.
+
+    # set workers - once per session
+    mirai::daemons(4)
+
+    # run your function as normal
+    tune_dw_model(aqroadside, "no2", tree_depth = c(5, 10))
+
 ## Author
 
 David Carslaw

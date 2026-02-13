@@ -199,6 +199,22 @@ sessions.</p></dd>
 <code>plot = FALSE</code>, a named list of plot data will be returned instead.</p>
     </div>
     <div class="section level2">
+    <h2 id="parallel-processing">Parallel Processing<a class="anchor" aria-label="anchor" href="#parallel-processing"></a></h2>
+
+
+
+<p>This function supports parallel processing using the <code>{mirai}</code> package. You
+will likely find that the performance of this function increases if
+"daemons" are set. The greatest benefits will be seen if you spawn as many
+daemons as you have cores on your machine, although one fewer than the
+available cores is often a good rule of thumb.</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># set workers - once per session</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>mirai<span class="sc">::</span><span class="fu">daemons</span>(<span class="dv">4</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co"># run your function as normal</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">tune_dw_model</span>(aqroadside, <span class="st">"no2"</span>, <span class="at">tree_depth =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">10</span>))</span></code></pre><p></p></div>
+    </div>
+    <div class="section level2">
     <h2 id="plotting-engines">Plotting Engines<a class="anchor" aria-label="anchor" href="#plotting-engines"></a></h2>
 
 
