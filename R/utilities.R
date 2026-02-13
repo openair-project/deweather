@@ -93,9 +93,6 @@ cp_profiles <- function(
             names(new_data)[names(new_data) == "y_new"] <- var_y
           }
 
-          # out <- predict_dw(dw, new_data, column_bind = TRUE)
-
-          # Track which obs produced these rows
           dplyr::mutate(new_data, .obs_id = i, .before = 1)
         },
         pollutant = pollutant,

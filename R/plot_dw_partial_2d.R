@@ -67,7 +67,6 @@ plot_dw_partial_2d <- function(
   }
 
   # get model features
-  model <- get_dw_model(dw)
   vars <- get_dw_vars(dw)
   input_data <- get_dw_input_data(dw)
   pollutant <- get_dw_pollutant(dw)
