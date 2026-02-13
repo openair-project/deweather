@@ -7,6 +7,7 @@
 #'
 #' @inheritParams plot_dw_partial_1d
 #' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Parallel Processing
 #' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param var_x,var_y The name of the two variables to plot. Must be one of the

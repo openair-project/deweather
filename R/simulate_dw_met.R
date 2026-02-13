@@ -7,6 +7,7 @@
 #' pollutant concentrations using a trained deweather model.
 #'
 #' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Parallel Processing
 #'
 #' @param newdata Data set to which to apply the model. If missing the data used
 #'   to build the model in the first place will be used.

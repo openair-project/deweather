@@ -92,6 +92,23 @@ predictor variables and model predictions. These plots show how the predicted
 pollutant concentration changes as a function of one variable while averaging
 over the effects of all other variables.
 }
+\section{Parallel Processing}{
+
+
+This function supports parallel processing using the \code{{mirai}} package. You
+will likely find that the performance of this function increases if
+"daemons" are set. The greatest benefits will be seen if you spawn as many
+daemons as you have cores on your machine, although one fewer than the
+available cores is often a good rule of thumb.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# set workers - once per session
+mirai::daemons(4)
+
+# run your function as normal
+tune_dw_model(aqroadside, "no2", tree_depth = c(5, 10))
+}\if{html}{\out{</div>}}
+}
+
 \section{Plotting Engines}{
 
 

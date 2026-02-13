@@ -6,6 +6,7 @@
 #' over the effects of all other variables.
 #'
 #' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Parallel Processing
 #' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param vars Character. The name of the variable(s) to plot. Must be one of

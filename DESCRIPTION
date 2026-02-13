@@ -22,7 +22,7 @@ Imports:
     carrier,
     cli,
     dials,
-    dplyr,
+    dplyr (>= 1.2.0),
     lubridate,
     mgcv,
     mirai,
