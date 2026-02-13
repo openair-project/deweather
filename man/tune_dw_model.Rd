@@ -77,9 +77,9 @@ parameters must be fixed.
 \item \code{num.random.splits}: \verb{<ranger>} Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"}).
 }}
 
-\item{.progress}{Log progress in the console? Passed to the \code{verbose} argument
-of \code{\link[tune:control_grid]{tune::control_grid()}}. Note that logging does not occur when parallel
-processing is used.}
+\item{.progress}{Log progress in the console? Passed to the \code{verbose}
+argument of \code{\link[tune:control_grid]{tune::control_grid()}}. Note that logging does not occur when
+parallel processing is used.}
 
 \item{.date}{The name of the 'date' column which defines the air quality
 timeseries. Passed to \code{\link[=append_dw_vars]{append_dw_vars()}} if needed. Also used to extract
@@ -108,6 +108,23 @@ The function performs the following steps:
 At least one hyperparameter must be specified as a range (vector of length
 2) for tuning to occur. Single values are treated as fixed parameters.
 }
+\section{Parallel Processing}{
+
+
+This function supports parallel processing using the \code{{mirai}} package. You
+will likely find that the performance of this function increases if
+"daemons" are set. The greatest benefits will be seen if you spawn as many
+daemons as you have cores on your machine, although one fewer than the
+available cores is often a good rule of thumb.
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# set workers - once per session
+mirai::daemons(4)
+
+# run your function as normal
+tune_dw_model(aqroadside, "no2", tree_depth = c(5, 10))
+}\if{html}{\out{</div>}}
+}
+
 \section{Modelling Approaches and Parameters}{
 
 \subsection{Types of Model}{

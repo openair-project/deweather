@@ -6,6 +6,7 @@
 #' over the effects of all other variables.
 #'
 #' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Parallel Processing
 #' @inheritSection shared_deweather_params Plotting Engines
 #'
 #' @param vars Character. The name of the variable(s) to plot. Must be one of
@@ -77,7 +78,6 @@ plot_dw_partial_1d <- function(
   rlang::check_dots_empty()
   .plot_engine <- check_plot_engine(.plot_engine)
 
-  model <- get_dw_model(dw)
   input_data <- get_dw_input_data(dw)
   pollutant <- get_dw_pollutant(dw)
   importance <- get_dw_importance(dw, aggregate_factors = TRUE)
@@ -257,7 +257,7 @@ plot_dw_partial_1d.ggplot2 <- function(
   # if more than one plot, return a patchwork
   if (length(plots) > 1) {
     # strip away most legends
-    for (i in 1:length(plots)) {
+    for (i in seq_along(plots)) {
       if (i != 1) {
         plots[[i]] <- plots[[i]] + ggplot2::theme(legend.position = "none")
       }
@@ -479,7 +479,7 @@ plot_single_pd.ggplot2 <- function(
   }
 
   # add title - if boost tree, add importance gain %, else just variable name
-  scale_fun <- if (dw$engine$method == "boost_tree") {
+  if (dw$engine$method == "boost_tree") {
     gain <- scales::label_percent(0.1)(importance$importance[
       importance$var == var
     ])
@@ -540,7 +540,7 @@ plot_dw_partial_1d.plotly <- function(
   # if more than one plot, return a patchwork
   if (length(plots) > 1) {
     # strip away most legends
-    for (i in 1:length(plots)) {
+    for (i in seq_along(plots)) {
       if (i != 1) {
         plots[[i]] <- plots[[i]]
       }
@@ -589,12 +589,6 @@ plot_single_pd.plotly <- function(
   showlegend
 ) {
   df <- pd_data[[var]]
-
-  # find colours
-  colours <- openair::openColours(
-    scheme = cols,
-    n = dplyr::n_distinct(df$group_var)
-  )
 
   # if the variable is "trend", convert it to a datetime and drop the far
   # reaches of it

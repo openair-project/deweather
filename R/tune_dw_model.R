@@ -8,6 +8,7 @@
 #' <https://tune.tidymodels.org/articles/extras/optimizations.html#parallel-processing>.
 #'
 #' @inheritParams build_dw_model
+#' @inheritSection shared_deweather_params Parallel Processing
 #'
 #' @param
 #' tree_depth,trees,learn_rate,mtry,min_n,loss_reduction,sample_size,stop_iter
@@ -29,9 +30,9 @@
 #'   v-fold cross-validation. Passed to the `v` argument of
 #'   [rsample::vfold_cv()].
 #'
-#' @param .progress Log progress in the console? Passed to the `verbose` argument
-#'   of [tune::control_grid()]. Note that logging does not occur when parallel
-#'   processing is used.
+#' @param .progress Log progress in the console? Passed to the `verbose`
+#'   argument of [tune::control_grid()]. Note that logging does not occur when
+#'   parallel processing is used.
 #'
 #' @details The function performs the following steps:
 #'
@@ -443,7 +444,7 @@ tune_dw_model <- function(
     grid <- dials::grid_regular(x = grid, levels = grid_levels)
 
     # reconcile parsnip names with engine-specific names
-    names(grid) <- dplyr::case_match(
+    names(grid) <- dplyr::recode_values(
       names(grid),
       "regularization_factor" ~ "regularization.factor",
       "regularize_depth" ~ "regularization.usedepth",
@@ -454,7 +455,7 @@ tune_dw_model <- function(
       "penalty_L2" ~ "lambda",
       "penalty_L1" ~ "alpha",
       "num_leaves" ~ "num_leaves",
-      .default = names(grid)
+      default = names(grid)
     )
   }
 

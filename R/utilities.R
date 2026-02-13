@@ -16,6 +16,8 @@ cp_profiles <- function(
   data <- get_dw_input_data(dw)
 
   # Grids (shared across all obs)
+  x_grid <- NULL
+  y_grid <- NULL
   if (is_2pd) {
     if (is.numeric(data[[var_x]]) || lubridate::is.POSIXct(data[[var_x]])) {
       xrange <- range(data[[var_x]])
@@ -61,39 +63,51 @@ cp_profiles <- function(
     }
   }
 
+  # need pollutant
+  pollutant <- get_dw_pollutant(dw)
+
   # For each obs row, build the grid with "other vars" fixed, then predict
-  purrr::map(
-    .x = seq_len(nrow(obs)),
-    .f = function(i) {
-      obs_i <- obs[i, , drop = FALSE]
+  out <-
+    purrr::map(
+      .x = seq_len(nrow(obs)),
+      .f = purrr::in_parallel(
+        function(i) {
+          obs_i <- obs[i, , drop = FALSE]
 
-      if (is.null(var_y)) {
-        new_data <- tidyr::crossing(
-          x_new = x_grid,
-          dplyr::select(obs_i, -dplyr::all_of(c(var_x, get_dw_pollutant(dw))))
-        )
-        names(new_data)[names(new_data) == "x_new"] <- var_x
-      } else {
-        new_data <- tidyr::crossing(
-          x_new = x_grid,
-          y_new = y_grid,
-          dplyr::select(
-            obs_i,
-            -dplyr::all_of(c(var_x, var_y, get_dw_pollutant(dw)))
-          )
-        )
-        names(new_data)[names(new_data) == "x_new"] <- var_x
-        names(new_data)[names(new_data) == "y_new"] <- var_y
-      }
+          if (is.null(var_y)) {
+            new_data <- tidyr::crossing(
+              x_new = x_grid,
+              dplyr::select(obs_i, -dplyr::all_of(c(var_x, pollutant)))
+            )
+            names(new_data)[names(new_data) == "x_new"] <- var_x
+          } else {
+            new_data <- tidyr::crossing(
+              x_new = x_grid,
+              y_new = y_grid,
+              dplyr::select(
+                obs_i,
+                -dplyr::all_of(c(var_x, var_y, pollutant))
+              )
+            )
+            names(new_data)[names(new_data) == "x_new"] <- var_x
+            names(new_data)[names(new_data) == "y_new"] <- var_y
+          }
 
-      out <- predict_dw(dw, new_data, column_bind = TRUE)
-
-      # Track which obs produced these rows
-      dplyr::mutate(out, .obs_id = i, .before = 1)
-    },
-    .progress = progress
-  ) |>
+          dplyr::mutate(new_data, .obs_id = i, .before = 1)
+        },
+        pollutant = pollutant,
+        obs = obs,
+        var_x = var_x,
+        var_y = var_y,
+        x_grid = x_grid,
+        y_grid = y_grid
+      ),
+      .progress = progress
+    ) |>
     dplyr::bind_rows()
+
+  # predict and return
+  predict_dw(dw, out, column_bind = TRUE)
 }
 
 #' Check if plotting engines are available
@@ -133,11 +147,11 @@ check_engine_installed <- function(engine) {
 #' Get the engine method
 #' @noRd
 define_engine_method <- function(engine) {
-  x <- dplyr::case_match(
+  x <- dplyr::recode_values(
     engine,
     c("xgboost", "lightgbm") ~ "boost_tree",
     c("ranger") ~ "rand_forest",
-    .default = "unknown"
+    default = "unknown"
   )
   if (x == "unknown") {
     cli::cli_abort(

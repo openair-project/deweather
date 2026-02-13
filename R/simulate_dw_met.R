@@ -7,6 +7,7 @@
 #' pollutant concentrations using a trained deweather model.
 #'
 #' @inheritParams shared_deweather_params
+#' @inheritSection shared_deweather_params Parallel Processing
 #'
 #' @param newdata Data set to which to apply the model. If missing the data used
 #'   to build the model in the first place will be used.
@@ -83,7 +84,7 @@ simulate_dw_met <-
             \(x) {
               library(deweather)
               contr_one_hot <- parsnip::contr_one_hot
-              doPred(
+              sample_and_predict(
                 mydata = newdata,
                 mod = model,
                 vars = vars,
@@ -94,7 +95,7 @@ simulate_dw_met <-
                 tz = tz
               )
             },
-            doPred = doPred,
+            sample_and_predict = sample_and_predict,
             newdata = newdata,
             model = model,
             vars = vars,
@@ -113,7 +114,7 @@ simulate_dw_met <-
           .x = 1:n,
           .f = purrr::in_parallel(
             \(x) {
-              doPred(
+              sample_and_predict(
                 mydata = newdata,
                 mod = model,
                 vars = vars,
@@ -124,7 +125,7 @@ simulate_dw_met <-
                 tz = tz
               )
             },
-            doPred = doPred,
+            sample_and_predict = sample_and_predict,
             newdata = newdata,
             model = model,
             vars = vars,
@@ -166,7 +167,7 @@ simulate_dw_met <-
   }
 
 # get random samples and predict
-doPred <- function(
+sample_and_predict <- function(
   mydata,
   mod,
   vars,
