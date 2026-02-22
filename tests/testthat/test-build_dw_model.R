@@ -60,7 +60,7 @@ for (engine in c("xgboost", "ranger")) {
     imp <- get_dw_importance(dw_model)
     expect_type(imp$importance, "double")
     expect_s3_class(imp$var, "factor")
-    expect_identical(nrow(imp), ifelse(engine == "xgboost", 12, 6))
+    expect_identical(nrow(imp), ifelse(engine == "xgboost", 12L, 6L))
 
     imp2 <- get_dw_importance(dw_model, aggregate_factors = TRUE)
     expect_length(get_dw_vars(dw_model), nrow(imp2))
