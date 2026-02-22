@@ -123,19 +123,15 @@ check_deweather <- function(
 ) {
   what <- rlang::arg_match(what)
 
-  if (what == "Deweather") {
-    if (!inherits(dw, what)) {
-      cli::cli_abort(
-        "{.arg dw} must be a '{what}' object created using {.fun deweather::build_dw_model}."
-      )
-    }
+  if (what == "Deweather" && !inherits(dw, what)) {
+    cli::cli_abort(
+      "{.arg dw} must be a '{what}' object created using {.fun deweather::build_dw_model}."
+    )
   }
 
-  if (what == "TuneDeweather") {
-    if (!inherits(dw, what)) {
-      cli::cli_abort(
-        "{.arg tdw} must be a '{what}' object created using {.fun deweather::tune_dw_model}."
-      )
-    }
+  if (what == "TuneDeweather" && !inherits(dw, what)) {
+    cli::cli_abort(
+      "{.arg tdw} must be a '{what}' object created using {.fun deweather::tune_dw_model}."
+    )
   }
 }

@@ -133,7 +133,7 @@ plot_sim_trend.ggplot2 <- function(sim, pollutant, ylim, cols) {
     ) +
     ggplot2::scale_y_continuous(
       breaks = scales::pretty_breaks(6),
-      expand = ggplot2::expansion(c(0, .1))
+      expand = ggplot2::expansion(c(0, 0.1))
     ) +
     theme_deweather(legend.position = "top", legend.justification = "left")
 }

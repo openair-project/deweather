@@ -150,12 +150,12 @@ plot_tdw_testing_scatter.ggplot2 <- function(
     ) +
     ggplot2::scale_x_continuous(
       limits = axisrange,
-      expand = ggplot2::expansion(c(0, .1)),
+      expand = ggplot2::expansion(c(0, 0.1)),
       breaks = scales::pretty_breaks(6)
     ) +
     ggplot2::scale_y_continuous(
       limits = axisrange,
-      expand = ggplot2::expansion(c(0, .1)),
+      expand = ggplot2::expansion(c(0, 0.1)),
       breaks = scales::pretty_breaks(6)
     ) +
     theme_deweather() +

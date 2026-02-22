@@ -187,7 +187,7 @@ sample_and_predict <- function(
   n <- nrow(mydata)
 
   if (resampling == "all") {
-    id <- sample(1:n, n, replace = FALSE)
+    id <- sample.int(n, n, replace = FALSE)
   }
 
   if (resampling == "constrained") {

@@ -210,7 +210,7 @@ build_dw_model <- function(
 
   # if any of the vars given aren't in data, they can be appended by the
   # append_dw_vars function
-  if (any(!vars %in% names(data))) {
+  if (!all(vars %in% names(data))) {
     vars_to_add <- vars[!vars %in% names(data)]
     data <- append_dw_vars(data, vars = vars_to_add, abbr = TRUE, .date = .date)
   }

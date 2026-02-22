@@ -63,7 +63,7 @@ plot_dw_importance.ggplot2 <- function(dw, importance, cols) {
   ) +
     ggplot2::geom_col(fill = openair::openColours(cols, n = 1L)) +
     ggplot2::scale_x_continuous(
-      expand = ggplot2::expansion(c(0, .1)),
+      expand = ggplot2::expansion(c(0, 0.1)),
       breaks = scales::pretty_breaks(6),
       labels = scale_fun
     ) +

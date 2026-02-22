@@ -25,15 +25,15 @@ test_that("tuning works", {
     expect_named(tuned)
 
     # expected items
-    expect_equal(
-      names(tuned),
+    expect_named(
+      tuned,
       c("pollutant", "vars", "best_params", "metrics", "final_fit", "engine")
     )
 
     # all params should be present
     if (engine == "xgboost") {
-      expect_equal(
-        names(tuned$best_params),
+      expect_named(
+        tuned$best_params,
         c(
           "min_n",
           "tree_depth",
@@ -48,8 +48,8 @@ test_that("tuning works", {
         )
       )
     } else {
-      expect_equal(
-        names(tuned$best_params),
+      expect_named(
+        tuned$best_params,
         c(
           "min_n",
           "trees",
@@ -65,9 +65,9 @@ test_that("tuning works", {
     }
 
     # getters
-    expect_equal(tuned$engine$engine, engine)
+    expect_identical(tuned$engine$engine, engine)
 
-    expect_equal(names(tuned$final_fit), c("predictions", "metrics"))
+    expect_named(tuned$final_fit, c("predictions", "metrics"))
 
     expect_s3_class(tuned$final_fit$predictions, "data.frame")
     expect_s3_class(tuned$final_fit$metrics, "data.frame")

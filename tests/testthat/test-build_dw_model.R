@@ -16,14 +16,14 @@ for (engine in c("xgboost", "ranger")) {
 
   # check that we can get the correct part of the deweather object
   test_that("getters work", {
-    expect_equal(get_dw_engine(dw_model), engine)
-    expect_equal(get_dw_pollutant(dw_model), "no2")
-    expect_equal(
+    expect_identical(get_dw_engine(dw_model), engine)
+    expect_identical(get_dw_pollutant(dw_model), "no2")
+    expect_identical(
       get_dw_vars(dw_model),
       c("trend", "ws", "wd", "hour", "weekday", "air_temp")
     )
-    expect_equal(
-      names(get_dw_input_data(dw_model)),
+    expect_named(
+      get_dw_input_data(dw_model),
       c("no2", "trend", "ws", "wd", "hour", "weekday", "air_temp")
     )
 
@@ -44,7 +44,7 @@ for (engine in c("xgboost", "ranger")) {
     }
 
     if (engine == "ranger") {
-      expect_equal(
+      expect_identical(
         get_dw_params(dw_model),
         list(
           trees = 50L,
@@ -54,16 +54,16 @@ for (engine in c("xgboost", "ranger")) {
       )
     }
 
-    expect_equal(get_dw_params(dw_model, "trees"), 50L)
+    expect_identical(get_dw_params(dw_model, "trees"), 50L)
 
     # importance is more complex
     imp <- get_dw_importance(dw_model)
     expect_type(imp$importance, "double")
     expect_s3_class(imp$var, "factor")
-    expect_equal(nrow(imp), ifelse(engine == "xgboost", 12, 6))
+    expect_identical(nrow(imp), ifelse(engine == "xgboost", 12, 6))
 
     imp2 <- get_dw_importance(dw_model, aggregate_factors = TRUE)
-    expect_equal(nrow(imp2), length(get_dw_vars(dw_model)))
+    expect_length(get_dw_vars(dw_model), nrow(imp2))
 
     imp3 <- get_dw_importance(dw_model, sort = FALSE)
     expect_type(imp3$var, "character")

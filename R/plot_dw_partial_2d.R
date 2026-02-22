@@ -114,11 +114,9 @@ plot_dw_partial_2d <- function(
   }
 
   # need to switch around the variables if radial_wd is desired
-  if (radial_wd && (var_x == "wd" || var_y == "wd")) {
-    if (var_y == "wd") {
-      var_y <- var_x
-      var_x <- "wd"
-    }
+  if (radial_wd && var_y == "wd") {
+    var_y <- var_x
+    var_x <- "wd"
   }
 
   # rows to use in data
