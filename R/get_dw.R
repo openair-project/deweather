@@ -31,6 +31,19 @@
 #'
 #' @family Object 'Getter' Functions
 #'
+#' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' # build a model
+#' dw <- build_dw_model(aqroadside, "no2")
+#'
+#' # extract variables, for example:
+#' get_dw_params(dw)
+#' get_dw_importance(dw)
+#' get_dw_model(dw)
+#' }
+#'
 #' @rdname getters-dw
 #' @order 1
 #' @export
@@ -128,6 +141,19 @@ get_dw_importance <-
 #' - [get_tdw_testing_data()]: a `data.frame`
 #'
 #' @family Object 'Getter' Functions
+#'
+#' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' # tune a model
+#' tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+#'
+#' # extract variables, for example:
+#' get_tdw_testing_metrics(tdw)
+#' get_tdw_best_params(tdw)
+#' get_tdw_testing_data(tdw)
+#' }
 #'
 #' @rdname getters-tdw
 #' @order 1

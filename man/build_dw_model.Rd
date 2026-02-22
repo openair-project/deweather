@@ -182,6 +182,15 @@ The following \code{ranger}-specific parameters are tunable:
 }
 }
 
+\examples{
+\dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+}
+
+}
 \seealso{
 \code{\link[=finalise_tdw_model]{finalise_tdw_model()}}
+}
+\author{
+Jack Davison
 }

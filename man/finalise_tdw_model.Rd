@@ -37,6 +37,16 @@ This function takes the output of \code{\link[=tune_dw_model]{tune_dw_model()}} 
 happy with the parameters it has chosen. That being said, the \code{params}
 argument can be used to override specific hyperparameters.
 }
+\examples{
+\dontrun{
+# tune data
+tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+
+# finalise hyperparameters
+dw <- finalise_tdw_mdoel(tdw, aqroadside)
+}
+
+}
 \seealso{
 \code{\link[=build_dw_model]{build_dw_model()}}
 }

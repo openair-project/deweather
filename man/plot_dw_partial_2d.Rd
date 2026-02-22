@@ -146,3 +146,13 @@ engines. For example, hexagonal binning in \code{\link[=plot_tdw_testing_scatter
 supported in \code{ggplot2} but not in \code{plotly} at time of writing.
 }
 
+\examples{
+\dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+plot_dw_partial_2d(dw)
+}
+
+}
+\author{
+Jack Davison
+}

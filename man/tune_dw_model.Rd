@@ -196,6 +196,16 @@ The following \code{ranger}-specific parameters are tunable:
 }
 }
 
+\examples{
+\dontrun{
+# tune one variable
+tune_dw_model(aqroadside, "no2", trees = c(10, 50))
+
+# tune multiple
+tune_dw_model(aqroadside, "no2", trees = c(10, 50), alpha = c(0, 1))
+}
+
+}
 \seealso{
 Other Model Tuning Functions: 
 \code{\link{plot_tdw_testing_scatter}()},

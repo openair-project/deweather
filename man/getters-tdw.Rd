@@ -51,8 +51,23 @@ model features from a deweather model and/or tuning objects. These are a
 useful convenience, particularly in conjunction with R's \link[=pipeOp]{pipe}
 operator (\verb{|>}).
 }
+\examples{
+\dontrun{
+# tune a model
+tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+
+# extract variables, for example:
+get_tdw_testing_metrics(tdw)
+get_tdw_best_params(tdw)
+get_tdw_testing_data(tdw)
+}
+
+}
 \seealso{
 Other Object 'Getter' Functions: 
 \code{\link{get_dw_pollutant}()}
+}
+\author{
+Jack Davison
 }
 \concept{Object 'Getter' Functions}

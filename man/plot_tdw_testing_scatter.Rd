@@ -101,9 +101,19 @@ engines. For example, hexagonal binning in \code{\link[=plot_tdw_testing_scatter
 supported in \code{ggplot2} but not in \code{plotly} at time of writing.
 }
 
+\examples{
+\dontrun{
+tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+plot_tdw_testing_scatter(tdw)
+}
+
+}
 \seealso{
 Other Model Tuning Functions: 
 \code{\link{plot_tdw_tuning_metrics}()},
 \code{\link{tune_dw_model}()}
+}
+\author{
+Jack Davison
 }
 \concept{Model Tuning Functions}

@@ -25,7 +25,18 @@
 #'
 #' @param .date The name of the 'date' column to use for manipulation.
 #'
-#' @seealso [openair::cutData()] for more flexible time series data conditioning.
+#' @seealso [openair::cutData()] for more flexible time series data conditioning
+#'
+#' @author Jack Davison
+#'
+#' @examples
+#' # use directly
+#' model_data <- append_dw_vars(aqroadside)
+#'
+#' \dontrun{
+#' # or is used automatically within build_dw_model
+#' dw <- build_dw_model(aqroadside, "no2")
+#' }
 #'
 #' @export
 append_dw_vars <- function(

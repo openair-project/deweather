@@ -20,6 +20,12 @@
 #'
 #' @return a [tibble][tibble::tibble-package]
 #'
+#' @examples
+#' \dontrun{
+#' dw <- build_dw_model(aqroadside, "no2")
+#' pred <- predict_dw(dw)
+#' }
+#'
 #' @author Jack Davison
 predict_dw <- function(
   dw,

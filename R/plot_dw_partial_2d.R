@@ -39,6 +39,14 @@
 #' @return A `ggplot2` object showing the partial dependence plot. If `plot =
 #'   FALSE`, a named list of plot data will be returned instead.
 #'
+#' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' dw <- build_dw_model(aqroadside, "no2")
+#' plot_dw_partial_2d(dw)
+#' }
+#'
 #' @export
 plot_dw_partial_2d <- function(
   dw,

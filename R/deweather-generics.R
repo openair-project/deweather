@@ -97,7 +97,6 @@ summary.TuneDeweather <- function(object, ...) {
 
 #' mapping helper to perform functions on each dataframe element of a DW model
 #' @noRd
-#' @author Jack Davison
 dw_map <- function(x, FUN, ...) {
   dat <- names(x)
 

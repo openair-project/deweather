@@ -21,6 +21,13 @@
 #' @param show_std_err Show the standard error using error bars?
 #'
 #' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+#' plot_tdw_tuning_metrics(tdw)
+#' }
+#'
 #' @family Model Tuning Functions
 #' @export
 plot_tdw_tuning_metrics <- function(

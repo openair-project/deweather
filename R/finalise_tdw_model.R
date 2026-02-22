@@ -28,6 +28,16 @@
 #'
 #' @seealso [build_dw_model()]
 #' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' # tune data
+#' tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+#'
+#' # finalise hyperparameters
+#' dw <- finalise_tdw_mdoel(tdw, aqroadside)
+#' }
+#'
 #' @export
 finalise_tdw_model <- function(
   tdw,

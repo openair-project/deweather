@@ -53,6 +53,14 @@
 #'   `vars` are specified, a `patchwork` assembly of plots will be returned. If
 #'   `plot = FALSE`, a named list of plot data will be returned instead.
 #'
+#' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' dw <- build_dw_model(aqroadside, "no2")
+#' plot_dw_partial_1d(dw)
+#' }
+#'
 #' @export
 plot_dw_partial_1d <- function(
   dw,

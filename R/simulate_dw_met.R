@@ -46,7 +46,14 @@
 #'
 #' @return a [tibble][tibble::tibble-package]
 #'
+#' @examples
+#' \dontrun{
+#' dw <- build_dw_model(aqroadside, "no2")
+#' simulate_dw_met(dw)
+#' }
+#'
 #' @author David Carslaw
+#' @author Jack Davison
 simulate_dw_met <-
   function(
     dw,

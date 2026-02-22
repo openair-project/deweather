@@ -85,6 +85,15 @@ tune_dw_model(aqroadside, "no2", tree_depth = c(5, 10))
 }\if{html}{\out{</div>}}
 }
 
+\examples{
+\dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+simulate_dw_met(dw)
+}
+
+}
 \author{
 David Carslaw
+
+Jack Davison
 }

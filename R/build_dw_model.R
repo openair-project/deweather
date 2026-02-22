@@ -171,6 +171,14 @@
 #' @return a 'Deweather' object for further analysis
 #'
 #' @seealso [finalise_tdw_model()]
+#'
+#' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' dw <- build_dw_model(aqroadside, "no2")
+#' }
+#'
 #' @export
 build_dw_model <- function(
   data,

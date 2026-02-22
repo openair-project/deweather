@@ -23,6 +23,14 @@
 #'   dataset and the original dataset.
 #'
 #' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' dw <- build_dw_model(aqroadside, "no2")
+#' sim <- simulate_dw_met(dw)
+#' plot_sim_trend(sim, dw, avg.time = "month")
+#' }
+#'
 #' @export
 plot_sim_trend <- function(
   sim,

@@ -32,6 +32,13 @@ to use a deweather model for prediction. This automatically extracts relevant
 parts of the deweather object and creates variables within \code{newdata} using
 \code{\link[=append_dw_vars]{append_dw_vars()}} if required.
 }
+\examples{
+\dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+pred <- predict_dw(dw)
+}
+
+}
 \author{
 Jack Davison
 }

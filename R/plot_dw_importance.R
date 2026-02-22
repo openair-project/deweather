@@ -10,6 +10,14 @@
 #'
 #' @return a [ggplot2][ggplot2::ggplot2-package] figure
 #'
+#' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' dw <- build_dw_model(aqroadside, "no2")
+#' plot_dw_importance(dw)
+#' }
+#'
 #' @export
 plot_dw_importance <-
   function(

@@ -29,6 +29,14 @@
 #'   TRUE`. The the first colour is used for the 1:1 line, and the second for
 #'   the 2:1 and 1:2 lines. Passed to [openair::openColours()].
 #'
+#' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+#' plot_tdw_testing_scatter(tdw)
+#' }
+#'
 #' @family Model Tuning Functions
 #' @export
 plot_tdw_testing_scatter <- function(

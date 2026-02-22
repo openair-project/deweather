@@ -39,6 +39,19 @@ default named 'date') into a series of columns which are useful features in
 deweather models. Used internally by \code{\link[=build_dw_model]{build_dw_model()}} and
 \code{\link[=tune_dw_model]{tune_dw_model()}}, but can be used directly by users if desired.
 }
+\examples{
+# use directly
+model_data <- append_dw_vars(aqroadside)
+
+\dontrun{
+# or is used automatically within build_dw_model
+dw <- build_dw_model(aqroadside, "no2")
+}
+
+}
 \seealso{
-\code{\link[openair:cutData]{openair::cutData()}} for more flexible time series data conditioning.
+\code{\link[openair:cutData]{openair::cutData()}} for more flexible time series data conditioning
+}
+\author{
+Jack Davison
 }

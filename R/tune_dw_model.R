@@ -55,6 +55,16 @@
 #'
 #' @family Model Tuning Functions
 #' @author Jack Davison
+#'
+#' @examples
+#' \dontrun{
+#' # tune one variable
+#' tune_dw_model(aqroadside, "no2", trees = c(10, 50))
+#'
+#' # tune multiple
+#' tune_dw_model(aqroadside, "no2", trees = c(10, 50), alpha = c(0, 1))
+#' }
+#'
 #' @export
 tune_dw_model <- function(
   data,
