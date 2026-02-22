@@ -109,3 +109,16 @@ Note that not all arguments in a function may apply to all plotting
 engines. For example, hexagonal binning in
 [`plot_tdw_testing_scatter()`](https://openair-project.github.io/deweather/reference/plot_tdw_testing_scatter.md)
 is supported in `ggplot2` but not in `plotly` at time of writing.
+
+## Author
+
+Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+plot_dw_importance(dw)
+} # }
+```

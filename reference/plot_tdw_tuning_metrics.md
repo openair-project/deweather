@@ -119,3 +119,12 @@ Other Model Tuning Functions:
 ## Author
 
 Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+plot_tdw_tuning_metrics(tdw)
+} # }
+```

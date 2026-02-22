@@ -104,3 +104,14 @@ the available cores is often a good rule of thumb.
 ## Author
 
 David Carslaw
+
+Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+simulate_dw_met(dw)
+} # }
+```

@@ -264,3 +264,15 @@ Other Model Tuning Functions:
 ## Author
 
 Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# tune one variable
+tune_dw_model(aqroadside, "no2", trees = c(10, 50))
+
+# tune multiple
+tune_dw_model(aqroadside, "no2", trees = c(10, 50), alpha = c(0, 1))
+} # }
+```

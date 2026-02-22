@@ -64,3 +64,15 @@ finalise_tdw_model(tdw, data, params = list(), ..., .date = "date")
 ## Author
 
 Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# tune data
+tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+
+# finalise hyperparameters
+dw <- finalise_tdw_mdoel(tdw, aqroadside)
+} # }
+```

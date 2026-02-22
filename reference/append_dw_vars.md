@@ -52,4 +52,20 @@ append_dw_vars(
 ## See also
 
 [`openair::cutData()`](https://openair-project.github.io/openair/reference/cutData.html)
-for more flexible time series data conditioning.
+for more flexible time series data conditioning
+
+## Author
+
+Jack Davison
+
+## Examples
+
+``` r
+# use directly
+model_data <- append_dw_vars(aqroadside)
+
+if (FALSE) { # \dontrun{
+# or is used automatically within build_dw_model
+dw <- build_dw_model(aqroadside, "no2")
+} # }
+```

@@ -132,7 +132,25 @@ factor or character data type.</p></dd>
     <div class="dont-index"><p>Other Object 'Getter' Functions:
 <code><a href="getters-tdw.html">get_tdw_pollutant()</a></code></p></div>
     </div>
+    <div class="section level2">
+    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
+    <p>Jack Davison</p>
+    </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># build a model</span></span></span>
+<span class="r-in"><span><span class="va">dw</span> <span class="op">&lt;-</span> <span class="fu"><a href="build_dw_model.html">build_dw_model</a></span><span class="op">(</span><span class="va">aqroadside</span>, <span class="st">"no2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># extract variables, for example:</span></span></span>
+<span class="r-in"><span><span class="fu">get_dw_params</span><span class="op">(</span><span class="va">dw</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_dw_importance</span><span class="op">(</span><span class="va">dw</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_dw_model</span><span class="op">(</span><span class="va">dw</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

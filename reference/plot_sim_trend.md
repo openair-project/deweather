@@ -115,3 +115,13 @@ is supported in `ggplot2` but not in `plotly` at time of writing.
 ## Author
 
 Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+sim <- simulate_dw_met(dw)
+plot_sim_trend(sim, dw, avg.time = "month")
+} # }
+```

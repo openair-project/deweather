@@ -246,3 +246,15 @@ The following `ranger`-specific parameters are tunable:
 ## See also
 
 [`finalise_tdw_model()`](https://openair-project.github.io/deweather/reference/finalise_tdw_model.md)
+
+## Author
+
+Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+} # }
+```

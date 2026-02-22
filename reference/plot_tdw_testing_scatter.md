@@ -131,3 +131,16 @@ is supported in `ggplot2` but not in `plotly` at time of writing.
 Other Model Tuning Functions:
 [`plot_tdw_tuning_metrics()`](https://openair-project.github.io/deweather/reference/plot_tdw_tuning_metrics.md),
 [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
+
+## Author
+
+Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+tdw <- tune_dw_model(aqroadside, "no2", trees = c(1, 5))
+plot_tdw_testing_scatter(tdw)
+} # }
+```

@@ -125,7 +125,25 @@ will return one specific parameter. <code>metric</code> must be one of the
     <div class="dont-index"><p>Other Object 'Getter' Functions:
 <code><a href="getters-dw.html">get_dw_pollutant()</a></code></p></div>
     </div>
+    <div class="section level2">
+    <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
+    <p>Jack Davison</p>
+    </div>
 
+    <div class="section level2">
+    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># tune a model</span></span></span>
+<span class="r-in"><span><span class="va">tdw</span> <span class="op">&lt;-</span> <span class="fu"><a href="tune_dw_model.html">tune_dw_model</a></span><span class="op">(</span><span class="va">aqroadside</span>, <span class="st">"no2"</span>, trees <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># extract variables, for example:</span></span></span>
+<span class="r-in"><span><span class="fu">get_tdw_testing_metrics</span><span class="op">(</span><span class="va">tdw</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_tdw_best_params</span><span class="op">(</span><span class="va">tdw</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_tdw_testing_data</span><span class="op">(</span><span class="va">tdw</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 

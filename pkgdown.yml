@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   articles/deweather: deweather.html
   articles/Parameter-Mapping: Parameter-Mapping.html
-last_built: 2026-02-13T16:14Z
+last_built: 2026-02-22T14:31Z
 urls:
   reference: https://openair-project.github.io/deweather/reference
   article: https://openair-project.github.io/deweather/articles

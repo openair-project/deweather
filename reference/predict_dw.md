@@ -48,3 +48,12 @@ a [tibble](https://tibble.tidyverse.org/reference/tibble-package.html)
 ## Author
 
 Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+dw <- build_dw_model(aqroadside, "no2")
+pred <- predict_dw(dw)
+} # }
+```

@@ -69,3 +69,21 @@ Typically a character vector, except:
 
 Other Object 'Getter' Functions:
 [`get_tdw_pollutant()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+
+## Author
+
+Jack Davison
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# build a model
+dw <- build_dw_model(aqroadside, "no2")
+
+# extract variables, for example:
+get_dw_params(dw)
+get_dw_importance(dw)
+get_dw_model(dw)
+} # }
+```
