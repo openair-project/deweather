@@ -37,6 +37,8 @@ Imports:
     workflows
 Suggests: 
     bonsai,
+    fastshap,
+    ggbeeswarm,
     ggplot2 (>= 4.0.0),
     knitr,
     lightgbm,
@@ -45,6 +47,7 @@ Suggests:
     ranger,
     rmarkdown,
     scales,
+    shapviz,
     testthat (>= 3.0.0),
     xgboost
 LinkingTo: 

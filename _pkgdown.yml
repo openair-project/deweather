@@ -56,6 +56,7 @@ reference:
   - plot_dw_importance
   - plot_dw_partial_1d
   - plot_dw_partial_2d
+  - plot_dw_shap_importance
 
 - title: Predict
   desc: >

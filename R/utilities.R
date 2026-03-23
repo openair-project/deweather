@@ -181,7 +181,8 @@ theme_deweather <- function(dir = c("y", "x"), ...) {
       theme <- theme +
         ggplot2::theme(
           panel.grid.major.y = ggplot2::element_blank(),
-          axis.line.y.left = ggplot2::element_line()
+          axis.line.y.left = ggplot2::element_line(),
+          axis.line.y.right = ggplot2::element_line()
         )
     } else {
       theme <- theme +

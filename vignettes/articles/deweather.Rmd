@@ -256,6 +256,18 @@ plot_dw_partial_2d(
 )
 ```
 
+## SHAP values
+
+SHAP values are a way of understanding the contribution of each feature to the model's predictions for individual observations. They can be thought of as a way of explaining the model's predictions in terms of the input features. The `plot_dw_shap_importance()` function provides a convenient way to visualize the SHAP values for the features in a `deweather` model. The plot shows the importance of each feature in terms of its contribution to the model's predictions, with the colour representing the normalised feature value.
+
+For example, in the below figure we can conclude that wind direction is the 'most important' model feature as its average absolute SHAP and range of SHAP values are greatest. Both 'low' and 'high' wind direction (i.e., wind directions around 0/360/"North") tend to push concentrations in a negative direction. Similarly, 'low' and 'high' hours of the day (i.e., times around midnight) and the day being Sunday/Saturday typically push NO2 down.
+
+```{r}
+#| label: shap
+#| fig-height: 8
+plot_dw_shap_importance(no2_model)
+```
+
 ## Customisation
 
 These plots can be customised like any other `{ggplot2}` object. 
