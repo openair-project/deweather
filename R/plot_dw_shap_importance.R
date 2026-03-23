@@ -136,8 +136,8 @@ plot_dw_shap_importance <- function(
     dplyr::distinct(.data$feature, .data$avg_shap_value) |>
     dplyr::arrange(dplyr::desc(.data$avg_shap_value))
 
-  plot_df$feature <- factor(plot_df$feature, avg_shap_df$feature)
-  avg_shap_df$feature <- factor(avg_shap_df$feature, avg_shap_df$feature)
+  plot_df$feature <- factor(plot_df$feature, rev(avg_shap_df$feature))
+  avg_shap_df$feature <- factor(avg_shap_df$feature, rev(avg_shap_df$feature))
 
   # need nice labels for plotly graphics
   plot_df <-
@@ -220,7 +220,7 @@ plot_dw_shap_importance.ggplot2 <- function(plot_df, avg_shap_df, cols) {
 }
 
 plot_dw_shap_importance.plotly <- function(plot_df, avg_shap_df, cols) {
-  feature_order <- levels(plot_df$feature)
+  feature_order <- rev(levels(plot_df$feature))
 
   plot_df |>
     dplyr::mutate(feature = as.character(.data$feature)) |>
