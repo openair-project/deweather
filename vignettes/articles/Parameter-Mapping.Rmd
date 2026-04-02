@@ -41,11 +41,9 @@ args <- ls(envir) |>
 args |>
   dplyr::filter(engine %in% c("xgboost", "lightgbm", "ranger")) |>
   # some lightgbm params don't apply
-  dplyr::filter(ifelse(
-    engine == "lightgbm" & parsnip %in% c("stop_iter", "sample_size"),
-    FALSE,
-    TRUE
-  )) |>
+  dplyr::filter(
+    !(engine == "lightgbm" & parsnip %in% c("stop_iter", "sample_size"))
+  ) |>
   dplyr::select(-model) |>
   tidyr::pivot_wider(
     names_from = engine,
