@@ -69,8 +69,8 @@ get_dw_model(dw)
 
 }
 \seealso{
-Other Object 'Getter' Functions: 
-\code{\link{get_tdw_pollutant}()}
+Other Object 'Getter' Functions:
+\code{\link[=get_tdw_pollutant]{get_tdw_pollutant()}}
 }
 \author{
 Jack Davison
