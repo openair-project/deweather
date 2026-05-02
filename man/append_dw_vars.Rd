@@ -18,13 +18,15 @@ append_dw_vars(
 
 \item{vars}{A character vector of variables of interest. Possible options
 include:
-- \code{"trend"}: a numeric expression of the overall time series
-- \code{"hour"}: the hour of the day (0-23)
-- \code{"weekday"}: the day of the week (Sunday through Saturday)
-- \code{"weekend"}: whether it is a weekend (Saturday, Sunday) or weekday
-- \code{"yday"}: the day of the year
-- \code{"week"}: the week of the year
-- \code{"month"}: the month of the year}
+\itemize{
+\item \code{"trend"}: a numeric expression of the overall time series
+\item \code{"hour"}: the hour of the day (0-23)
+\item \code{"weekday"}: the day of the week (Sunday through Saturday)
+\item \code{"weekend"}: whether it is a weekend (Saturday, Sunday) or weekday
+\item \code{"yday"}: the day of the year
+\item \code{"week"}: the week of the year
+\item \code{"month"}: the month of the year
+}}
 
 \item{abbr}{Abbreviate weekday and month strings? Defaults to \code{TRUE}, which
 tends to look better in plots.}

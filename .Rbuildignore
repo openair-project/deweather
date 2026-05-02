@@ -16,3 +16,5 @@ test.R
 ^\.github$
 ^[.]?air[.]toml$
 ^\.vscode$
+^\.positai$
+^\.claude$

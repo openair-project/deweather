@@ -64,8 +64,8 @@ get_tdw_testing_data(tdw)
 
 }
 \seealso{
-Other Object 'Getter' Functions: 
-\code{\link{get_dw_pollutant}()}
+Other Object 'Getter' Functions:
+\code{\link[=get_dw_pollutant]{get_dw_pollutant()}}
 }
 \author{
 Jack Davison

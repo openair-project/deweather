@@ -109,9 +109,9 @@ plot_tdw_testing_scatter(tdw)
 
 }
 \seealso{
-Other Model Tuning Functions: 
-\code{\link{plot_tdw_tuning_metrics}()},
-\code{\link{tune_dw_model}()}
+Other Model Tuning Functions:
+\code{\link[=plot_tdw_tuning_metrics]{plot_tdw_tuning_metrics()}},
+\code{\link[=tune_dw_model]{tune_dw_model()}}
 }
 \author{
 Jack Davison

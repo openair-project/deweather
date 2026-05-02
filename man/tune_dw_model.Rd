@@ -71,7 +71,7 @@ parameters must be fixed.
 \item \code{num_leaves}: \verb{<lightgbm>} max number of leaves in one tree.
 \item \code{regularization.factor}: \verb{<ranger>} Regularization factor (gain penalization).
 \item \code{regularization.usedepth}: \verb{<ranger>} Consider the depth in regularization? (\code{TRUE}/\code{FALSE}).
-\item \code{splitrule}: \verb{<ranger>} Splitting rule. One of \link[dials:ranger_parameters]{dials::ranger_reg_rules}.
+\item \code{splitrule}: \verb{<ranger>} Splitting rule. One of \link[dials:ranger_reg_rules]{dials::ranger_reg_rules}.
 \item \code{alpha}: \verb{<ranger>} Significance threshold to allow splitting (for \code{splitrule = "maxstat"}).
 \item \code{minprop}: \verb{<ranger>} Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"}).
 \item \code{num.random.splits}: \verb{<ranger>} Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"}).
@@ -188,7 +188,7 @@ The following \code{ranger}-specific parameters are tunable:
 \itemize{
 \item \code{regularization.factor}: Regularization factor (gain penalization)
 \item \code{regularization.usedepth}: Consider the depth in regularization? (\code{TRUE}/\code{FALSE})
-\item \code{splitrule}: Splitting rule. One of \link[dials:ranger_parameters]{dials::ranger_reg_rules}
+\item \code{splitrule}: Splitting rule. One of \link[dials:ranger_reg_rules]{dials::ranger_reg_rules}
 \item \code{alpha}: Significance threshold to allow splitting (for \code{splitrule = "maxstat"})
 \item \code{minprop}: Lower quantile of covariate distribution to be considered for splitting (for \code{splitrule = "maxstat"})
 \item \code{num.random.splits}: Number of random splits to consider for each candidate splitting variable (for \code{splitrule = "extratrees"})
@@ -207,9 +207,9 @@ tune_dw_model(aqroadside, "no2", trees = c(10, 50), alpha = c(0, 1))
 
 }
 \seealso{
-Other Model Tuning Functions: 
-\code{\link{plot_tdw_testing_scatter}()},
-\code{\link{plot_tdw_tuning_metrics}()}
+Other Model Tuning Functions:
+\code{\link[=plot_tdw_testing_scatter]{plot_tdw_testing_scatter()}},
+\code{\link[=plot_tdw_tuning_metrics]{plot_tdw_tuning_metrics()}}
 }
 \author{
 Jack Davison
