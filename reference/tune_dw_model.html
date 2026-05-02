@@ -169,7 +169,7 @@ parameters must be fixed.</p><ul><li><p><code>alpha</code>: <code>&lt;xgboost&gt
 <li><p><code>num_leaves</code>: <code>&lt;lightgbm&gt;</code> max number of leaves in one tree.</p></li>
 <li><p><code>regularization.factor</code>: <code>&lt;ranger&gt;</code> Regularization factor (gain penalization).</p></li>
 <li><p><code>regularization.usedepth</code>: <code>&lt;ranger&gt;</code> Consider the depth in regularization? (<code>TRUE</code>/<code>FALSE</code>).</p></li>
-<li><p><code>splitrule</code>: <code>&lt;ranger&gt;</code> Splitting rule. One of dials::ranger_reg_rules.</p></li>
+<li><p><code>splitrule</code>: <code>&lt;ranger&gt;</code> Splitting rule. One of <a href="https://dials.tidymodels.org/reference/ranger_parameters.html" class="external-link">dials::ranger_reg_rules</a>.</p></li>
 <li><p><code>alpha</code>: <code>&lt;ranger&gt;</code> Significance threshold to allow splitting (for <code>splitrule = "maxstat"</code>).</p></li>
 <li><p><code>minprop</code>: <code>&lt;ranger&gt;</code> Lower quantile of covariate distribution to be considered for splitting (for <code>splitrule = "maxstat"</code>).</p></li>
 <li><p><code>num.random.splits</code>: <code>&lt;ranger&gt;</code> Number of random splits to consider for each candidate splitting variable (for <code>splitrule = "extratrees"</code>).</p></li>
@@ -258,7 +258,7 @@ available cores is often a good rule of thumb.</p>
 <li><p><code>min_n</code>: Minimal Node Size</p></li>
 </ul><p>The following <code>ranger</code>-specific parameters are tunable:</p><ul><li><p><code>regularization.factor</code>: Regularization factor (gain penalization)</p></li>
 <li><p><code>regularization.usedepth</code>: Consider the depth in regularization? (<code>TRUE</code>/<code>FALSE</code>)</p></li>
-<li><p><code>splitrule</code>: Splitting rule. One of dials::ranger_reg_rules</p></li>
+<li><p><code>splitrule</code>: Splitting rule. One of <a href="https://dials.tidymodels.org/reference/ranger_parameters.html" class="external-link">dials::ranger_reg_rules</a></p></li>
 <li><p><code>alpha</code>: Significance threshold to allow splitting (for <code>splitrule = "maxstat"</code>)</p></li>
 <li><p><code>minprop</code>: Lower quantile of covariate distribution to be considered for splitting (for <code>splitrule = "maxstat"</code>)</p></li>
 <li><p><code>num.random.splits</code>: Number of random splits to consider for each candidate splitting variable (for <code>splitrule = "extratrees"</code>)</p></li>

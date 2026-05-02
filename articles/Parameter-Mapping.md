@@ -14,13 +14,21 @@ The table in this article can be considered a ‘cheat sheet’ so you can
 understand how different `deweather` arguments map onto their engine
 equivalents.
 
-| deweather/parsnip | xgboost          | lightgbm                | ranger        |
-|:------------------|:-----------------|:------------------------|:--------------|
-| tree_depth        | max_depth        | max_depth               | \-            |
-| trees             | nrounds          | num_iterations          | num.trees     |
-| learn_rate        | eta              | learning_rate           | \-            |
-| mtry              | colsample_bynode | feature_fraction_bynode | mtry          |
-| min_n             | min_child_weight | min_data_in_leaf        | min.node.size |
-| loss_reduction    | gamma            | min_gain_to_split       | \-            |
-| sample_size       | subsample        | \-                      | \-            |
-| stop_iter         | early_stop       | \-                      | \-            |
+| deweather/parsnip | xgboost | lightgbm | ranger |
+|:---|:---|:---|:---|
+| tree_depth | max_depth | max_depth | \- |
+| trees | nrounds | num_iterations | num.trees |
+| learn_rate | eta | learning_rate | \- |
+| mtry | colsample_bynode | feature_fraction_bynode | mtry |
+| min_n | min_child_weight | min_data_in_leaf | min.node.size |
+| loss_reduction | gamma | min_gain_to_split | \- |
+| sample_size | subsample | \- | \- |
+| stop_iter | early_stop | \- | \- |
+| alpha | alpha | \- | alpha |
+| lambda | lambda | \- | \- |
+| scale_pos_weight | scale_pos_weight | \- | \- |
+| regularization.factor | \- | \- | regularization.factor |
+| regularization.usedepth | \- | \- | regularization.usedepth |
+| minprop | \- | \- | minprop |
+| splitrule | \- | \- | splitrule |
+| num.random.splits | \- | \- | num.random.splits |

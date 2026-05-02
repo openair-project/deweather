@@ -1,10 +1,10 @@
-pandoc: 3.1.11
+pandoc: 3.8.3
 pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   articles/deweather: deweather.html
   articles/Parameter-Mapping: Parameter-Mapping.html
-last_built: 2026-02-22T14:43Z
+last_built: 2026-05-02T11:13Z
 urls:
   reference: https://openair-project.github.io/deweather/reference
   article: https://openair-project.github.io/deweather/articles

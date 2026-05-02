@@ -35,6 +35,7 @@ ethane and isoprene as well as meteorological data including wind speed,
 wind direction, relative humidity, ambient temperature and cloud cover.
 
 ``` r
+
 head(aqroadside)
 #> # A tibble: 6 × 11
 #>   date                  nox   no2 ethane isoprene benzene    ws    wd air_temp
@@ -76,6 +77,7 @@ itself in the background if those columns do not exist in the input
 dataframe.
 
 ``` r
+
 append_dw_vars(aqroadside) |>
   dplyr::glimpse()
 #> Rows: 149,040
@@ -123,6 +125,7 @@ for more information. In this example, we’ll also significantly trim
 down the data to speed things up.
 
 ``` r
+
 tuned_results <-
   aqroadside |>
   # want to sample by weekday to get good spread of categorical data
@@ -141,6 +144,7 @@ This output has a few useful features. First, we’re informed that the
 best value for `trees` is 50 and for `tree_depth` is 5.
 
 ``` r
+
 get_tdw_best_params(tuned_results)
 #> $min_n
 #> [1] 10
@@ -185,6 +189,7 @@ after a certain threshold and only serve to increase the time taken to
 fit and use the finalised model.
 
 ``` r
+
 get_tdw_tuning_metrics(tuned_results)
 #> # A tibble: 18 × 6
 #>    min_n tree_depth metric   mean     n std_err
@@ -220,6 +225,7 @@ to a small one. Around this elbow is likely a good value to set your
 hyperparameter.
 
 ``` r
+
 plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "min_n")
 ```
 
@@ -231,6 +237,7 @@ predictions is included (which can be usefully plotted as a scatter
 chart or binned surface), as well as a set of metrics to evaluate.
 
 ``` r
+
 get_tdw_testing_metrics(tuned_results) |>
   dplyr::glimpse()
 #> List of 11
@@ -248,6 +255,7 @@ get_tdw_testing_metrics(tuned_results) |>
 ```
 
 ``` r
+
 plot_tdw_testing_scatter(tuned_results)
 ```
 
@@ -260,6 +268,7 @@ more detail. `deweather` has useful defaults for many of the model
 parameters, but these can be adjusted by the user if required.
 
 ``` r
+
 no2_model <-
   build_dw_model(
     data = aqroadside,
@@ -275,6 +284,7 @@ the
 function to automatically lift the ‘best’ parameters from that.
 
 ``` r
+
 no2_model_alt <- finalise_tdw_model(tuned_results, aqroadside)
 ```
 
@@ -282,6 +292,7 @@ Both of these functions return a “deweather model” object. We can see a
 quick summary of it by simply printing it.
 
 ``` r
+
 no2_model
 #> 
 #> ── Deweather Model ─────────────────────────────────────────────────────────────
@@ -307,6 +318,7 @@ for accessing relevant features of different objects created in the
 package.
 
 ``` r
+
 get_dw_pollutant(no2_model)
 #> [1] "no2"
 get_dw_vars(no2_model)
@@ -336,6 +348,7 @@ each feature to the model based on the total gain of this feature’s
 splits. A higher percentage means a more important predictive feature.
 
 ``` r
+
 get_dw_importance(no2_model)
 #> # A tibble: 12 × 2
 #>    var        importance
@@ -360,6 +373,7 @@ function. The wind direction is the most predictive feature, and the day
 of the week being any week day is the least predictive feature.
 
 ``` r
+
 plot_dw_importance(no2_model)
 ```
 
@@ -378,6 +392,7 @@ Regardless, if you would like to see factor features as single features,
 the `aggregate_factors` argument may be of use.
 
 ``` r
+
 plot_dw_importance(no2_model, aggregate_factors = TRUE)
 ```
 
@@ -402,6 +417,7 @@ data to construct the plot. We can see that `no2` is highest during the
 day and lowest overnight, everything else kept equal.
 
 ``` r
+
 plot_dw_partial_1d(no2_model, "hour", n = 100)
 ```
 
@@ -412,6 +428,7 @@ achieves a similar result. `no2` is lowest on weekends, all else being
 equal.
 
 ``` r
+
 plot_dw_partial_1d(no2_model, "weekday", n = 100)
 ```
 
@@ -421,6 +438,7 @@ If a variable isn’t given, all variables will be plotted in a
 `patchwork` assembly in order of importance.
 
 ``` r
+
 plot_dw_partial_1d(no2_model, n = 100)
 ```
 
@@ -434,6 +452,7 @@ split the data into groups and calculate PDs for each subset of the
 data. Let’s give this a go now.
 
 ``` r
+
 plot_dw_partial_1d(no2_model, "hour", group = "weekday", n = 1000)
 ```
 
@@ -444,6 +463,7 @@ variable which will be binned into `group_intervals`. Here we group by
 `"air_temp"` and split it into 3 equally sized bins.
 
 ``` r
+
 plot_dw_partial_1d(
   no2_model,
   "hour",
@@ -469,6 +489,7 @@ likely due to more O₃ available to convert NO to NO₂. In fact,
 background O₃ would probably be a useful covariate to add to the model.
 
 ``` r
+
 plot_dw_partial_2d(no2_model, "ws", "air_temp", n = 200)
 ```
 
@@ -480,6 +501,7 @@ with contour lines. `contour = "fill"` will bin the entire colour scale.
 The number of bins is controlled using the `contour_bins` argument.
 
 ``` r
+
 plot_dw_partial_2d(
   no2_model,
   "ws",
@@ -499,6 +521,7 @@ These plots can be customised like any other
 [ggplot2](https://ggplot2.tidyverse.org) object.
 
 ``` r
+
 library(ggplot2)
 
 plot_dw_partial_1d(no2_model, "hour", group = "weekday") +
@@ -549,6 +572,7 @@ An *indication* of the meteorologically-averaged trend is given by the
 function above.
 
 ``` r
+
 plot_dw_partial_1d(no2_model, "trend", n = 100, intervals = 100)
 ```
 
@@ -565,6 +589,7 @@ some
 set to allow for parallelism.
 
 ``` r
+
 demet <- simulate_dw_met(
   no2_model,
   vars = c("ws", "wd", "air_temp"),
@@ -577,6 +602,7 @@ Now it is possible to plot the resulting trend. The
 function is a convenient way to do so.
 
 ``` r
+
 plot_sim_trend(demet)
 ```
 
@@ -595,6 +621,7 @@ results to provide a better indication of the overall trend. For
 example:
 
 ``` r
+
 plot_sim_trend(demet, avg.time = "month")
 ```
 
@@ -617,6 +644,7 @@ using the `plotly` engine provides useful tooltips, zooming, and the
 ability to toggle the different traces on and off.
 
 ``` r
+
 plot_sim_trend(
   demet,
   dw = no2_model,

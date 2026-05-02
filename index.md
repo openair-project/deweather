@@ -73,6 +73,7 @@ All **deweather** functions are fully documented; access documentation
 using R in your IDE of choice.
 
 ``` r
+
 ?deweather::build_dw_model
 ```
 
@@ -96,6 +97,7 @@ The development version of **deweather** can be installed from GitHub
 using [pak](https://pak.r-lib.org/):
 
 ``` r
+
 # install.packages("pak")
 pak::pak("openair-project/deweather")
 ```

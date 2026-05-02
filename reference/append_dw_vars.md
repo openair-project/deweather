@@ -28,13 +28,21 @@ append_dw_vars(
 
 - vars:
 
-  A character vector of variables of interest. Possible options
-  include: - `"trend"`: a numeric expression of the overall time
-  series - `"hour"`: the hour of the day (0-23) - `"weekday"`: the day
-  of the week (Sunday through Saturday) - `"weekend"`: whether it is a
-  weekend (Saturday, Sunday) or weekday - `"yday"`: the day of the
-  year - `"week"`: the week of the year - `"month"`: the month of the
-  year
+  A character vector of variables of interest. Possible options include:
+
+  - `"trend"`: a numeric expression of the overall time series
+
+  - `"hour"`: the hour of the day (0-23)
+
+  - `"weekday"`: the day of the week (Sunday through Saturday)
+
+  - `"weekend"`: whether it is a weekend (Saturday, Sunday) or weekday
+
+  - `"yday"`: the day of the year
+
+  - `"week"`: the week of the year
+
+  - `"month"`: the month of the year
 
 - abbr:
 

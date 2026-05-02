@@ -110,7 +110,7 @@ tune_dw_model(
     regularization? (`TRUE`/`FALSE`).
 
   - `splitrule`: `<ranger>` Splitting rule. One of
-    dials::ranger_reg_rules.
+    [dials::ranger_reg_rules](https://dials.tidymodels.org/reference/ranger_parameters.html).
 
   - `alpha`: `<ranger>` Significance threshold to allow splitting (for
     `splitrule = "maxstat"`).
@@ -244,7 +244,8 @@ The following `ranger`-specific parameters are tunable:
 - `regularization.usedepth`: Consider the depth in regularization?
   (`TRUE`/`FALSE`)
 
-- `splitrule`: Splitting rule. One of dials::ranger_reg_rules
+- `splitrule`: Splitting rule. One of
+  [dials::ranger_reg_rules](https://dials.tidymodels.org/reference/ranger_parameters.html)
 
 - `alpha`: Significance threshold to allow splitting (for
   `splitrule = "maxstat"`)
