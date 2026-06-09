@@ -134,38 +134,52 @@ tuned_results <-
   # tune model
   tune_dw_model(
     pollutant = "no2",
-    tree_depth = c(1, 5),
-    min_n = c(5, 10),
+    trees = 200L,
+    tree_depth = c(2, 5),
+    loss_reduction = c(0, 1),
+    lambda = 2,
+    sample_size = 0.8,
     grid_levels = 3L
   )
 ```
 
 This output has a few useful features. First, we’re informed that the
-best value for `trees` is 50 and for `tree_depth` is 5.
+best value for `trees` is 200 and for `tree_depth` is 3.
+
+A note on model selection: by default,
+[`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
+uses `selection_method = "pct_loss"` rather than simply picking the
+configuration with the lowest RMSE. This prefers simpler models
+(shallower trees, stronger regularisation) whose RMSE is within
+`pct_loss_limit = 2` percent of the minimum. The motivation is that for
+hourly air quality data, the marginal RMSE gain of a more complex model
+is typically smaller than measurement uncertainty, and simpler models
+are faster to use in \[simulate_dw_met()\]. Use
+`selection_method = "best"` to revert to strict minimum-RMSE selection.
 
 ``` r
 
 get_tdw_best_params(tuned_results)
-#> $min_n
+#> $tree_depth
+#> [1] 3
+#> 
+#> $loss_reduction
 #> [1] 10
 #> 
-#> $tree_depth
-#> [1] 5
-#> 
 #> $trees
-#> [1] 50
+#> [1] 200
 #> 
 #> $mtry
 #> NULL
 #> 
+#> $min_n
+#> [1] 10
+#> 
 #> $learn_rate
 #> [1] 0.1
 #> 
-#> $loss_reduction
-#> [1] 0
-#> 
 #> $sample_size
-#> [1] 1
+#> [1] 0.8
 #> 
 #> $stop_iter
 #> [1] 45
@@ -174,7 +188,7 @@ get_tdw_best_params(tuned_results)
 #> [1] 0
 #> 
 #> $lambda
-#> [1] 1
+#> [1] 2
 ```
 
 If we want to interrogate this more, the `metrics` object shows a
@@ -192,26 +206,26 @@ fit and use the finalised model.
 
 get_tdw_tuning_metrics(tuned_results)
 #> # A tibble: 18 × 6
-#>    min_n tree_depth metric   mean     n std_err
-#>    <int>      <int> <chr>   <dbl> <int>   <dbl>
-#>  1     5          1 rmse   37.5      10  0.850 
-#>  2     5          1 rsq     0.443    10  0.0173
-#>  3     5          3 rmse   31.2      10  0.720 
-#>  4     5          3 rsq     0.599    10  0.0200
-#>  5     5          5 rmse   29.7      10  0.728 
-#>  6     5          5 rsq     0.628    10  0.0194
-#>  7     7          1 rmse   37.5      10  0.850 
-#>  8     7          1 rsq     0.443    10  0.0173
-#>  9     7          3 rmse   31.1      10  0.693 
-#> 10     7          3 rsq     0.600    10  0.0201
-#> 11     7          5 rmse   29.6      10  0.645 
-#> 12     7          5 rsq     0.632    10  0.0199
-#> 13    10          1 rmse   37.5      10  0.850 
-#> 14    10          1 rsq     0.443    10  0.0173
-#> 15    10          3 rmse   31.1      10  0.661 
-#> 16    10          3 rsq     0.601    10  0.0197
-#> 17    10          5 rmse   29.5      10  0.651 
-#> 18    10          5 rsq     0.633    10  0.0201
+#>    tree_depth loss_reduction metric   mean     n std_err
+#>         <int>          <dbl> <chr>   <dbl> <int>   <dbl>
+#>  1          2           1    rmse   31.0      10  0.621 
+#>  2          2           1    rsq     0.589    10  0.0197
+#>  3          2           3.16 rmse   31.0      10  0.621 
+#>  4          2           3.16 rsq     0.589    10  0.0197
+#>  5          2          10    rmse   31.0      10  0.621 
+#>  6          2          10    rsq     0.589    10  0.0197
+#>  7          3           1    rmse   29.7      10  0.642 
+#>  8          3           1    rsq     0.624    10  0.0193
+#>  9          3           3.16 rmse   29.7      10  0.642 
+#> 10          3           3.16 rsq     0.624    10  0.0193
+#> 11          3          10    rmse   29.7      10  0.642 
+#> 12          3          10    rsq     0.624    10  0.0192
+#> 13          5           1    rmse   29.7      10  0.653 
+#> 14          5           1    rsq     0.626    10  0.0196
+#> 15          5           3.16 rmse   29.6      10  0.675 
+#> 16          5           3.16 rsq     0.629    10  0.0187
+#> 17          5          10    rmse   29.5      10  0.675 
+#> 18          5          10    rsq     0.631    10  0.0187
 ```
 
 It can be useful to see this data in a plot; the
@@ -226,7 +240,7 @@ hyperparameter.
 
 ``` r
 
-plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "min_n")
+plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "loss_reduction")
 ```
 
 ![](deweather_files/figure-html/unnamed-chunk-2-1.png)
@@ -242,16 +256,16 @@ get_tdw_testing_metrics(tuned_results) |>
   dplyr::glimpse()
 #> List of 11
 #>  $ n   : int 424
-#>  $ fac2: num 0.965
-#>  $ mb  : num -0.718
-#>  $ mge : num 20.1
-#>  $ nmb : num -0.00755
-#>  $ nmge: num 0.212
-#>  $ rmse: num 28
-#>  $ r   : num 0.812
-#>  $ p   : num 6.76e-101
-#>  $ coe : num 0.467
-#>  $ ioa : num 0.733
+#>  $ fac2: num 0.953
+#>  $ mb  : num -1.47
+#>  $ mge : num 20.4
+#>  $ nmb : num -0.0155
+#>  $ nmge: num 0.214
+#>  $ rmse: num 27.8
+#>  $ r   : num 0.813
+#>  $ p   : num 2.7e-101
+#>  $ coe : num 0.461
+#>  $ ioa : num 0.73
 ```
 
 ``` r
