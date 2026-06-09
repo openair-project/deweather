@@ -112,14 +112,20 @@ and, while sensible defaults have been set, you may be interested in
 seeing how tweaking them can influence how well the model behaves. This
 is called “tuning”, and the
 [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
-function provides an interface for this. Any of the boosted decision
-tree parameters (e.g., `tree_depth` and `trees`) can be set as a range
-which is then combined with `grid_levels` to create a regular grid of
-all parameter combinations.
+function provides an interface for this.
+
+A practical strategy for boosted tree models is to **fix** complexity
+controls (`trees`, `learn_rate`, `lambda`, `sample_size`) at
+conservative values and **tune** the structural parameters
+(`tree_depth`, `loss_reduction`) over a narrow range. This avoids the
+common pitfall of producing unnecessarily large models: leaving `trees`
+free to be tuned almost always results in the maximum value being
+selected, since adding more trees will marginally reduce
+cross-validation RMSE even when the practical benefit is negligible.
 
 Note that this process can take a while, especially if many parameters
 are being tuned. One way to speed this up is to invoke parallel
-processing through the `mirai` package - see
+processing through the `mirai` package — see
 <https://tune.tidymodels.org/articles/extras/optimizations.html#parallel-processing>
 for more information. In this example, we’ll also significantly trim
 down the data to speed things up.
@@ -143,19 +149,14 @@ tuned_results <-
   )
 ```
 
-This output has a few useful features. First, we’re informed that the
-best value for `trees` is 200 and for `tree_depth` is 3.
-
-A note on model selection: by default,
+By default,
 [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
-uses `selection_method = "pct_loss"` rather than simply picking the
-configuration with the lowest RMSE. This prefers simpler models
-(shallower trees, stronger regularisation) whose RMSE is within
-`pct_loss_limit = 2` percent of the minimum. The motivation is that for
-hourly air quality data, the marginal RMSE gain of a more complex model
-is typically smaller than measurement uncertainty, and simpler models
-are faster to use in \[simulate_dw_met()\]. Use
-`selection_method = "best"` to revert to strict minimum-RMSE selection.
+uses `selection_method = "pct_loss"`, which selects the **simplest**
+configuration (shallowest trees, strongest regularisation) whose RMSE is
+within `pct_loss_limit = 2` percent of the minimum. This avoids the
+well-known bias of strict minimum-RMSE selection toward ever-larger tree
+counts. The best values found here are `tree_depth =` 3 and
+`loss_reduction =` 10.
 
 ``` r
 
@@ -191,16 +192,14 @@ get_tdw_best_params(tuned_results)
 #> [1] 2
 ```
 
-If we want to interrogate this more, the `metrics` object shows a
-summary for all of the different hyperparameters that have been tuned.
 Examining the full set of metrics, rather than only the single best
-configuration, allows you to assess whether the marginal performance
-gain of the “best” model justifies its additional computational cost or
-complexity. For example, with air quality timeseries data, its likely
-that increasing `trees` (the number of trees in the model) is always
-going to ‘improve’ the model, but the actual benefits may be marginal
-after a certain threshold and only serve to increase the time taken to
-fit and use the finalised model.
+configuration, lets you assess the sensitivity of the model to each
+hyperparameter and judge whether the 2% tolerance is appropriate for
+your data. The `get_tdw_tuning_results()` function returns the raw
+`tune_grid()` output, allowing you to apply your own selection strategy
+— for example
+[`tune::select_by_one_std_err()`](https://tune.tidymodels.org/reference/show_best.html)
+— if you prefer a different approach.
 
 ``` r
 
@@ -232,11 +231,14 @@ It can be useful to see this data in a plot; the
 [`plot_tdw_tuning_metrics()`](https://openair-project.github.io/deweather/reference/plot_tdw_tuning_metrics.md)
 function allows for this to be done fairly flexibly. Note that this
 function is likely of most use with between 1 and 3 tuned
-hyperparmaeters; any more and its likely to be too messy to be
+hyperparameters; any more and it is likely to be too messy to be
 interpretable. It may be useful to look for the ‘elbow’ in the data,
-where the decrease in RMSE or increase in RSQ goes from a large gradient
-to a small one. Around this elbow is likely a good value to set your
-hyperparameter.
+where the decrease in RMSE or increase in RSQ goes from a steep gradient
+to a shallow one — around this point, additional model complexity
+provides diminishing returns. For `tree_depth` in particular, the elbow
+often appears between depths 2 and 4 for typical hourly air quality
+data; beyond this, RMSE reductions are marginal and partial dependencies
+become harder to interpret.
 
 ``` r
 
@@ -300,6 +302,10 @@ function to automatically lift the ‘best’ parameters from that.
 ``` r
 
 no2_model_alt <- finalise_tdw_model(tuned_results, aqroadside)
+
+# The `params` argument overrides individual best parameters if desired,
+# e.g. to accept a shallower tree depth than the one selected:
+no2_model_alt <- finalise_tdw_model(tuned_results, aqroadside, params = list(tree_depth = 2))
 ```
 
 Both of these functions return a “deweather model” object. We can see a
@@ -594,13 +600,18 @@ plot_dw_partial_1d(no2_model, "trend", n = 100, intervals = 100)
 
 A much better indication is given by using the model to predict many
 times with random sampling of **meteorological** conditions. This
-sampling is carried out by the `simulate_met()` function.
+sampling is carried out by the
+[`simulate_dw_met()`](https://openair-project.github.io/deweather/reference/simulate_dw_met.md)
+function.
 
-Note that you’d typically want `n` to be a higher value than what’s used
-in this example; it has been set to `50` for speed. Recall also that
-some
+Note that you’d typically want `n` to be a higher value for
+publication-quality results; 200–500 is common. It has been set to `50`
+here purely to keep this example brief. Constrained meteorological
+sampling is pre-computed across all `n` simulations in a single pass, so
+increasing `n` adds only the cost of additional predictions rather than
+repeated sampling work. Recall also that
 [`mirai::daemons()`](https://mirai.r-lib.org/reference/daemons.html) are
-set to allow for parallelism.
+set to distribute those predictions across parallel workers.
 
 ``` r
 
