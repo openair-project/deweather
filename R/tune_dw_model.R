@@ -30,6 +30,18 @@
 #'   v-fold cross-validation. Passed to the `v` argument of
 #'   [rsample::vfold_cv()].
 #'
+#' @param selection_method How to select the best model from the tuning grid.
+#'   `"pct_loss"` (the default) selects the simplest model whose RMSE is within
+#'   `pct_loss_limit` percent of the minimum, preferring fewer trees, shallower
+#'   depths, and stronger regularisation. `"one_se"` applies the one-standard-error
+#'   rule. `"best"` picks the configuration with the absolute minimum RMSE, which
+#'   will consistently favour maximum complexity and is not recommended when
+#'   `trees` is large.
+#'
+#' @param pct_loss_limit The maximum percentage increase in RMSE that is
+#'   acceptable when `selection_method = "pct_loss"`. Passed to the `limit`
+#'   argument of [tune::select_by_pct_loss()]. Defaults to `2`.
+#'
 #' @param .progress Log progress in the console? Passed to the `verbose`
 #'   argument of [tune::control_grid()]. Note that logging does not occur when
 #'   parallel processing is used.
@@ -82,12 +94,15 @@ tune_dw_model <- function(
   split_prop = 3 / 4,
   grid_levels = 5,
   v_partitions = 10,
+  selection_method = c("pct_loss", "best", "one_se"),
+  pct_loss_limit = 2,
   ...,
   .progress = TRUE,
   .date = "date"
 ) {
   # check inputs
   engine <- rlang::arg_match(engine, multiple = FALSE)
+  selection_method <- rlang::arg_match(selection_method)
   engine_method <- define_engine_method(engine)
   vars <- rlang::arg_match(
     vars,
@@ -450,6 +465,7 @@ tune_dw_model <- function(
   # deal with grid
   if (length(grid) == 0) {
     grid <- 1L
+    tuned_names <- character(0)
   } else {
     grid <- dials::grid_regular(x = grid, levels = grid_levels)
 
@@ -467,7 +483,22 @@ tune_dw_model <- function(
       "num_leaves" ~ "num_leaves",
       default = names(grid)
     )
+    tuned_names <- names(grid)
   }
+
+  # build ordering expressions for parsimony-aware selection:
+  # higher values mean simpler model for regularisation params; lower for size params
+  simpler_is_higher <- c(
+    "min_n", "loss_reduction", "alpha", "lambda",
+    "regularization.factor", "stop_iter"
+  )
+  ordering_exprs <- purrr::map(tuned_names, function(p) {
+    if (p %in% simpler_is_higher) {
+      rlang::expr(dplyr::desc(!!rlang::sym(p)))
+    } else {
+      rlang::sym(p)
+    }
+  })
 
   # get results from grid
   results <- tune::tune_grid(
@@ -486,9 +517,34 @@ tune_dw_model <- function(
     dplyr::select(-".config", -".estimator") |>
     dplyr::rename("metric" = ".metric")
 
-  # get the best overall model
-  best_params <- tune::select_best(results, metric = "rmse") |>
-    dplyr::select(-".config")
+  # get the best overall model — with parsimony preference unless "best" requested
+  best_params <-
+    if (selection_method == "best" || length(ordering_exprs) == 0) {
+      tune::select_best(results, metric = "rmse")
+    } else if (selection_method == "one_se") {
+      rlang::inject(
+        tune::select_by_one_std_err(results, !!!ordering_exprs, metric = "rmse")
+      )
+    } else {
+      # tune's select_by_pct_loss uses `1:best_index` where best_index can be a
+      # vector when multiple configs share the exact minimum RMSE (common with
+      # small samples or coarse grids). R emits a harmless warning in that case;
+      # suppress it here to avoid user confusion.
+      withCallingHandlers(
+        rlang::inject(
+          tune::select_by_pct_loss(
+            results, !!!ordering_exprs,
+            metric = "rmse", limit = pct_loss_limit
+          )
+        ),
+        warning = function(w) {
+          if (grepl("numerical expression has.*elements", conditionMessage(w))) {
+            invokeRestart("muffleWarning")
+          }
+        }
+      )
+    }
+  best_params <- dplyr::select(best_params, -".config")
 
   # finalise workflow
   wf <- tune::finalize_workflow(wf, best_params)
@@ -535,6 +591,7 @@ tune_dw_model <- function(
       fixed_params
     ),
     metrics = metrics,
+    tuning_results = results,
     final_fit = list(
       predictions = final_predictions,
       metrics = final_metrics
