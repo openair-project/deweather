@@ -133,7 +133,7 @@ Random forests are considerably less sensitive to hyperparameter choice than gra
 - **`mtry`**: the number of predictors considered at each split. This is the most influential parameter. Ranger defaults to `floor(p/3)` for regression (2 for a 6-predictor model), and testing a range from 2 to `p` covers all reasonable values.
 - **`min_n`**: minimum observations per leaf. Higher values produce shallower trees and smoother partial dependencies.
 
-`trees` should be **fixed at 500 or more** rather than tuned. Each tree in a random forest is an independent estimator; more trees only reduces prediction variance and there is no overfitting risk, so the question is not *whether* to have more trees but simply how much compute time to spend. Tuning `trees` tends to select the minimum value within the tolerance band, which increases prediction variability unnecessarily.
+`trees` should be **fixed rather than tuned**. Each tree in a random forest is an independent estimator; more trees only reduces prediction variance and there is no overfitting risk, so the question is not *whether* to have more trees but simply how much compute time to spend. In practice, gains beyond 50–100 trees tend to be marginal for typical hourly air quality datasets — try 100 for your own data and compare against the default 50 to see whether there is a meaningful improvement. Tuning `trees` tends to select the minimum value within the tolerance band, which increases prediction variability unnecessarily.
 
 The ranger-specific engine parameters exposed by `tune_dw_model()` (`regularization.factor`, `splitrule`, `alpha`, `minprop`, `num.random.splits`) address niche problems such as high-dimensional variable selection or alternative split criteria, and are not needed for standard air quality deweathering. The default split rule (`"variance"`) is the correct choice for regression.
 
@@ -149,7 +149,7 @@ tuned_results_rf <-
   tune_dw_model(
     pollutant = "no2",
     engine = "ranger",
-    trees = 500L,           # fix high: RF trees reduce variance, don't overfit
+    trees = 50L,            # fix rather than tune; try 100 if compute allows
     mtry = c(2, 6),         # key parameter: range from 2 to number of predictors
     min_n = c(5, 20),       # secondary: controls tree depth and smoothness
     grid_levels = 3L,
