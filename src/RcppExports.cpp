@@ -24,9 +24,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// get_constrained_indices_multi_cpp
+IntegerMatrix get_constrained_indices_multi_cpp(IntegerVector doy, IntegerVector hod, int day_win, int hour_win, int n_sims);
+RcppExport SEXP _deweather_get_constrained_indices_multi_cpp(SEXP doySEXP, SEXP hodSEXP, SEXP day_winSEXP, SEXP hour_winSEXP, SEXP n_simsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< IntegerVector >::type doy(doySEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type hod(hodSEXP);
+    Rcpp::traits::input_parameter< int >::type day_win(day_winSEXP);
+    Rcpp::traits::input_parameter< int >::type hour_win(hour_winSEXP);
+    Rcpp::traits::input_parameter< int >::type n_sims(n_simsSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_constrained_indices_multi_cpp(doy, hod, day_win, hour_win, n_sims));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_deweather_get_constrained_indices_cpp", (DL_FUNC) &_deweather_get_constrained_indices_cpp, 4},
+    {"_deweather_get_constrained_indices_multi_cpp", (DL_FUNC) &_deweather_get_constrained_indices_multi_cpp, 5},
     {NULL, NULL, 0}
 };
 

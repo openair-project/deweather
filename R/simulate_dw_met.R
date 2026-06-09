@@ -82,66 +82,68 @@ simulate_dw_met <-
       )
     }
 
-    # if daemons are set, need to load packages in the workers, otherwise don't
+    # Pre-compute all n sets of shuffled row indices at once.
+    #
+    # For constrained resampling the C++ function builds the (doy, hour) grid
+    # and candidate lists ONCE, then draws n independent samples per
+    # observation — total cost ≈ one single-simulation call regardless of n.
+    # Previously, get_constrained_indices_cpp was called inside each task,
+    # rebuilding the full grid every time: 50 calls × ~0.8 s = 40 s overhead
+    # for a 144 k-row dataset.
+    dates <- as.POSIXct(newdata$trend, tz = tz)
+
+    if (resampling == "constrained") {
+      doy <- lubridate::yday(dates)
+      hod <- lubridate::hour(dates)
+      id_mat <- get_constrained_indices_multi_cpp(doy, hod, window_day, window_hour, n)
+    } else {
+      n_rows <- nrow(newdata)
+      id_mat <- replicate(n, sample.int(n_rows, n_rows, replace = FALSE))
+    }
+
+    # Convert to a list so each task carries only its own ~576 KB index vector,
+    # not the full matrix.
+    id_list <- lapply(seq_len(n), function(j) id_mat[, j])
+
     if (mirai::daemons_set()) {
       prediction <-
-        purrr::map(
-          .x = 1:n,
-          .f = purrr::in_parallel(
-            \(x) {
+        purrr::map2(
+          seq_len(n),
+          id_list,
+          purrr::in_parallel(
+            \(i, id) {
               library(deweather)
               contr_one_hot <- parsnip::contr_one_hot
-              sample_and_predict(
-                mydata = newdata,
-                mod = model,
-                vars = vars,
-                resampling = resampling,
-                window_day = window_day,
-                window_hour = window_hour,
-                sample_fun = get_constrained_indices_cpp,
-                tz = tz
+              nd <- newdata
+              nd[vars] <- lapply(nd[vars], \(x) x[id])
+              pred <- parsnip::predict.model_fit(model, new_data = nd)
+              dplyr::tibble(
+                date = as.POSIXct(nd$trend, tz = tz),
+                pred = pred$.pred
               )
             },
-            sample_and_predict = sample_and_predict,
             newdata = newdata,
             model = model,
             vars = vars,
-            resampling = resampling,
-            window_day = window_day,
-            window_hour = window_hour,
-            tz = tz,
-            get_constrained_indices_cpp = get_constrained_indices_cpp
+            tz = tz
           ),
           .progress = .progress
         ) |>
         purrr::list_rbind()
     } else {
       prediction <-
-        purrr::map(
-          .x = 1:n,
-          .f = purrr::in_parallel(
-            \(x) {
-              sample_and_predict(
-                mydata = newdata,
-                mod = model,
-                vars = vars,
-                resampling = resampling,
-                window_day = window_day,
-                window_hour = window_hour,
-                sample_fun = get_constrained_indices_cpp,
-                tz = tz
-              )
-            },
-            sample_and_predict = sample_and_predict,
-            newdata = newdata,
-            model = model,
-            vars = vars,
-            resampling = resampling,
-            window_day = window_day,
-            window_hour = window_hour,
-            tz = tz,
-            get_constrained_indices_cpp = get_constrained_indices_cpp
-          ),
+        purrr::map2(
+          seq_len(n),
+          id_list,
+          \(i, id) {
+            nd <- newdata
+            nd[vars] <- lapply(nd[vars], \(x) x[id])
+            pred <- parsnip::predict.model_fit(model, new_data = nd)
+            dplyr::tibble(
+              date = as.POSIXct(nd$trend, tz = tz),
+              pred = pred$.pred
+            )
+          },
           .progress = .progress
         ) |>
         purrr::list_rbind()
@@ -172,50 +174,3 @@ simulate_dw_met <-
 
     return(prediction)
   }
-
-# get random samples and predict
-sample_and_predict <- function(
-  mydata,
-  mod,
-  vars,
-  resampling,
-  window_day,
-  window_hour,
-  sample_fun,
-  tz
-) {
-  n <- nrow(mydata)
-
-  if (resampling == "all") {
-    id <- sample.int(n, n, replace = FALSE)
-  }
-
-  if (resampling == "constrained") {
-    # Extract features
-    dates <- as.POSIXct(mydata$trend, tz = tz)
-    doy <- lubridate::yday(dates)
-    hod <- lubridate::hour(dates)
-
-    # Call C++ with the window arguments
-    id <- sample_fun(
-      doy = doy,
-      hod = hod,
-      day_win = window_day,
-      hour_win = window_hour
-    )
-  }
-
-  # new data with random samples
-  mydata[vars] <- lapply(mydata[vars], \(x) x[id])
-
-  # predict
-  prediction <- parsnip::predict.model_fit(mod, new_data = mydata)
-
-  # return data
-  prediction <- dplyr::tibble(
-    date = as.POSIXct(mydata$trend, tz = tz),
-    pred = prediction$.pred
-  )
-
-  return(prediction)
-}

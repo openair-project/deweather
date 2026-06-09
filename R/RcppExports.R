@@ -5,3 +5,7 @@ get_constrained_indices_cpp <- function(doy, hod, day_win, hour_win) {
     .Call(`_deweather_get_constrained_indices_cpp`, doy, hod, day_win, hour_win)
 }
 
+get_constrained_indices_multi_cpp <- function(doy, hod, day_win, hour_win, n_sims) {
+    .Call(`_deweather_get_constrained_indices_multi_cpp`, doy, hod, day_win, hour_win, n_sims)
+}
+
