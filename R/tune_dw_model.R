@@ -487,10 +487,14 @@ tune_dw_model <- function(
   }
 
   # build ordering expressions for parsimony-aware selection:
-  # higher values mean simpler model for regularisation params; lower for size params
+  # higher values mean simpler model for regularisation params; lower for size params.
+  # exception: for ranger, trees are independent estimators (not sequential boosting
+  # rounds), so more trees only reduces prediction variance — within tolerance, prefer
+  # higher tree counts rather than fewer.
   simpler_is_higher <- c(
     "min_n", "loss_reduction", "alpha", "lambda",
-    "regularization.factor", "stop_iter"
+    "regularization.factor", "stop_iter",
+    if (engine == "ranger") "trees"
   )
   ordering_exprs <- purrr::map(tuned_names, function(p) {
     if (p %in% simpler_is_higher) {
