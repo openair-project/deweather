@@ -68,6 +68,7 @@ of the `deweather` package for interpretation and prediction.
   [`get_tdw_tuning_metrics()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
   [`get_tdw_testing_metrics()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
   [`get_tdw_testing_data()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+  [`get_tdw_tuning_results()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
   : Getters for various deweather tuning object features
 
 ## Visualise

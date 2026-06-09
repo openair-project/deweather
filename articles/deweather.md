@@ -112,16 +112,9 @@ and, while sensible defaults have been set, you may be interested in
 seeing how tweaking them can influence how well the model behaves. This
 is called “tuning”, and the
 [`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
-function provides an interface for this.
-
-A practical strategy for boosted tree models is to **fix** complexity
-controls (`trees`, `learn_rate`, `lambda`, `sample_size`) at
-conservative values and **tune** the structural parameters
-(`tree_depth`, `loss_reduction`) over a narrow range. This avoids the
-common pitfall of producing unnecessarily large models: leaving `trees`
-free to be tuned almost always results in the maximum value being
-selected, since adding more trees will marginally reduce
-cross-validation RMSE even when the practical benefit is negligible.
+function provides an interface for this. The right strategy differs
+between the boosted tree engines (XGBoost, LightGBM) and the random
+forest engine (ranger).
 
 Note that this process can take a while, especially if many parameters
 are being tuned. One way to speed this up is to invoke parallel
@@ -129,6 +122,17 @@ processing through the `mirai` package — see
 <https://tune.tidymodels.org/articles/extras/optimizations.html#parallel-processing>
 for more information. In this example, we’ll also significantly trim
 down the data to speed things up.
+
+#### XGBoost and LightGBM
+
+A practical strategy for boosted tree models is to **fix** complexity
+controls (`trees`, `learn_rate`, `lambda`, `sample_size`) at
+conservative values and **tune** the structural parameters
+(`tree_depth`, `loss_reduction`) over a narrow range. This avoids the
+common pitfall of producing unnecessarily large models: leaving `trees`
+free to be tuned almost always results in the maximum value being
+selected, since adding more boosting rounds will marginally reduce
+cross-validation RMSE even when the practical benefit is negligible.
 
 ``` r
 
@@ -195,9 +199,10 @@ get_tdw_best_params(tuned_results)
 Examining the full set of metrics, rather than only the single best
 configuration, lets you assess the sensitivity of the model to each
 hyperparameter and judge whether the 2% tolerance is appropriate for
-your data. The `get_tdw_tuning_results()` function returns the raw
-`tune_grid()` output, allowing you to apply your own selection strategy
-— for example
+your data. The
+[`get_tdw_tuning_results()`](https://openair-project.github.io/deweather/reference/getters-tdw.md)
+function returns the raw `tune_grid()` output, allowing you to apply
+your own selection strategy — for example
 [`tune::select_by_one_std_err()`](https://tune.tidymodels.org/reference/show_best.html)
 — if you prefer a different approach.
 
@@ -276,6 +281,59 @@ plot_tdw_testing_scatter(tuned_results)
 ```
 
 ![](deweather_files/figure-html/finalplot-1.png)
+
+#### Ranger (Random Forest)
+
+Random forests are considerably less sensitive to hyperparameter choice
+than gradient-boosted trees — ranger’s built-in defaults work well for
+most hourly air quality datasets, so formal tuning is often optional.
+When it is worth doing, two parameters drive most of the benefit:
+
+- **`mtry`**: the number of predictors considered at each split. This is
+  the most influential parameter. Ranger defaults to `floor(p/3)` for
+  regression (2 for a 6-predictor model), and testing a range from 2 to
+  `p` covers all reasonable values.
+- **`min_n`**: minimum observations per leaf. Higher values produce
+  shallower trees and smoother partial dependencies.
+
+`trees` should be **fixed rather than tuned**. Each tree in a random
+forest is an independent estimator; more trees only reduces prediction
+variance and there is no overfitting risk, so the question is not
+*whether* to have more trees but simply how much compute time to spend.
+In practice, gains beyond 50–100 trees tend to be marginal for typical
+hourly air quality datasets — try 100 for your own data and compare
+against the default 50 to see whether there is a meaningful improvement.
+Tuning `trees` tends to select the minimum value within the tolerance
+band, which increases prediction variability unnecessarily.
+
+The ranger-specific engine parameters exposed by
+[`tune_dw_model()`](https://openair-project.github.io/deweather/reference/tune_dw_model.md)
+(`regularization.factor`, `splitrule`, `alpha`, `minprop`,
+`num.random.splits`) address niche problems such as high-dimensional
+variable selection or alternative split criteria, and are not needed for
+standard air quality deweathering. The default split rule (`"variance"`)
+is the correct choice for regression.
+
+Because the tree-count inflation problem is specific to sequential
+boosting, `selection_method = "best"` is more appropriate for ranger
+than the default `"pct_loss"`.
+
+``` r
+
+tuned_results_rf <-
+  aqroadside |>
+  append_dw_vars("weekday") |>
+  dplyr::slice_sample(n = 250, by = weekday) |>
+  tune_dw_model(
+    pollutant = "no2",
+    engine = "ranger",
+    trees = 50L,            # fix rather than tune; try 100 if compute allows
+    mtry = c(2, 6),         # key parameter: range from 2 to number of predictors
+    min_n = c(5, 20),       # secondary: controls tree depth and smoothness
+    grid_levels = 3L,
+    selection_method = "best"
+  )
+```
 
 ### Finalising a Model
 

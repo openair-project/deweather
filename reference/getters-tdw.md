@@ -21,6 +21,8 @@ get_tdw_tuning_metrics(tdw, metric = NULL)
 get_tdw_testing_metrics(tdw, metric = NULL)
 
 get_tdw_testing_data(tdw)
+
+get_tdw_tuning_results(tdw)
 ```
 
 ## Arguments

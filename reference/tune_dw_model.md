@@ -27,6 +27,8 @@ tune_dw_model(
   split_prop = 3/4,
   grid_levels = 5,
   v_partitions = 10,
+  selection_method = c("pct_loss", "best", "one_se"),
+  pct_loss_limit = 2,
   ...,
   .progress = TRUE,
   .date = "date"
@@ -90,6 +92,23 @@ tune_dw_model(
   The number of partitions of the data set to use for v-fold
   cross-validation. Passed to the `v` argument of
   [`rsample::vfold_cv()`](https://rsample.tidymodels.org/reference/vfold_cv.html).
+
+- selection_method:
+
+  How to select the best model from the tuning grid. `"pct_loss"` (the
+  default) selects the simplest model whose RMSE is within
+  `pct_loss_limit` percent of the minimum, preferring fewer trees,
+  shallower depths, and stronger regularisation. `"one_se"` applies the
+  one-standard-error rule. `"best"` picks the configuration with the
+  absolute minimum RMSE, which will consistently favour maximum
+  complexity and is not recommended when `trees` is large.
+
+- pct_loss_limit:
+
+  The maximum percentage increase in RMSE that is acceptable when
+  `selection_method = "pct_loss"`. Passed to the `limit` argument of
+  [`tune::select_by_pct_loss()`](https://tune.tidymodels.org/reference/show_best.html).
+  Defaults to `2`.
 
 - ...:
 
