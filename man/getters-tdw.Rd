@@ -8,6 +8,7 @@
 \alias{get_tdw_tuning_metrics}
 \alias{get_tdw_testing_metrics}
 \alias{get_tdw_testing_data}
+\alias{get_tdw_tuning_results}
 \title{Getters for various deweather tuning object features}
 \usage{
 get_tdw_pollutant(tdw)
@@ -23,6 +24,8 @@ get_tdw_tuning_metrics(tdw, metric = NULL)
 get_tdw_testing_metrics(tdw, metric = NULL)
 
 get_tdw_testing_data(tdw)
+
+get_tdw_tuning_results(tdw)
 }
 \arguments{
 \item{tdw}{A deweather tuning object created with \code{\link[=tune_dw_model]{tune_dw_model()}}.}
