@@ -79,13 +79,18 @@ tuned_results <-
   # tune model
   tune_dw_model(
     pollutant = "no2",
-    tree_depth = c(1, 5),
-    min_n = c(5, 10),
+    trees = 200L,
+    tree_depth = c(2, 5),
+    loss_reduction = c(0, 1),
+    lambda = 2,
+    sample_size = 0.8,
     grid_levels = 3L
   )
 ```
 
 This output has a few useful features. First, we're informed that the best value for `trees` is `r tuned_results$best_params$trees` and for `tree_depth` is `r tuned_results$best_params$tree_depth`.
+
+A note on model selection: by default, `tune_dw_model()` uses `selection_method = "pct_loss"` rather than simply picking the configuration with the lowest RMSE. This prefers simpler models (shallower trees, stronger regularisation) whose RMSE is within `pct_loss_limit = 2` percent of the minimum. The motivation is that for hourly air quality data, the marginal RMSE gain of a more complex model is typically smaller than measurement uncertainty, and simpler models are faster to use in [simulate_dw_met()]. Use `selection_method = "best"` to revert to strict minimum-RMSE selection.
 
 ```{r}
 #| label: bestParams
@@ -102,7 +107,7 @@ get_tdw_tuning_metrics(tuned_results)
 It can be useful to see this data in a plot; the `plot_tdw_tuning_metrics()` function allows for this to be done fairly flexibly. Note that this function is likely of most use with between 1 and 3 tuned hyperparmaeters; any more and its likely to be too messy to be interpretable. It may be useful to look for the 'elbow' in the data, where the decrease in RMSE or increase in RSQ goes from a large gradient to a small one. Around this elbow is likely a good value to set your hyperparameter.
 
 ```{r}
-plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "min_n")
+plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "loss_reduction")
 ```
 
 We can also see how the tuned model behaved on some reserved testing data, using the 'best parameters' it has decided on. A set of predictions is included (which can be usefully plotted as a scatter chart or binned surface), as well as a set of metrics to evaluate.
