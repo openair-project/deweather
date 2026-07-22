@@ -318,16 +318,27 @@ build_dw_model <- function(
   # fit the model
   model <- parsnip::fit(model_spec, formula, data = data)
 
-  if (engine_method == "boost_tree") {
-    # get importance
-    importance <- vip::vi(model$fit) |>
-      stats::setNames(c("var", "importance"))
-  } else {
-    # get importance
-    importance <- parsnip::fit(model_spec_importance, formula, data = data) |>
+  if (engine == "xgboost") {
+    importance <-
+      xgboost::xgb.importance(model$fit) |>
+      dplyr::select("var" = "Feature", "importance" = "Gain") |>
+      dplyr::tibble()
+  } else if (engine == "lightgbm") {
+    importance <-
+      lightgbm::lgb.importance(model$fit) |>
+      dplyr::select("var" = "Feature", "importance" = "Gain") |>
+      dplyr::tibble()
+  } else if (engine == "ranger") {
+    importance_v <-
+      parsnip::fit(model_spec_importance, formula, data = data) |>
       purrr::pluck("fit") |>
-      vip::vi() |>
-      stats::setNames(c("var", "importance"))
+      ranger::importance()
+
+    importance <-
+      dplyr::tibble(
+        var = names(importance_v),
+        importance = unname(importance_v)
+      )
   }
 
   # reverse the factor levels (for plotting mainly)

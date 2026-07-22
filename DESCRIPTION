@@ -33,7 +33,6 @@ Imports:
     rsample,
     tidyr,
     tune,
-    vip,
     workflows
 Suggests: 
     bonsai,

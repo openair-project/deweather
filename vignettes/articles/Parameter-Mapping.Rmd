@@ -41,16 +41,27 @@ args <- ls(envir) |>
 args |>
   dplyr::filter(engine %in% c("xgboost", "lightgbm", "ranger")) |>
   # some lightgbm params don't apply
-  dplyr::filter(ifelse(
-    engine == "lightgbm" & parsnip %in% c("stop_iter", "sample_size"),
-    FALSE,
-    TRUE
-  )) |>
+  dplyr::filter(
+    !(engine == "lightgbm" & parsnip %in% c("stop_iter", "sample_size"))
+  ) |>
   dplyr::select(-model) |>
   tidyr::pivot_wider(
     names_from = engine,
     values_from = original,
     values_fill = "-"
+  ) |>
+  dplyr::filter(
+    parsnip %in%
+      c(
+        "tree_depth",
+        "trees",
+        "learn_rate",
+        "mtry",
+        "min_n",
+        "loss_reduction",
+        "sample_size",
+        "stop_iter"
+      )
   ) |>
   dplyr::rename(`deweather/parsnip` = parsnip) |>
   knitr::kable()
