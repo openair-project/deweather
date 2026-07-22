@@ -27,7 +27,7 @@ test_that("tuning works", {
     # expected items
     expect_named(
       tuned,
-      c("pollutant", "vars", "best_params", "metrics", "final_fit", "engine")
+      c("pollutant", "vars", "best_params", "metrics", "tuning_results", "final_fit", "engine")
     )
 
     # all params should be present

@@ -65,9 +65,13 @@ append_dw_vars(aqroadside) |>
 
 ### Tuning a Model
 
-There are many input parameters to `build_dw_model()` and, while sensible defaults have been set, you may be interested in seeing how tweaking them can influence how well the model behaves. This is called "tuning", and the `tune_dw_model()` function provides an interface for this. Any of the boosted decision tree parameters (e.g., `tree_depth` and `trees`) can be set as a range which is then combined with `grid_levels` to create a regular grid of all parameter combinations.
+There are many input parameters to `build_dw_model()` and, while sensible defaults have been set, you may be interested in seeing how tweaking them can influence how well the model behaves. This is called "tuning", and the `tune_dw_model()` function provides an interface for this. The right strategy differs between the boosted tree engines (XGBoost, LightGBM) and the random forest engine (ranger).
 
-Note that this process can take a while, especially if many parameters are being tuned. One way to speed this up is to invoke parallel processing through the `mirai` package - see <https://tune.tidymodels.org/articles/extras/optimizations.html#parallel-processing> for more information. In this example, we'll also significantly trim down the data to speed things up.
+Note that this process can take a while, especially if many parameters are being tuned. One way to speed this up is to invoke parallel processing through the `mirai` package — see <https://tune.tidymodels.org/articles/extras/optimizations.html#parallel-processing> for more information. In this example, we'll also significantly trim down the data to speed things up.
+
+#### XGBoost and LightGBM
+
+A practical strategy for boosted tree models is to **fix** complexity controls (`trees`, `learn_rate`, `lambda`, `sample_size`) at conservative values and **tune** the structural parameters (`tree_depth`, `loss_reduction`) over a narrow range. This avoids the common pitfall of producing unnecessarily large models: leaving `trees` free to be tuned almost always results in the maximum value being selected, since adding more boosting rounds will marginally reduce cross-validation RMSE even when the practical benefit is negligible.
 
 ```{r}
 #| label: tune
@@ -79,30 +83,33 @@ tuned_results <-
   # tune model
   tune_dw_model(
     pollutant = "no2",
-    tree_depth = c(1, 5),
-    min_n = c(5, 10),
+    trees = 200L,
+    tree_depth = c(2, 5),
+    loss_reduction = c(0, 1),
+    lambda = 2,
+    sample_size = 0.8,
     grid_levels = 3L
   )
 ```
 
-This output has a few useful features. First, we're informed that the best value for `trees` is `r tuned_results$best_params$trees` and for `tree_depth` is `r tuned_results$best_params$tree_depth`.
+By default, `tune_dw_model()` uses `selection_method = "pct_loss"`, which selects the **simplest** configuration (shallowest trees, strongest regularisation) whose RMSE is within `pct_loss_limit = 2` percent of the minimum. This avoids the well-known bias of strict minimum-RMSE selection toward ever-larger tree counts. The best values found here are `tree_depth =` `r tuned_results$best_params$tree_depth` and `loss_reduction =` `r tuned_results$best_params$loss_reduction`.
 
 ```{r}
 #| label: bestParams
 get_tdw_best_params(tuned_results)
 ```
 
-If we want to interrogate this more, the `metrics` object shows a summary for all of the different hyperparameters that have been tuned. Examining the full set of metrics, rather than only the single best configuration, allows you to assess whether the marginal performance gain of the "best" model justifies its additional computational cost or complexity. For example, with air quality timeseries data, its likely that increasing `trees` (the number of trees in the model) is always going to 'improve' the model, but the actual benefits may be marginal after a certain threshold and only serve to increase the time taken to fit and use the finalised model.
+Examining the full set of metrics, rather than only the single best configuration, lets you assess the sensitivity of the model to each hyperparameter and judge whether the 2% tolerance is appropriate for your data. The `get_tdw_tuning_results()` function returns the raw `tune_grid()` output, allowing you to apply your own selection strategy — for example `tune::select_by_one_std_err()` — if you prefer a different approach.
 
 ```{r}
 #| label: allMetrics
 get_tdw_tuning_metrics(tuned_results)
 ```
 
-It can be useful to see this data in a plot; the `plot_tdw_tuning_metrics()` function allows for this to be done fairly flexibly. Note that this function is likely of most use with between 1 and 3 tuned hyperparmaeters; any more and its likely to be too messy to be interpretable. It may be useful to look for the 'elbow' in the data, where the decrease in RMSE or increase in RSQ goes from a large gradient to a small one. Around this elbow is likely a good value to set your hyperparameter.
+It can be useful to see this data in a plot; the `plot_tdw_tuning_metrics()` function allows for this to be done fairly flexibly. Note that this function is likely of most use with between 1 and 3 tuned hyperparameters; any more and it is likely to be too messy to be interpretable. It may be useful to look for the 'elbow' in the data, where the decrease in RMSE or increase in RSQ goes from a steep gradient to a shallow one — around this point, additional model complexity provides diminishing returns. For `tree_depth` in particular, the elbow often appears between depths 2 and 4 for typical hourly air quality data; beyond this, RMSE reductions are marginal and partial dependencies become harder to interpret.
 
 ```{r}
-plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "min_n")
+plot_tdw_tuning_metrics(tuned_results, x = "tree_depth", group = "loss_reduction")
 ```
 
 We can also see how the tuned model behaved on some reserved testing data, using the 'best parameters' it has decided on. A set of predictions is included (which can be usefully plotted as a scatter chart or binned surface), as well as a set of metrics to evaluate.
@@ -117,6 +124,37 @@ get_tdw_testing_metrics(tuned_results) |>
 #| label: finalplot
 #| fig-height: 6
 plot_tdw_testing_scatter(tuned_results)
+```
+
+#### Ranger (Random Forest)
+
+Random forests are considerably less sensitive to hyperparameter choice than gradient-boosted trees — ranger's built-in defaults work well for most hourly air quality datasets, so formal tuning is often optional. When it is worth doing, two parameters drive most of the benefit:
+
+- **`mtry`**: the number of predictors considered at each split. This is the most influential parameter. Ranger defaults to `floor(p/3)` for regression (2 for a 6-predictor model), and testing a range from 2 to `p` covers all reasonable values.
+- **`min_n`**: minimum observations per leaf. Higher values produce shallower trees and smoother partial dependencies.
+
+`trees` should be **fixed rather than tuned**. Each tree in a random forest is an independent estimator; more trees only reduces prediction variance and there is no overfitting risk, so the question is not *whether* to have more trees but simply how much compute time to spend. In practice, gains beyond 50–100 trees tend to be marginal for typical hourly air quality datasets — try 100 for your own data and compare against the default 50 to see whether there is a meaningful improvement. Tuning `trees` tends to select the minimum value within the tolerance band, which increases prediction variability unnecessarily.
+
+The ranger-specific engine parameters exposed by `tune_dw_model()` (`regularization.factor`, `splitrule`, `alpha`, `minprop`, `num.random.splits`) address niche problems such as high-dimensional variable selection or alternative split criteria, and are not needed for standard air quality deweathering. The default split rule (`"variance"`) is the correct choice for regression.
+
+Because the tree-count inflation problem is specific to sequential boosting, `selection_method = "best"` is more appropriate for ranger than the default `"pct_loss"`.
+
+```{r}
+#| label: tune-ranger
+#| eval: false
+tuned_results_rf <-
+  aqroadside |>
+  append_dw_vars("weekday") |>
+  dplyr::slice_sample(n = 250, by = weekday) |>
+  tune_dw_model(
+    pollutant = "no2",
+    engine = "ranger",
+    trees = 50L,            # fix rather than tune; try 100 if compute allows
+    mtry = c(2, 6),         # key parameter: range from 2 to number of predictors
+    min_n = c(5, 20),       # secondary: controls tree depth and smoothness
+    grid_levels = 3L,
+    selection_method = "best"
+  )
 ```
 
 ### Finalising a Model
@@ -140,6 +178,10 @@ Alternatively, if you have carried out some model tuning, you can use the `final
 #| label: finalMod
 #| eval: false
 no2_model_alt <- finalise_tdw_model(tuned_results, aqroadside)
+
+# The `params` argument overrides individual best parameters if desired,
+# e.g. to accept a shallower tree depth than the one selected:
+no2_model_alt <- finalise_tdw_model(tuned_results, aqroadside, params = list(tree_depth = 2))
 ```
 
 Both of these functions return a "deweather model" object. We can see a quick summary of it by simply printing it.
@@ -306,9 +348,9 @@ An *indication* of the meteorologically-averaged trend is given by the `plot_dw_
 plot_dw_partial_1d(no2_model, "trend", n = 100, intervals = 100)
 ```
 
-A much better indication is given by using the model to predict many times with random sampling of **meteorological** conditions. This sampling is carried out by the `simulate_met()` function.
+A much better indication is given by using the model to predict many times with random sampling of **meteorological** conditions. This sampling is carried out by the `simulate_dw_met()` function.
 
-Note that you'd typically want `n` to be a higher value than what's used in this example; it has been set to `50` for speed. Recall also that some `mirai::daemons()` are set to allow for parallelism.
+Note that you'd typically want `n` to be a higher value for publication-quality results; 200–500 is common. It has been set to `50` here purely to keep this example brief. Constrained meteorological sampling is pre-computed across all `n` simulations in a single pass, so increasing `n` adds only the cost of additional predictions rather than repeated sampling work. Recall also that `mirai::daemons()` are set to distribute those predictions across parallel workers.
 
 ```{r}
 #| label: "metSim"

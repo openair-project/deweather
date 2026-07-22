@@ -20,6 +20,8 @@ tune_dw_model(
   split_prop = 3/4,
   grid_levels = 5,
   v_partitions = 10,
+  selection_method = c("pct_loss", "best", "one_se"),
+  pct_loss_limit = 2,
   ...,
   .progress = TRUE,
   .date = "date"
@@ -61,6 +63,18 @@ use to make the regular grid. Passed to the \code{levels} argument of
 \item{v_partitions}{The number of partitions of the data set to use for
 v-fold cross-validation. Passed to the \code{v} argument of
 \code{\link[rsample:vfold_cv]{rsample::vfold_cv()}}.}
+
+\item{selection_method}{How to select the best model from the tuning grid.
+\code{"pct_loss"} (the default) selects the simplest model whose RMSE is within
+\code{pct_loss_limit} percent of the minimum, preferring fewer trees, shallower
+depths, and stronger regularisation. \code{"one_se"} applies the one-standard-error
+rule. \code{"best"} picks the configuration with the absolute minimum RMSE, which
+will consistently favour maximum complexity and is not recommended when
+\code{trees} is large.}
+
+\item{pct_loss_limit}{The maximum percentage increase in RMSE that is
+acceptable when \code{selection_method = "pct_loss"}. Passed to the \code{limit}
+argument of \code{\link[tune:select_by_pct_loss]{tune::select_by_pct_loss()}}. Defaults to \code{2}.}
 
 \item{...}{Used to pass additional engine-specific parameters to the model.
 The parameters listed here can be tuned using \code{\link[=tune_dw_model]{tune_dw_model()}}. All other

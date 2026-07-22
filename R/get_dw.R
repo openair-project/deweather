@@ -227,3 +227,11 @@ get_tdw_testing_data <- function(tdw) {
   check_deweather(tdw, "TuneDeweather")
   tdw$final_fit$predictions
 }
+
+#' @rdname getters-tdw
+#' @order 8
+#' @export
+get_tdw_tuning_results <- function(tdw) {
+  check_deweather(tdw, "TuneDeweather")
+  tdw$tuning_results
+}
