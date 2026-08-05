@@ -38,9 +38,13 @@ export(tune_dw_model)
 importFrom(Rcpp,sourceCpp)
 importFrom(carrier,crate)
 importFrom(parsnip,contr_one_hot)
-importFrom(rlang,"%||%")
-importFrom(rlang,":=")
-importFrom(rlang,.data)
-importFrom(utils,head)
-importFrom(utils,tail)
+importFrom(rlang,
+  "%||%",
+  ":=",
+  .data
+)
+importFrom(utils,
+  head,
+  tail
+)
 useDynLib(deweather, .registration = TRUE)
