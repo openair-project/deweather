@@ -1,8 +1,8 @@
 # Visualise deweather model feature importance
 
 Visualise the feature importance (% Gain for boosted tree models,
-permutation importance for random forest models) for each variable of a
-deweather model as a bar chart, with some customisation.
+impurity-corrected importance for random forest models) for each
+variable of a deweather model as a bar chart, with some customisation.
 
 ## Usage
 
