@@ -62,6 +62,10 @@ for (engine in c("xgboost", "ranger")) {
     expect_s3_class(imp$var, "factor")
     expect_identical(nrow(imp), ifelse(engine == "xgboost", 12L, 6L))
 
+    # importance should be sorted (descending), with factor levels reversed
+    expect_false(is.unsorted(rev(imp$importance)))
+    expect_identical(levels(imp$var), rev(as.character(imp$var)))
+
     imp2 <- get_dw_importance(dw_model, aggregate_factors = TRUE)
     expect_length(get_dw_vars(dw_model), nrow(imp2))
 

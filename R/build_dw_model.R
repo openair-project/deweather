@@ -320,7 +320,7 @@ build_dw_model <- function(
 
   if (engine == "xgboost") {
     importance <-
-      xgboost::xgb.importance(model$fit) |>
+      xgboost::xgb.importance(model = model$fit) |>
       dplyr::select("var" = "Feature", "importance" = "Gain") |>
       dplyr::tibble()
   } else if (engine == "lightgbm") {
@@ -340,6 +340,10 @@ build_dw_model <- function(
         importance = unname(importance_v)
       )
   }
+
+  # sort by importance - not all engines return sorted importance (e.g.,
+  # ranger returns features in input order)
+  importance <- dplyr::arrange(importance, dplyr::desc(.data$importance))
 
   # reverse the factor levels (for plotting mainly)
   importance$var <- factor(importance$var, rev(importance$var))

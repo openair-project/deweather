@@ -42,9 +42,9 @@ returns a static plot, or \code{"plotly"}, which returns a dynamic HTML plot.}
 a \link[ggplot2:ggplot2-package]{ggplot2} figure
 }
 \description{
-Visualise the feature importance (\% Gain for boosted tree models, permutation
-importance for random forest models) for each variable of a deweather model
-as a bar chart, with some customisation.
+Visualise the feature importance (\% Gain for boosted tree models,
+impurity-corrected importance for random forest models) for each variable of
+a deweather model as a bar chart, with some customisation.
 }
 \section{Plotting Engines}{
 
